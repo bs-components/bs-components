@@ -30,9 +30,12 @@ declare global {
 
   namespace StencilComponents {
     interface BossDropdown {
+      'hideDropdown': () => void;
       'keepopen': boolean;
+      'setDropdownVisibility': (toShow: any) => void;
       'show': boolean;
-      'toggleDropdown': () => void;
+      'showDropdown': () => void;
+      'toggle': () => void;
     }
   }
 

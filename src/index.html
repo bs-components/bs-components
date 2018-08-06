@@ -56,7 +56,8 @@
 </head>
 <body>
   <div class=" mt-5 ml-5">
-    <boss-dropdown id="my-dropdown" class="dropdown show" style="display: block;">
+
+    <boss-dropdown id="my-dropdown" class="dropdown btn-block show">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Dropdown button
         </button>
@@ -67,13 +68,28 @@
         </div>
     </boss-dropdown>
 
+
+    <boss-dropdown id="my-split-dropdown" class="btn-group">
+        <button type="button" class="btn btn-danger">Action</button>
+        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </boss-dropdown>
+
+
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <button id="toggle-my-dropdown-button" type="button" class="btn btn-primary">Toggle Dropdown</button>
 
-    <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -86,62 +102,35 @@
 
   <script type="x/template" id="dropdown-vue-test">
     <div>
-      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown" style="display: block;"
+      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown btn-block"
         v-on:shownBossDropdown='handleShownBossDropdown'
         v-on:hiddenBossDropdown='handleHiddenBossDropdown'
-        show
       >
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Vue Dropdown button
-            </button>
-            <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-        </boss-dropdown>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-
-        <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Vue Dropdown button
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </boss-dropdown>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
     </div>
   </script>
 
 
   <script>
 
-// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
-(function () {
-
-if ( typeof window.CustomEvent === "function" ) return false;
-
-function CustomEvent ( event, params ) {
-  params = params || { bubbles: false, cancelable: false, detail: undefined };
-  var evt = document.createEvent( 'CustomEvent' );
-  evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-  return evt;
- }
-
-CustomEvent.prototype = window.Event.prototype;
-
-window.CustomEvent = CustomEvent;
-})();
-
-
-
-    Vue.config.ignoredElements = ['dtna-bs-modal'];
-
     function handleShownBossDropdown() {
       console.log('vue Shown');
-      // console.log('this.showDropdown: ', this.showDropdown);
     }
 
     function handleHiddenBossDropdown() {
       console.log('vue Hidden');
-      // console.log('this.showDropdown: ', this.showDropdown);
     }
 
     function handleUserClickedToggleDropdownButton() {
@@ -161,9 +150,7 @@ window.CustomEvent = CustomEvent;
       // }
     }
 
-
-
-
+    Vue.config.ignoredElements = ['dtna-bs-modal'];
     new Vue({
       template: '#dropdown-vue-test',
       el: '#app',
@@ -179,50 +166,12 @@ window.CustomEvent = CustomEvent;
     });
 
 
-    // http://youmightnotneedjquery.com/
-    function triggerCustomEvent(element, eventName, payload) {
-      var event;
-      // if (window.CustomEvent) {
-      //   event = new CustomEvent(eventName, {detail: payload});
-      // } else {
-        event = document.createEvent('CustomEvent');
-        event.initCustomEvent(eventName, true, true, payload);
-      // }
-      element.dispatchEvent(event);
-    }
-
+    // -- everything below here is not in the vue scope --
 
     function toggleDropdown() {
-      // console.log('toggleDropdown');
-      const el = window.document.getElementById("my-dropdown");
-      // triggerCustomEvent(el, 'setDropdownVisibility', { show: !el.show });
-
-      // triggerCustomEvent(el, 'toggleDropdown', {});
-
-
-
-      // el).trigger('my-event', {some: 'data'});
-
-      // const myElement = el.getElement();
-      // console.log('myElement: ', myElement);
-
-
-      el.toggleDropdown();
-      // const myAttrib = el.getAttribute('show');
-      // // console.log('myAttrib: ', myAttrib);
-      // // console.log('el.show: ', el.show);
-      // if (el.show === true) {
-      //   el.setAttribute('show', 'false');
-      // } else {
-      //   el.setAttribute('show', 'true');
-      // }
+      const el = document.getElementById("my-dropdown");
+      el.toggle();
     }
-
-  // @Event() showBossDropdown: EventEmitter;
-  // @Event() shownBossDropdown: EventEmitter;
-  // @Event() hideBossDropdown: EventEmitter;
-  // @Event() hiddenBossDropdown: EventEmitter;
-
 
     function handleMyComponentShow(event) {
       // console.log('handleMyComponentShow event: ', event);
