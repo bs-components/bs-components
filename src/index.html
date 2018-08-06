@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Stencil Component Starter</title>
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+
+
+  <script src="build/bosscomponents.js"></script>
+
+<style>
+  /*
+.dropdown .dropdown-menu {
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+
+    max-height: 0;
+    display: block;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.dropdown.show .dropdown-menu {
+    max-height: 300px;
+    opacity: 1;
+}
+*/
+
+/* https://stackoverflow.com/questions/49351611/bootstrap-4-dropdown-fade-in-transition */
+
+.dropdown-menu.fade {
+   display: block;
+   opacity: 0;
+   pointer-events: none;
+}
+
+.show > .dropdown-menu.fade {
+   pointer-events: auto;
+   opacity: 1;
+}
+
+
+</style>
+
+</head>
+<body>
+  <div class=" mt-5 ml-5">
+    <boss-dropdown id="my-dropdown" class="dropdown show" style="display: block;">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown button
+        </button>
+        <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+    </boss-dropdown>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <button id="toggle-my-dropdown-button" type="button" class="btn btn-primary">Toggle Dropdown</button>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <div id="app"></div>
+
+  </div>
+
+
+  <script type="x/template" id="dropdown-vue-test">
+    <div>
+      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown" style="display: block;"
+        v-on:shownBossDropdown='handleShownBossDropdown'
+        v-on:hiddenBossDropdown='handleHiddenBossDropdown'
+        show
+      >
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Vue Dropdown button
+            </button>
+            <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+        </boss-dropdown>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+
+        <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
+    </div>
+  </script>
+
+
+  <script>
+
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+(function () {
+
+if ( typeof window.CustomEvent === "function" ) return false;
+
+function CustomEvent ( event, params ) {
+  params = params || { bubbles: false, cancelable: false, detail: undefined };
+  var evt = document.createEvent( 'CustomEvent' );
+  evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+  return evt;
+ }
+
+CustomEvent.prototype = window.Event.prototype;
+
+window.CustomEvent = CustomEvent;
+})();
+
+
+
+    Vue.config.ignoredElements = ['dtna-bs-modal'];
+
+    function handleShownBossDropdown() {
+      console.log('vue Shown');
+      // console.log('this.showDropdown: ', this.showDropdown);
+    }
+
+    function handleHiddenBossDropdown() {
+      console.log('vue Hidden');
+      // console.log('this.showDropdown: ', this.showDropdown);
+    }
+
+    function handleUserClickedToggleDropdownButton() {
+      // method 1
+      this.$refs.bossDropdownInVueExample.setDropdownVisibility(!this.$refs.bossDropdownInVueExample.show);
+
+      // // method 2
+      // this.$refs.bossDropdownInVueExample.toggle();
+
+      // // method 3
+      // const isVisisble = this.$refs.bossDropdownInVueExample.show;
+      // console.log('isVisisble: ', isVisisble);
+      // if (isVisisble) {
+      //   this.$refs.bossDropdownInVueExample.hideDropdown();
+      // } else {
+      //   this.$refs.bossDropdownInVueExample.showDropdown();
+      // }
+    }
+
+
+
+
+    new Vue({
+      template: '#dropdown-vue-test',
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+        showDropdown: 'false',
+      },
+      methods: {
+        handleShownBossDropdown: handleShownBossDropdown,
+        handleHiddenBossDropdown: handleHiddenBossDropdown,
+        handleUserClickedToggleDropdownButton: handleUserClickedToggleDropdownButton,
+      }
+    });
+
+
+    // http://youmightnotneedjquery.com/
+    function triggerCustomEvent(element, eventName, payload) {
+      var event;
+      // if (window.CustomEvent) {
+      //   event = new CustomEvent(eventName, {detail: payload});
+      // } else {
+        event = document.createEvent('CustomEvent');
+        event.initCustomEvent(eventName, true, true, payload);
+      // }
+      element.dispatchEvent(event);
+    }
+
+
+    function toggleDropdown() {
+      // console.log('toggleDropdown');
+      const el = window.document.getElementById("my-dropdown");
+      // triggerCustomEvent(el, 'setDropdownVisibility', { show: !el.show });
+
+      // triggerCustomEvent(el, 'toggleDropdown', {});
+
+
+
+      // el).trigger('my-event', {some: 'data'});
+
+      // const myElement = el.getElement();
+      // console.log('myElement: ', myElement);
+
+
+      el.toggleDropdown();
+      // const myAttrib = el.getAttribute('show');
+      // // console.log('myAttrib: ', myAttrib);
+      // // console.log('el.show: ', el.show);
+      // if (el.show === true) {
+      //   el.setAttribute('show', 'false');
+      // } else {
+      //   el.setAttribute('show', 'true');
+      // }
+    }
+
+  // @Event() showBossDropdown: EventEmitter;
+  // @Event() shownBossDropdown: EventEmitter;
+  // @Event() hideBossDropdown: EventEmitter;
+  // @Event() hiddenBossDropdown: EventEmitter;
+
+
+    function handleMyComponentShow(event) {
+      // console.log('handleMyComponentShow event: ', event);
+      console.log('handleMyComponentShow');
+    }
+
+    function handleMyComponentShown(event) {
+      // console.log('handleMyComponentShown event: ', event);
+      console.log('handleMyComponentShown');
+    }
+
+    function handleMyComponentHide(event) {
+      // console.log('handleMyComponentHide event: ', event);
+      console.log('handleMyComponentHide');
+    }
+
+    function handleMyComponentHidden(event) {
+      // console.log('handleMyComponentHidden event: ', event);
+      console.log('handleMyComponentHidden');
+    }
+
+    document.getElementById("my-dropdown").addEventListener('showBossDropdown', handleMyComponentShow);
+    document.getElementById("my-dropdown").addEventListener('shownBossDropdown', handleMyComponentShown);
+    document.getElementById("my-dropdown").addEventListener('hideBossDropdown', handleMyComponentHide);
+    document.getElementById("my-dropdown").addEventListener('hiddenBossDropdown', handleMyComponentHidden);
+
+
+    document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
+  </script>
+
+
+
+</body>
+</html>
