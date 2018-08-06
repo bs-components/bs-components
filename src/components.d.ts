@@ -31,7 +31,7 @@ declare global {
   namespace StencilComponents {
     interface BossDropdown {
       'hideDropdown': () => void;
-      'keepopen': boolean;
+      'keepOpen': boolean;
       'setDropdownVisibility': (toShow: any) => void;
       'show': boolean;
       'showDropdown': () => void;
@@ -58,7 +58,7 @@ declare global {
   }
   namespace JSXElements {
     export interface BossDropdownAttributes extends HTMLAttributes {
-      'keepopen'?: boolean;
+      'keepOpen'?: boolean;
       'onHiddenBossDropdown'?: (event: CustomEvent) => void;
       'onHideBossDropdown'?: (event: CustomEvent) => void;
       'onShowBossDropdown'?: (event: CustomEvent) => void;

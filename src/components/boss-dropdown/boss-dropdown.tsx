@@ -7,20 +7,17 @@ import hasClass from '../../utilities/has-class';
 import isAChildOfBsId from '../../utilities/is-a-child-of-bs-id';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 
-
 @Component({
   tag: 'boss-dropdown',
-  // styleUrl: 'boss-dropdown.css',
   shadow: false
 })
 export class BossDropdown {
   @Element() dropdownEl: HTMLElement;
 
   @Prop({ mutable: true }) show: boolean = false;
-  @Prop() keepopen: boolean = false;
+  @Prop() keepOpen: boolean = false;
 
   @State() dropdownId: string;
-  @State() expanded: boolean;
 
   @Event() showBossDropdown: EventEmitter;
   @Event() shownBossDropdown: EventEmitter;
@@ -31,55 +28,46 @@ export class BossDropdown {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
       this.show = true;
     }
-    this.expanded = this.show;
     this.dropdownId = getUniqueId('dropdown');
     this.dropdownEl.setAttribute('data-boss-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
-    for (var i = 0, len = toggles.length; i < len; i++) {
-      toggles[i].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
-      toggles[i].addEventListener('click', this.handleToggleDropdownOnToggleClick);
-    }
-    if (this.expanded === true) {
-      addClass(this.dropdownEl, 'show');
-      this.handleShowDropdown();
-    } else {
-      removeClass(this.dropdownEl, 'show');
-      this.handleHideDropdown();
+    for (let j = 0, len = toggles.length; j < len; j++) {
+      toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
+      toggles[j].addEventListener('click', this.handleToggleDropdownOnToggleClick);
     }
   }
 
   componentDidUnload() {
+    document.removeEventListener('click', this.handleDropdownClickOutside);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
-    for (var i = 0, len = toggles.length; i < len; i++) {
-      toggles[i].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
+    for (let j = 0, len = toggles.length; j < len; j++) {
+      toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
     }
   }
 
   handleDropdownClickOutside = (event) => {
     // https://gist.github.com/Restuta/e400a555ba24daa396cc
     // handleDropdownClickOutside is an arrow function so that removeEventListener will work
-    if (!this.expanded) {
+    if (!this.show) {
       return;
     }
     const clickWasInside = isAChildOfBsId(event.target, this.dropdownId);
-    if (!clickWasInside || !this.keepopen) {
+    if (!clickWasInside || !this.keepOpen) {
       document.removeEventListener('click', this.handleDropdownClickOutside);
-      this.expanded = false;
       this.show = true;
       this.handleHideDropdown();
     }
   }
 
   handleShowDropdown() {
-    this.expanded = true;
     this.show = true;
     this.showBossDropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
     addClass(dropdownMenuEl, 'show');
-    for (var i = 0, len = toggles.length; i < len; i++) {
-      toggles[i].setAttribute('aria-expanded', 'true');
+    for (let j = 0, len = toggles.length; j < len; j++) {
+      toggles[j].setAttribute('aria-expanded', 'true');
     }
     document.removeEventListener('click', this.handleDropdownClickOutside);
     setTimeout(() => {
@@ -93,7 +81,6 @@ export class BossDropdown {
   }
 
   handleHideDropdown() {
-    this.expanded = false;
     this.show = false;
     this.hideBossDropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
@@ -101,8 +88,8 @@ export class BossDropdown {
     document.removeEventListener('click', this.handleDropdownClickOutside);
     removeClass(this.dropdownEl, 'show');
     removeClass(dropdownMenuEl, 'show');
-    for (var i = 0, len = toggles.length; i < len; i++) {
-      toggles[i].setAttribute('aria-expanded', 'false');
+    for (let j = 0, len = toggles.length; j < len; j++) {
+      toggles[j].setAttribute('aria-expanded', 'false');
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
@@ -111,7 +98,7 @@ export class BossDropdown {
   }
 
   handleToggleDropdownOnToggleClick = () => {
-    if (this.expanded === true) {
+    if (this.show === true) {
       this.handleHideDropdown();
     } else {
       this.handleShowDropdown();
