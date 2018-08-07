@@ -1,4 +1,7 @@
 import { Component, Prop, State, Element, Event, EventEmitter, Method } from '@stencil/core';
+import Popper from 'popper.js';
+
+import getPopperDropdownConfig from './get-popper-dropdown-config';
 
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
@@ -6,6 +9,7 @@ import removeClass from '../../utilities/remove-class';
 import hasClass from '../../utilities/has-class';
 import isAChildOfBsId from '../../utilities/is-a-child-of-bs-id';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
+import closest from '../../utilities/closest';
 
 @Component({
   tag: 'boss-dropdown',
@@ -17,7 +21,15 @@ export class BossDropdown {
   @Prop({ mutable: true }) show: boolean = false;
   @Prop() keepOpen: boolean = false;
 
+  @Prop() offset: any = 0;
+  @Prop() flip: boolean = true;
+  @Prop() boundary: any = 'scrollParent';
+  @Prop() reference: any = 'toggle';
+  @Prop() display: string = 'dynamic';
+
   @State() dropdownId: string;
+  @State() inNavbar: boolean;
+  @State() popperHandle: any;
 
   @Event() showBossDropdown: EventEmitter;
   @Event() shownBossDropdown: EventEmitter;
@@ -27,6 +39,12 @@ export class BossDropdown {
   componentWillLoad() {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
       this.show = true;
+    }
+    if (this.show === true) {
+      setTimeout(() => {
+        document.removeEventListener('click', this.handleDropdownClickOutside);
+        document.addEventListener('click', this.handleDropdownClickOutside);
+      }, 0);
     }
     this.dropdownId = getUniqueId('dropdown');
     this.dropdownEl.setAttribute('data-boss-id', this.dropdownId);
@@ -43,6 +61,47 @@ export class BossDropdown {
     for (let j = 0, len = toggles.length; j < len; j++) {
       toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
     }
+    if (this.popperHandle !== null) {
+      this.popperHandle.destroy()
+      this.popperHandle = null
+    }
+  }
+
+  initPopper(dropdownMenuEl) {
+    this.inNavbar = this.detectNavbar(this.dropdownEl);
+    console.log('this.inNavbar: ', this.inNavbar);
+    if (!this.inNavbar) {
+      const popperSettings = {
+        offset: this.offset,
+        flip: this.flip,
+        boundary: this.boundary,
+        // reference: this.reference,
+        display: this.display,
+      };
+      // const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
+      const popperConfig: any = getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, popperSettings);
+
+      // If boundary is not `scrollParent`, then set position to `static`
+      // to allow the menu to "escape" the scroll parent's boundaries
+      // https://github.com/twbs/bootstrap/issues/24251
+      if (this.boundary !== 'scrollParent') {
+        addClass(this.dropdownEl, 'position-static');
+      }
+
+      let referenceElement: any = this.dropdownEl;
+      // console.log('referenceElement: ', referenceElement);
+      if (this.reference === 'parent') {
+        referenceElement = this.dropdownEl.parentNode;
+      } else if (this.reference instanceof Element) {
+        referenceElement = this.reference;
+      }
+      // console.log('popperConfig: ', popperConfig);
+      this.popperHandle = new Popper(referenceElement, dropdownMenuEl, popperConfig)
+    }
+  }
+
+  detectNavbar(el) {
+    return closest(el, '.navbar') !== null;
   }
 
   handleDropdownClickOutside = (event) => {
@@ -75,6 +134,7 @@ export class BossDropdown {
       document.addEventListener('click', this.handleDropdownClickOutside);
     }, 0);
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
+    this.initPopper(dropdownMenuEl);
     setTimeout(() => {
       this.shownBossDropdown.emit(event);
     }, dropdownMenuTransitionDuration);
@@ -108,6 +168,14 @@ export class BossDropdown {
   @Method()
   toggle() {
     this.handleToggleDropdownOnToggleClick();
+  }
+
+  @Method()
+  update() {
+    this.inNavbar = this.detectNavbar(this.dropdownEl);
+    if (this.popperHandle !== null) {
+      this.popperHandle.scheduleUpdate()
+    }
   }
 
   @Method()

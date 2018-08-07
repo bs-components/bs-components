@@ -55,24 +55,27 @@
 
 </head>
 <body>
-  <div class=" mt-5 ml-5">
+  <div class="mt-5 ml-5">
 
-    <boss-dropdown id="my-dropdown" class="dropdown btn-block show">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown button
-        </button>
-        <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-    </boss-dropdown>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+      <boss-dropdown id="my-dropdown" class="dropdown d-block mr-2 show">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+          </button>
+          <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </boss-dropdown>
 
 
-    <boss-dropdown id="my-split-dropdown" class="btn-group">
-        <button type="button" class="btn btn-danger">Action</button>
-        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="sr-only">Toggle Dropdown</span>
+      <boss-dropdown class="btn-group d-block mr-2">
+        <!-- <button type="button" class="btn btn-danger">Action</button> -->
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+          Toggle Dropdown
         </button>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="#">Action</a>
@@ -82,6 +85,23 @@
           <a class="dropdown-item" href="#">Separated link</a>
         </div>
       </boss-dropdown>
+
+
+      <!-- <div class="btn-group dropleft"> -->
+      <boss-dropdown class="btn-group dropleft d-block">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</button>
+        <div class="dropdown-menu" x-placement="left-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-196px, 0px, 0px);">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </boss-dropdown>
+      <!-- </div> -->
+
+
+    </div>
 
 
     <p>&nbsp;</p>
@@ -102,7 +122,7 @@
 
   <script type="x/template" id="dropdown-vue-test">
     <div>
-      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown btn-block"
+      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown d-block"
         v-on:shownBossDropdown='handleShownBossDropdown'
         v-on:hiddenBossDropdown='handleHiddenBossDropdown'
       >

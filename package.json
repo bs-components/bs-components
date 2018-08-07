@@ -1,7 +1,7 @@
 {
-  "name": "my-component",
+  "name": "boss-componentgs",
   "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "description": "Bootstrap Stenciljs Components",
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
   "types": "dist/types/components.d.ts",
@@ -18,7 +18,8 @@
     "test.watch": "jest --watch"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "popper.js": "^1.14.4"
   },
   "devDependencies": {
     "@stencil/core": "^0.11.0",
@@ -28,14 +29,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-component-starter.git"
+    "url": "git+https://github.com/JasonCubic/boss-components"
   },
-  "author": "Ionic Team",
+  "author": "Jason Cubic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
+    "url": "https://github.com/JasonCubic/boss-components"
   },
-  "homepage": "https://github.com/ionic-team/stencil",
+  "homepage": "https://github.com/JasonCubic/boss-components",
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
