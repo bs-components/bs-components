@@ -1,3 +1,8 @@
+// http://youmightnotneedjquery.com/
 export default function hasClass(el, className) {
-  return (" " + el.className + " ").replace(/[\n\t]/g, " ").indexOf(` ${className} `) > -1;
+  if (el.classList) {
+    return el.classList.contains(className);
+  } else {
+    return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+  }
 }

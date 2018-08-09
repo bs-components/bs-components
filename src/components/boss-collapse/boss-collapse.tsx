@@ -1,6 +1,7 @@
 import { Component, Element, Listen, Method } from '@stencil/core';
 
 import get from 'lodash/get';
+import has from 'lodash/has';
 import size from 'lodash/size';
 import filter from 'lodash/filter';
 import upperFirst from 'lodash/upperFirst';
@@ -27,31 +28,37 @@ export class BossCollapse {
   }
 
   getConfig(overrideConfig = {}) {
-    console.log('overrideConfig: ', overrideConfig);
-    const targetSelector = get(this.collapseEl, 'dataset.target', '');
-    if (targetSelector.length === 0) {
-      console.log('boss-collapse data-target has not been set');
+    const config: any = {};
+    config.toggle = get(overrideConfig, 'toggle', 'toggle');
+    if (has(overrideConfig, 'target')) {
+      config.targetSelector = get(overrideConfig, 'target', '');
+    } else {
+      config.targetSelector = get(this.collapseEl, 'dataset.target', '');
+    }
+    if (size(config.targetSelector) === 0) {
       return {};
     }
-    const targetArr = Array.prototype.slice.call(document.querySelectorAll(targetSelector));
-    let closeListArr = [];
-    for (let j = 0, len = targetArr.length; j < len; j++) {
-      const parentSelector = get(targetArr[j], 'dataset.parent', '');
-      if (size(parentSelector) > 0) {
-        const parentEl = document.querySelector(parentSelector);
-        const childCollapses = Array.prototype.slice.call(parentEl.querySelectorAll(`[data-parent="${parentSelector}"]`));
-        closeListArr = filter(childCollapses, (el) => {
-          if (el.isEqualNode(targetArr[j])) {
+    config.targetArr = Array.prototype.slice.call(document.querySelectorAll(config.targetSelector));
+    config.closeListArr = [];
+    for (let j = 0, len = config.targetArr.length; j < len; j++) {
+      if (has(overrideConfig, 'parent')) {
+        config.parentSelector = get(overrideConfig, 'parent', '');
+      } else {
+        config.parentSelector = get(config.targetArr[j], 'dataset.parent', '');
+      }
+      if (size(config.parentSelector) > 0) {
+        const parentEl = document.querySelector(config.parentSelector);
+        const childCollapses = Array.prototype.slice.call(parentEl.querySelectorAll(`[data-parent="${config.parentSelector}"]`));
+        config.closeListArr = config.closeListArr.concat(filter(childCollapses, (el) => {
+          if (el.isEqualNode(config.targetArr[j])) {
             // don't include the current collapse even if it is open
             return false;
           }
           return hasClass(el, 'show')
-        });
+        }));
       }
     }
-    const toggle = get(overrideConfig, 'toggle', true);
-    const visibility = get(overrideConfig, 'visibility', true);
-    return { toggle, visibility, targetSelector, targetArr, closeListArr };
+    return config;
   }
 
   checkIfElementInListOfElements(el, elArr) {
@@ -64,11 +71,21 @@ export class BossCollapse {
   }
 
   handleToggle(config) {
+    if (!has(config, 'targetSelector')) {
+      console.log('boss-collapse data-target has not been set');
+      return;
+    }
     const AllOpenedSelectorArr = [];
     const AllClosedSelectorArr = [];
     // actually toggle the collapses that the user will see
     for (let j = 0, len = config.targetArr.length; j < len; j++) {
-      if (hasClass(config.targetArr[j], 'show')) {
+      if (config.toggle === 'show') {
+        this.showCollapse(config.targetArr[j]);
+        AllOpenedSelectorArr.push(config.targetArr[j]);
+      } else if (config.toggle === 'hide') {
+        this.hideCollapse(config.targetArr[j]);
+        AllClosedSelectorArr.push(config.targetArr[j]);
+      } else if (hasClass(config.targetArr[j], 'show')) {
         this.hideCollapse(config.targetArr[j]);
         AllClosedSelectorArr.push(config.targetArr[j]);
       } else {
@@ -85,7 +102,6 @@ export class BossCollapse {
     const allCollapsesOnPage = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="collapse"]'));
     for (let j = 0, len = allCollapsesOnPage.length; j < len; j++) {
       const targetSelector = get(allCollapsesOnPage[j], 'dataset.target', '');
-      // const AllOpenedCollapsesArr = [];
       let thisCollapseWasOpened = false;
       // see if we need to open this collapse
       for (let x = 0, len = AllOpenedSelectorArr.length; x < len; x++) {
@@ -93,7 +109,6 @@ export class BossCollapse {
         if (shouldOpen === true) {
           thisCollapseWasOpened = true;
           this.setCollapseTogglerToCollapsedTrue(allCollapsesOnPage[j]);
-          // AllOpenedCollapsesArr.push(allCollapsesOnPage[j]);
         }
       }
       // see if we need to close this collapse
@@ -171,33 +186,12 @@ export class BossCollapse {
     return hasWidth ? 'width' : 'height';
   };
 
-  // TODO: collapse method
-    // .collapse('toggle') // triggers a default toggle
-          // what to go on accordion?
-    // .collapse('show') // shows instead of toggles
-          // what to go on accordion?  show all maybe?
-    // .collapse('hide') // collapses instead of toggles
-    // .collapse({ action: 'toggle', target: '.selector', parent: '.selector' })
-    // if its an object then anything not set is derived
-    // collapse with an overridden target setting
-    // collapse with an overridden parent setting
-    // collapse with using a different parent setting (none for disabling accordion activity for one toggle)
-    // collapse using show, or hide instead of toggle
-
   @Method()
   collapse(passedConfig) {
-    // console.log('passedConfig: ', passedConfig);
-    console.log('typeof passedConfig: ', typeof passedConfig);
-    if (size(passedConfig) === 0) {
-      this.handleToggle(this.getConfig());
-    } else if (typeof passedConfig === 'string') {
-      if (toLower(passedConfig) === 'show') {
-        this.handleToggle(this.getConfig({ visibility: 'show' }));
-      } else if (toLower(passedConfig) === 'hide') {
-        this.handleToggle(this.getConfig({ visibility: 'hide' }));
-      } else {
-        this.handleToggle(this.getConfig());
-      }
+    // .collapse('toggle|show|hide')
+    // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
+    if (typeof passedConfig === 'string') {
+      this.handleToggle(this.getConfig({ toggle: toLower(passedConfig) }));
     } else if (typeof passedConfig === 'object') {
       this.handleToggle(this.getConfig(passedConfig));
     } else {

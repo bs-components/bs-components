@@ -1,22 +1,22 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-// Polyfill for IE9+
+// supports IE9+
 
-if (!Element.prototype.matches) {
-  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
-}
-
-if (!Element.prototype.closest) {
-  Element.prototype.closest = function(s) {
-    var el = this;
-    if (!document.documentElement.contains(el)) return null;
-    do {
-      if (el.matches(s)) return el;
-      el = el.parentElement || el.parentNode;
-    } while (el !== null && el.nodeType === 1);
-    return null;
-  };
-}
+import elementMatches from './element-matches';
 
 export default function closest(element, selectors) {
-  return element.closest(selectors);
+  if (Element.prototype.closest) {
+    return element.closest(selectors);
+  } else {
+    let currentEl = element;
+    if (!document.documentElement.contains(currentEl)) {
+      return null;
+    }
+    do {
+      if (elementMatches(currentEl, selectors)) {
+        return currentEl;
+      }
+      currentEl = currentEl.parentElement || currentEl.parentNode;
+    } while (currentEl !== null && currentEl.nodeType === 1);
+    return null;
+  }
 }

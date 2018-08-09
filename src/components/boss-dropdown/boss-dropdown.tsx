@@ -7,7 +7,7 @@ import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
 import hasClass from '../../utilities/has-class';
-import isAChildOfBsId from '../../utilities/is-a-child-of-bs-id';
+import clickWasInside from '../../utilities/click-was-inside';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 
@@ -105,8 +105,8 @@ export class BossDropdown {
     if (!this.show) {
       return;
     }
-    const clickWasInside = isAChildOfBsId(event.target, this.dropdownId);
-    if (!clickWasInside || !this.keepOpen) {
+    const clickWasInsideDropdown = clickWasInside(event.target, `[data-boss-id="${this.dropdownId}"]`);
+    if (!clickWasInsideDropdown || !this.keepOpen) {
       document.removeEventListener('click', this.handleDropdownClickOutside);
       this.show = true;
       this.handleHideDropdown();
