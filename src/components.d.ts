@@ -29,6 +29,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface BossCollapse {
+      'collapse': (passedConfig: any) => void;
+    }
+  }
+
+  interface HTMLBossCollapseElement extends StencilComponents.BossCollapse, HTMLStencilElement {}
+
+  var HTMLBossCollapseElement: {
+    prototype: HTMLBossCollapseElement;
+    new (): HTMLBossCollapseElement;
+  };
+  interface HTMLElementTagNameMap {
+    'boss-collapse': HTMLBossCollapseElement;
+  }
+  interface ElementTagNameMap {
+    'boss-collapse': HTMLBossCollapseElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'boss-collapse': JSXElements.BossCollapseAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface BossCollapseAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface BossDropdown {
       'boundary': any;
       'display': string;

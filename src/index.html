@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <title>Stencil Component Starter</title>
+  <title>Boss Components</title>
 
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -38,7 +38,7 @@
 */
 
 /* https://stackoverflow.com/questions/49351611/bootstrap-4-dropdown-fade-in-transition */
-
+/*
 .dropdown-menu.fade {
    display: block;
    opacity: 0;
@@ -49,6 +49,7 @@
    pointer-events: auto;
    opacity: 1;
 }
+*/
 
 
 </style>
@@ -57,9 +58,94 @@
 <body>
   <div class="mt-5 ml-5">
 
+    <p>
+      <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
+
+      <boss-collapse class="btn btn-primary"  data-toggle="collapse" data-target="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</boss-collapse>
+
+      <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</button> -->
+
+
+      <boss-collapse class="btn btn-primary" id="second-boss-collapse" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Toggle second element</boss-collapse>
+
+
+
+      <boss-collapse class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Toggle both elements</boss-collapse>
+    </p>
+    <div class="row">
+      <div class="col">
+        <div class="collapse multi-collapse" id="multiCollapseExample1">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="collapse multi-collapse" id="multiCollapseExample2">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="toggle-second-collapse" type="button" class="btn btn-default">Toggle Second Collapse</button>
+
+
+
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <boss-collapse class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Collapsible Group Item #1
+            </boss-collapse>
+          </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <boss-collapse class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Collapsible Group Item #2
+            </boss-collapse>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <boss-collapse class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Collapsible Group Item #3
+            </boss-collapse>
+          </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
 
-      <boss-dropdown id="my-dropdown" class="dropdown d-block mr-2 show">
+      <boss-dropdown id="my-dropdown" class="dropdown mr-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Dropdown button
           </button>
@@ -71,7 +157,7 @@
       </boss-dropdown>
 
 
-      <boss-dropdown class="btn-group d-block mr-2">
+      <boss-dropdown class="btn-group mr-2">
         <!-- <button type="button" class="btn btn-danger">Action</button> -->
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
@@ -88,7 +174,7 @@
 
 
       <!-- <div class="btn-group dropleft"> -->
-      <boss-dropdown class="btn-group dropleft d-block">
+      <boss-dropdown class="btn-group dropleft ">
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</button>
         <div class="dropdown-menu" x-placement="left-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-196px, 0px, 0px);">
           <a class="dropdown-item" href="#">Action</a>
@@ -122,7 +208,7 @@
 
   <script type="x/template" id="dropdown-vue-test">
     <div>
-      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown d-block"
+      <boss-dropdown ref="bossDropdownInVueExample" class="dropdown btn-group"
         v-on:shownBossDropdown='handleShownBossDropdown'
         v-on:hiddenBossDropdown='handleHiddenBossDropdown'
       >
@@ -213,13 +299,45 @@
       console.log('handleMyComponentHidden');
     }
 
+
+
     document.getElementById("my-dropdown").addEventListener('showBossDropdown', handleMyComponentShow);
     document.getElementById("my-dropdown").addEventListener('shownBossDropdown', handleMyComponentShown);
     document.getElementById("my-dropdown").addEventListener('hideBossDropdown', handleMyComponentHide);
     document.getElementById("my-dropdown").addEventListener('hiddenBossDropdown', handleMyComponentHidden);
 
+    function handleMyCollapseShow(event) {
+      console.log('handleMyCollapseShow');
+    }
+    function handleMyCollapseShown(event) {
+      console.log('handleMyCollapseShown');
+    }
+    function handleMyCollapseHide(event) {
+      console.log('handleMyCollapseHide');
+    }
+    function handleMyCollapseHidden(event) {
+      console.log('handleMyCollapseHidden');
+    }
+
+    document.getElementById("multiCollapseExample2").addEventListener('showBossCollapse', handleMyCollapseShow);
+    document.getElementById("multiCollapseExample2").addEventListener('shownBossCollapse', handleMyCollapseShown);
+    document.getElementById("multiCollapseExample2").addEventListener('hideBossCollapse', handleMyCollapseHide);
+    document.getElementById("multiCollapseExample2").addEventListener('hiddenBossCollapse', handleMyCollapseHidden);
+
+    function toggleSecondCollapse() {
+      const el = document.getElementById("second-boss-collapse");
+      el.collapse({ toggle: true });
+    }
+
+
+
+
 
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
+
+    document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
+
+
   </script>
 
 

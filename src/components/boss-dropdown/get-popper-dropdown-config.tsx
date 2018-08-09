@@ -1,6 +1,3 @@
-// import Popper from 'popper.js';
-// import get from 'lodash/get';
-// import toString from 'lodash/toString';
 import hasClass from '../../utilities/has-class';
 
 const AttachmentMap = {

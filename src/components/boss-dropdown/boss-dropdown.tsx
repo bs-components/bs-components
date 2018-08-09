@@ -69,16 +69,13 @@ export class BossDropdown {
 
   initPopper(dropdownMenuEl) {
     this.inNavbar = this.detectNavbar(this.dropdownEl);
-    console.log('this.inNavbar: ', this.inNavbar);
     if (!this.inNavbar) {
       const popperSettings = {
         offset: this.offset,
         flip: this.flip,
         boundary: this.boundary,
-        // reference: this.reference,
         display: this.display,
       };
-      // const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
       const popperConfig: any = getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, popperSettings);
 
       // If boundary is not `scrollParent`, then set position to `static`
@@ -89,13 +86,11 @@ export class BossDropdown {
       }
 
       let referenceElement: any = this.dropdownEl;
-      // console.log('referenceElement: ', referenceElement);
       if (this.reference === 'parent') {
         referenceElement = this.dropdownEl.parentNode;
       } else if (this.reference instanceof Element) {
         referenceElement = this.reference;
       }
-      // console.log('popperConfig: ', popperConfig);
       this.popperHandle = new Popper(referenceElement, dropdownMenuEl, popperConfig)
     }
   }
