@@ -58,6 +58,39 @@
 <body>
   <div class="mt-5 ml-5">
 
+
+    <boss-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      Single toggle
+    </boss-button>
+    <button id="toggle-single-toggle-button" type="button" class="btn btn-default">toggle single toggle</button>
+    <p>&nbsp;</p>
+
+
+
+    <boss-button class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active">
+        <input type="checkbox" checked autocomplete="off"> Checked
+      </label>
+    </boss-button>
+
+    <p>&nbsp;</p>
+
+
+    <boss-button id="boss-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+      </label>
+    </boss-button>
+
+    <p>&nbsp;</p>
+
+
     <p>
       <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
 
@@ -329,6 +362,11 @@
       el.collapse({ toggle: 'toggle', target: '', parent:'' });
     }
 
+    function toggleSingleToggleButton() {
+      const el = document.getElementById("boss-button-radio-buttons");
+      el.toggle('.btn:nth-child(2)');
+    }
+
 
 
 
@@ -336,6 +374,10 @@
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
 
     document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
+
+    document.getElementById("toggle-single-toggle-button").addEventListener('click', toggleSingleToggleButton);
+
+
 
 
   </script>
