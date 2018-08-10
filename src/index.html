@@ -56,7 +56,56 @@
 
 </head>
 <body>
+
+
+    <div class="pos-f-t">
+        <div class="collapse" id="navbarToggleExternalContent">
+          <div class="bg-dark p-4">
+            <h5 class="text-white h4">Collapsed content</h5>
+            <span class="text-muted">Toggleable via the navbar brand.</span>
+          </div>
+        </div>
+        <nav class="navbar navbar-dark bg-dark">
+          <boss-collapse class="navbar-toggler" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </boss-collapse>
+        </nav>
+      </div>
+
   <div class="mt-5 ml-5">
+
+
+
+
+  <!-- Button trigger modal -->
+  <boss-modal class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+  </boss-modal>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+
+
 
     <p>
       <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
@@ -326,7 +375,18 @@
 
     function toggleSecondCollapse() {
       const el = document.getElementById("second-boss-collapse");
-      el.collapse({ toggle: 'toggle', target: '', parent:'' });
+
+    // .collapse('toggle|show|hide')
+    // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
+
+      el.collapse(); // will toggle
+      // el.collapse('toggle');
+      // el.collapse('show'); // will show this collapse
+      // el.collapse('hide'); // will hide this collapse
+      // el.collapse({ toggle: 'toggle', target: '', parent:'' }); // will do nothing
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'body' }); // toggle all accordions
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'' }); // will open everything ignoring accordion rules
+      // el.collapse({ toggle: 'show', parent:'body' }); // will show this collapse and close every other collapse on the page
     }
 
 

@@ -41,14 +41,22 @@ export class BossCollapse {
     config.targetArr = Array.prototype.slice.call(document.querySelectorAll(config.targetSelector));
     config.closeListArr = [];
     for (let j = 0, len = config.targetArr.length; j < len; j++) {
+      let useDataParentSelector;
       if (has(overrideConfig, 'parent')) {
+        useDataParentSelector = false;
         config.parentSelector = get(overrideConfig, 'parent', '');
       } else {
+        useDataParentSelector = true;
         config.parentSelector = get(config.targetArr[j], 'dataset.parent', '');
       }
       if (size(config.parentSelector) > 0) {
         const parentEl = document.querySelector(config.parentSelector);
-        const childCollapses = Array.prototype.slice.call(parentEl.querySelectorAll(`[data-parent="${config.parentSelector}"]`));
+        let childCollapses;
+        if (useDataParentSelector === true) {
+          childCollapses = Array.prototype.slice.call(parentEl.querySelectorAll(`[data-parent="${config.parentSelector}"]`));
+        } else {
+          childCollapses = Array.prototype.slice.call(parentEl.querySelectorAll('.collapse'));
+        }
         config.closeListArr = config.closeListArr.concat(filter(childCollapses, (el) => {
           if (el.isEqualNode(config.targetArr[j])) {
             // don't include the current collapse even if it is open
@@ -71,6 +79,7 @@ export class BossCollapse {
   }
 
   handleToggle(config) {
+    // console.log('config: ', config);
     if (!has(config, 'targetSelector')) {
       console.log('boss-collapse data-target has not been set');
       return;

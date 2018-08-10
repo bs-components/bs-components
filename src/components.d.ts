@@ -112,6 +112,39 @@ declare global {
   }
 }
 
+
+declare global {
+
+  namespace StencilComponents {
+    interface BossModal {
+
+    }
+  }
+
+  interface HTMLBossModalElement extends StencilComponents.BossModal, HTMLStencilElement {}
+
+  var HTMLBossModalElement: {
+    prototype: HTMLBossModalElement;
+    new (): HTMLBossModalElement;
+  };
+  interface HTMLElementTagNameMap {
+    'boss-modal': HTMLBossModalElement;
+  }
+  interface ElementTagNameMap {
+    'boss-modal': HTMLBossModalElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'boss-modal': JSXElements.BossModalAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface BossModalAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
 declare global { namespace JSX { interface StencilJSX {} } }
 
 export declare function defineCustomElements(window: any): void;
