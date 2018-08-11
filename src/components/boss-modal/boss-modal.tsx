@@ -169,12 +169,18 @@ export class BossModal {
 
     addClass(this.modalEl, 'show');
 
+    // TODO: figure out what focus is
+
+    // if (this._config.focus) {
+    //   this._enforceFocus();
+    // }
+
 
 
 
   }
 
-  reflow(element) {
+  reflow(element) { // TODO: put this in utilities
     // https://gist.github.com/paulirish/5d52fb081b3570c81e3a
     return element.offsetHeight;
   }
