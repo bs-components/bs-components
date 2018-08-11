@@ -58,7 +58,34 @@
 <body>
 
 
-    <div class="pos-f-t">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Fixed navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+      <form class="form-inline mt-2 mt-md-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+
+
+
+
+    <!-- <div class="pos-f-t">
         <div class="collapse" id="navbarToggleExternalContent">
           <div class="bg-dark p-4">
             <h5 class="text-white h4">Collapsed content</h5>
@@ -70,20 +97,20 @@
             <span class="navbar-toggler-icon"></span>
           </boss-collapse>
         </nav>
-      </div>
+      </div> -->
 
-  <div class="mt-5 ml-5">
+  <div class="container mt-5">
 
 
 
 
   <!-- Button trigger modal -->
-  <boss-modal class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  <boss-button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="yadda yada ya">
     Launch demo modal
-  </boss-modal>
+  </boss-button>
 
   <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <boss-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -101,10 +128,42 @@
         </div>
       </div>
     </div>
-  </div>
+  </boss-modal>
 
   <p>&nbsp;</p>
 
+    <boss-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      Single toggle
+    </boss-button>
+    <button id="toggle-single-toggle-button" type="button" class="btn btn-default">toggle single toggle</button>
+    <p>&nbsp;</p>
+
+
+
+    <boss-button class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active">
+        <input type="checkbox" checked autocomplete="off"> Checked
+      </label>
+    </boss-button>
+
+    <p>&nbsp;</p>
+
+
+    <boss-button id="boss-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+      </label>
+    </boss-button>
+
+    <button id="toggle-second-radio-button" type="button" class="btn btn-default">press Second Radio Button</button>
+
+    <p>&nbsp;</p>
 
 
     <p>
@@ -389,6 +448,17 @@
       // el.collapse({ toggle: 'show', parent:'body' }); // will show this collapse and close every other collapse on the page
     }
 
+    function toggleSingleToggleButton() {
+      const el = document.getElementById("single-toggle-button");
+      el.toggle();
+      // el.click();
+    }
+
+    function toggleSecondRadioButton() {
+      const el = document.getElementById("boss-button-radio-buttons");
+      el.toggle('.btn:nth-child(2)');
+    }
+
 
 
 
@@ -396,6 +466,14 @@
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
 
     document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
+
+    document.getElementById("toggle-single-toggle-button").addEventListener('click', toggleSingleToggleButton);
+
+    document.getElementById("toggle-second-radio-button").addEventListener('click', toggleSecondRadioButton);
+
+
+
+
 
 
   </script>

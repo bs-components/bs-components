@@ -11,6 +11,17 @@ import clickWasInside from '../../utilities/click-was-inside';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 
+// TODO:
+      // focus toggler (optional)
+      // data-offset="10,20"
+      // data-reference="parent"
+      // popper.js stuff:
+          // offset
+          // flip
+          // boundary
+          // reference
+          // display
+
 @Component({
   tag: 'boss-dropdown',
   shadow: false

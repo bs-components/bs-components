@@ -29,6 +29,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface BossButton {
+      'toggle': (selector: any) => void;
+    }
+  }
+
+  interface HTMLBossButtonElement extends StencilComponents.BossButton, HTMLStencilElement {}
+
+  var HTMLBossButtonElement: {
+    prototype: HTMLBossButtonElement;
+    new (): HTMLBossButtonElement;
+  };
+  interface HTMLElementTagNameMap {
+    'boss-button': HTMLBossButtonElement;
+  }
+  interface ElementTagNameMap {
+    'boss-button': HTMLBossButtonElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'boss-button': JSXElements.BossButtonAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface BossButtonAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface BossCollapse {
       'collapse': (passedConfig: any) => void;
     }
@@ -117,7 +150,8 @@ declare global {
 
   namespace StencilComponents {
     interface BossModal {
-
+      'modal': (modalOptions: any) => void;
+      'modalToggleButtonClicked': (relatedTarget: any) => void;
     }
   }
 
@@ -140,7 +174,10 @@ declare global {
   }
   namespace JSXElements {
     export interface BossModalAttributes extends HTMLAttributes {
-
+      'onHiddenBossModal'?: (event: CustomEvent) => void;
+      'onHideBossModal'?: (event: CustomEvent) => void;
+      'onShowBossModal'?: (event: CustomEvent) => void;
+      'onShownBossModal'?: (event: CustomEvent) => void;
     }
   }
 }

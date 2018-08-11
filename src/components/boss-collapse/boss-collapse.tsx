@@ -22,9 +22,25 @@ export class BossCollapse {
 
   @Element() collapseEl: HTMLElement;
 
+  componentDidUnload() {
+    document.removeEventListener('click', this.removeFocusFromBossCollapseEl);
+  }
+
   @Listen('click')
   handleClick() {
+    const isBtn = hasClass(this.collapseEl, 'btn');
+    const isBtnLink = hasClass(this.collapseEl, 'btn-link');
+    if (isBtn === true && isBtnLink !== true) {
+      setTimeout(() => {
+        addClass(this.collapseEl, 'focus');
+        document.addEventListener('click', this.removeFocusFromBossCollapseEl, { once: true });
+      }, 0);
+    }
     this.handleToggle(this.getConfig());
+  }
+
+  removeFocusFromBossCollapseEl = () => {
+    removeClass(this.collapseEl, 'focus');
   }
 
   getConfig(overrideConfig = {}) {
