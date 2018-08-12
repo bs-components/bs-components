@@ -1,5 +1,5 @@
 {
-  "name": "boss-componentgs",
+  "name": "bs-components",
   "version": "0.0.1",
   "description": "Bootstrap Stenciljs Components",
   "module": "dist/esm/index.js",
@@ -29,14 +29,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasonCubic/boss-components"
+    "url": "git+https://github.com/JasonCubic/bs-components.git"
   },
   "author": "Jason Cubic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JasonCubic/boss-components"
+    "url": "https://github.com/JasonCubic/bs-components"
   },
-  "homepage": "https://github.com/JasonCubic/boss-components",
+  "homepage": "https://github.com/JasonCubic/bs-components",
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"

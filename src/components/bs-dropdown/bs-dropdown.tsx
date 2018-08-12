@@ -23,10 +23,10 @@ import closest from '../../utilities/closest';
           // display
 
 @Component({
-  tag: 'boss-dropdown',
+  tag: 'bs-dropdown',
   shadow: false
 })
-export class BossDropdown {
+export class BsDropdown {
   @Element() dropdownEl: HTMLElement;
 
   @Prop({ mutable: true }) show: boolean = false;
@@ -42,10 +42,10 @@ export class BossDropdown {
   @State() inNavbar: boolean;
   @State() popperHandle: any;
 
-  @Event() showBossDropdown: EventEmitter;
-  @Event() shownBossDropdown: EventEmitter;
-  @Event() hideBossDropdown: EventEmitter;
-  @Event() hiddenBossDropdown: EventEmitter;
+  @Event() show_bs_dropdown: EventEmitter;
+  @Event() shown_bs_dropdown: EventEmitter;
+  @Event() hide_bs_dropdown: EventEmitter;
+  @Event() hidden_bs_dropdown: EventEmitter;
 
   componentWillLoad() {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
@@ -58,7 +58,7 @@ export class BossDropdown {
       }, 0);
     }
     this.dropdownId = getUniqueId('dropdown');
-    this.dropdownEl.setAttribute('data-boss-id', this.dropdownId);
+    this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j++) {
       toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
@@ -116,7 +116,7 @@ export class BossDropdown {
     if (!this.show) {
       return;
     }
-    const clickWasInsideDropdown = clickWasInside(event.target, `[data-boss-id="${this.dropdownId}"]`);
+    const clickWasInsideDropdown = clickWasInside(event.target, `[data-bs-id="${this.dropdownId}"]`);
     if (!clickWasInsideDropdown || !this.keepOpen) {
       document.removeEventListener('click', this.handleDropdownClickOutside);
       this.show = true;
@@ -126,7 +126,7 @@ export class BossDropdown {
 
   handleShowDropdown() {
     this.show = true;
-    this.showBossDropdown.emit(event);
+    this.show_bs_dropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
@@ -142,13 +142,13 @@ export class BossDropdown {
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     this.initPopper(dropdownMenuEl);
     setTimeout(() => {
-      this.shownBossDropdown.emit(event);
+      this.shown_bs_dropdown.emit(event);
     }, dropdownMenuTransitionDuration);
   }
 
   handleHideDropdown() {
     this.show = false;
-    this.hideBossDropdown.emit(event);
+    this.hide_bs_dropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -159,7 +159,7 @@ export class BossDropdown {
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      this.hiddenBossDropdown.emit(event);
+      this.hidden_bs_dropdown.emit(event);
     }, dropdownMenuTransitionDuration);
   }
 

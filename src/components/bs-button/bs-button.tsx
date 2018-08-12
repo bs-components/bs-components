@@ -12,19 +12,19 @@ import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
 
 @Component({
-  tag: 'boss-button',
+  tag: 'bs-button',
   shadow: false
 })
-export class BossButton {
+export class BsButton {
 
-  @Element() bossButtonEl: HTMLElement;
+  @Element() bsButtonEl: HTMLElement;
 
   componentDidUnload() {
-    document.removeEventListener('click', this.removeFocusFromBossButtonEl);
+    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
   }
 
-  removeFocusFromBossButtonEl = () => {
-    removeClass(this.bossButtonEl, 'focus');
+  removeFocusFromBsButtonEl = () => {
+    removeClass(this.bsButtonEl, 'focus');
   }
 
   getClosestButtonInsideComponent(element) {
@@ -33,7 +33,7 @@ export class BossButton {
       if (elementMatches(currentEl, '.btn')) {
         return currentEl;
       }
-      if (this.bossButtonEl.isEqualNode(currentEl)) {
+      if (this.bsButtonEl.isEqualNode(currentEl)) {
         return null;
       }
       currentEl = element.parentElement || element.parentNode;
@@ -43,14 +43,14 @@ export class BossButton {
 
   @Listen('focusin')
   handleFocusIn(event) {
-    // only hit by input's inside the boss-button
+    // only hit by input's inside the bs-button
     const closestButton = this.getClosestButtonInsideComponent(event.target);
     addClass(closestButton, 'focus');
   }
 
   @Listen('focusout')
   handleFocusOut(event) {
-    // only hit by input's inside the boss-button
+    // only hit by input's inside the bs-button
     const closestButton = this.getClosestButtonInsideComponent(event.target);
     removeClass(closestButton, 'focus');
   }
@@ -104,8 +104,8 @@ export class BossButton {
       }
     } else {
       setTimeout(() => {
-        addClass(this.bossButtonEl, 'focus');
-        document.addEventListener('click', this.removeFocusFromBossButtonEl, { once: true });
+        addClass(this.bsButtonEl, 'focus');
+        document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });
       }, 0);
     }
     if (addAriaPressed) {
@@ -117,13 +117,21 @@ export class BossButton {
   }
 
   @Method()
+  removeFocus() {
+    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
+  }
+
+
+  @Method()
   toggle(selector) {
     if (size(selector) === 0) {
-      this.handleToggle(this.bossButtonEl);
+      this.handleToggle(this.bsButtonEl);
     } else {
-      this.handleToggle(this.bossButtonEl.querySelector(selector));
+      this.handleToggle(this.bsButtonEl.querySelector(selector));
     }
   }
+
+
 
   render() {
     return ( <slot /> );

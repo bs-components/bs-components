@@ -13,17 +13,18 @@ import removeClass from '../../utilities/remove-class';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import elementMatches from '../../utilities/element-matches';
 import customEvent from '../../utilities/custom-event';
+import reflow from '../../utilities/reflow';
 
 @Component({
-  tag: 'boss-collapse',
+  tag: 'bs-collapse',
   shadow: false
 })
-export class BossCollapse {
+export class BsCollapse {
 
   @Element() collapseEl: HTMLElement;
 
   componentDidUnload() {
-    document.removeEventListener('click', this.removeFocusFromBossCollapseEl);
+    document.removeEventListener('click', this.removeFocusFromBsCollapseEl);
   }
 
   @Listen('click')
@@ -33,13 +34,13 @@ export class BossCollapse {
     if (isBtn === true && isBtnLink !== true) {
       setTimeout(() => {
         addClass(this.collapseEl, 'focus');
-        document.addEventListener('click', this.removeFocusFromBossCollapseEl, { once: true });
+        document.addEventListener('click', this.removeFocusFromBsCollapseEl, { once: true });
       }, 0);
     }
     this.handleToggle(this.getConfig());
   }
 
-  removeFocusFromBossCollapseEl = () => {
+  removeFocusFromBsCollapseEl = () => {
     removeClass(this.collapseEl, 'focus');
   }
 
@@ -97,7 +98,7 @@ export class BossCollapse {
   handleToggle(config) {
     // console.log('config: ', config);
     if (!has(config, 'targetSelector')) {
-      console.log('boss-collapse data-target has not been set');
+      console.log('bs-collapse data-target has not been set');
       return;
     }
     const AllOpenedSelectorArr = [];
@@ -165,7 +166,7 @@ export class BossCollapse {
     if (hasClass(targetEl, 'show') || hasClass(targetEl, 'collapsing')) {
       return;
     }
-    customEvent(targetEl, 'showBossCollapse');
+    customEvent(targetEl, 'show_bs_collapse');
     const dimension = this.getDimension(targetEl);
     const scrollSize = "scroll" + upperFirst(dimension);
     addClass(targetEl, 'collapsing');
@@ -176,7 +177,7 @@ export class BossCollapse {
       addClass(targetEl, 'collapse');
       addClass(targetEl, 'show');
       targetEl.style[dimension] = '';
-      customEvent(targetEl, 'shownBossCollapse');
+      customEvent(targetEl, 'shown_bs_collapse');
     }, collapsingTransitionDuration);
     targetEl.style[dimension] = targetEl[scrollSize] + "px";
   }
@@ -185,10 +186,10 @@ export class BossCollapse {
     if (!hasClass(targetEl, 'show')) {
       return;
     }
-    customEvent(targetEl, 'hideBossCollapse');
+    customEvent(targetEl, 'hide_bs_collapse');
     const dimension = this.getDimension(targetEl);
     targetEl.style[dimension] = targetEl.getBoundingClientRect()[dimension] + "px";
-    this.reflow(targetEl);
+    reflow(targetEl);
     addClass(targetEl, 'collapsing');
     removeClass(targetEl, 'collapse');
     removeClass(targetEl, 'show');
@@ -197,13 +198,8 @@ export class BossCollapse {
     setTimeout(() => {
       removeClass(targetEl, 'collapsing');
       addClass(targetEl, 'collapse');
-      customEvent(targetEl, 'hiddenBossCollapse');
+      customEvent(targetEl, 'hidden_bs_collapse');
     }, collapsingTransitionDuration);
-  }
-
-  reflow(element) {
-    // https://gist.github.com/paulirish/5d52fb081b3570c81e3a
-    return element.offsetHeight;
   }
 
   getDimension(el) {
