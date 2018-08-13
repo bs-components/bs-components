@@ -61,9 +61,14 @@ export class BsButton {
     if (!hasBtnClass) {
       return;
     }
-    this.handleToggle(event.target);
 
     const buttonToggleData = get(event, 'target.dataset.toggle', '');
+
+
+    this.handleToggle(event.target);
+
+
+
     if (buttonToggleData === 'modal') {
       const modalTargetSelector = get(event, 'target.dataset.target', '');
       if (size(modalTargetSelector) > 0) {
@@ -103,6 +108,10 @@ export class BsButton {
         addAriaPressed = false;
       }
     } else {
+      const buttonToggleData = get(this.bsButtonEl, 'dataset.toggle', '');
+      if (buttonToggleData !== 'button') {
+        triggerChangeEvent = false;
+      }
       setTimeout(() => {
         addClass(this.bsButtonEl, 'focus');
         document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });

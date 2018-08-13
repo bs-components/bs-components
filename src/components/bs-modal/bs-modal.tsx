@@ -1,20 +1,13 @@
 import { Component, Element, Method, State, Event, EventEmitter } from '@stencil/core';
 
-// import cloneDeep from 'lodash/cloneDeep';
-// import forEach from 'lodash/forEach';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import toLower from 'lodash/toLower';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
-// import closest from '../../utilities/closest';
-// import elementMatches from '../../utilities/element-matches';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
-// import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
-// import toggleClass from '../../utilities/toggle-class';
-// import customEvent from '../../utilities/custom-event';
 import reflow from '../../utilities/reflow';
 
 @Component({
@@ -31,18 +24,32 @@ export class BsModal {
   @State() isBodyOverflowing: boolean;
   @State() scrollbarWidth: number;
   @State() backdrop: any;
+  // @State() ignoreBackdropClick: boolean;
+  @State() config: any;
 
   @Event() show_bs_modal: EventEmitter;
   @Event() shown_bs_modal: EventEmitter;
   @Event() hide_bs_modal: EventEmitter;
   @Event() hidden_bs_modal: EventEmitter;
 
-
-  // TODO: when triggering customEvent show.bs.modal make the payload = this.modalButtonEl.dataset to support the relatedTarget stuff
-
   componentWillLoad() {
     this.isShown = hasClass(this.modalEl, 'show');
     this.isTransitioning = false;
+    // this.ignoreBackdropClick = false;
+  }
+
+  componentDidUnload() {
+    this.unbindAllEventListenersUsed();
+  }
+
+  unbindAllEventListenersUsed() {
+    document.removeEventListener('focusin', this.handleFocusIn);
+    this.modalEl.removeEventListener('click', this.backdropClickDismiss);
+    // this.modalEl.removeEventListener('mouseup', this.handelSetIgnoreBackDropClickToTrue);
+    // this.modalEl.querySelector('.modal-dialog').removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
+    document.removeEventListener('click', this.handleDataDismissModalClick);
+    window.removeEventListener('resize', this.handleResizeEvent);
+    document.removeEventListener('keydown', this.hideModalBecauseEscapsepressed);
   }
 
   getScrollbarWidth() {
@@ -62,8 +69,8 @@ export class BsModal {
 
   setScrollbar() {
     if (this.isBodyOverflowing) {
-      let fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
-      let stickyContent = Array.prototype.slice.call(document.querySelectorAll('.sticky-top'));
+      const fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
+      const stickyContent = Array.prototype.slice.call(document.querySelectorAll('.sticky-top'));
       // Adjust fixed content padding
       for (let j = 0, len = fixedContent.length; j < len; j++) {
         let actualPadding = fixedContent[j].style.paddingRight;
@@ -71,27 +78,13 @@ export class BsModal {
         fixedContent[j].dataset.paddingRight = actualPadding;
         fixedContent[j].style.paddingRight = parseFloat(calculatedPadding) + this.scrollbarWidth + "px";
       }
-      // forEach(fixedContent, (element) => {
-      //   let actualPadding = element.style.paddingRight;
-      //   let calculatedPadding = window.getComputedStyle(element)['padding-right'];
-      //   element.dataset.paddingRight = actualPadding;
-      //   element.style.paddingRight = parseFloat(calculatedPadding) + this.scrollbarWidth + "px";
-      // });
       // Adjust sticky content margin
-
       for (let j = 0, len = stickyContent.length; j < len; j++) {
         let actualMargin = stickyContent[j].style.marginRight;
         let calculatedMargin = window.getComputedStyle(stickyContent[j])['margin-right'];
         stickyContent[j].dataset.marginRight = actualMargin;
         stickyContent[j].style.marginRight = parseFloat(calculatedMargin) - this.scrollbarWidth + "px";
       }
-
-      // forEach(stickyContent, (element) => {
-      //   let actualMargin = element.style.marginRight;
-      //   let calculatedMargin = window.getComputedStyle(element)['margin-right'];
-      //   element.dataset.marginRight = actualMargin;
-      //   element.style.marginRight = parseFloat(calculatedMargin) - this.scrollbarWidth + "px";
-      // });
       // Adjust body padding
       let actualPadding = document.body.style.paddingRight;
       let calculatedPadding = window.getComputedStyle(document.body)['padding-right'];
@@ -99,6 +92,31 @@ export class BsModal {
       document.body.style.paddingRight = parseFloat(calculatedPadding) + this.scrollbarWidth + "px";
     }
   }
+
+
+  resetScrollbar() {
+    // Restore fixed content padding
+    const fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
+    for (let j = 0, len = fixedContent.length; j < len; j++) {
+      const padding = fixedContent[j].dataset.paddingRight;
+      delete fixedContent[j].dataset.paddingRight;
+      fixedContent[j].style.paddingRight = padding ? padding : '';
+    }
+    // Restore sticky content
+    const stickyContent = Array.prototype.slice.call(document.querySelectorAll('.sticky-top'));
+    for (let j = 0, len = stickyContent.length; j < len; j++) {
+      const margin = stickyContent[j].dataset.marginRight;
+      if (typeof margin !== 'undefined') {
+        stickyContent[j].style.marginRight = margin;
+        delete stickyContent[j].dataset.marginRight;
+      }
+    }
+    // Restore body padding
+    const padding = document.body.dataset.paddingRight;
+    delete document.body.dataset.paddingRight;
+    document.body.style.paddingRight = padding ? padding : '';
+  }
+
 
   adjustDialog() {
     let isModalOverflowing = this.modalEl.scrollHeight > document.documentElement.clientHeight;
@@ -111,10 +129,54 @@ export class BsModal {
   }
 
   hide() {
-    console.log('hide modal');
+    if (this.isTransitioning || !this.isShown) {
+      return;
+    }
+    this.hide_bs_modal.emit(event);
+    if (!this.isShown || event.defaultPrevented) {
+      return;
+    }
+    this.isShown = false;
+    let transition = hasClass(this.modalEl, 'fade');
+    if (transition) {
+      this.isTransitioning = true;
+    }
+    this.setEscapeEvent();
+    this.setResizeEvent();
+    document.removeEventListener('focusin', this.handleFocusIn);
+    removeClass(this.modalEl, 'show');
+    document.removeEventListener('click', this.handleDataDismissModalClick);
+    // const modalDialog = this.modalEl.querySelector('.modal-dialog');
+    // modalDialog.removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
+    if (transition) {
+      const transitionDuration = getTransitionDurationFromElement(this.modalEl);
+      setTimeout(() => {
+        this.hideModal();
+      }, transitionDuration);
+    } else {
+      this.hideModal();
+    }
   }
 
-  show(config, passedRelatedTarget) {
+  hideModal() {
+    this.modalEl.style.display = 'none';
+    this.modalEl.setAttribute('aria-hidden', 'true');
+    this.isTransitioning = false;
+    this.showBackdrop(() => {
+      removeClass(document.body, 'modal-open')
+      this.resetAdjustments();
+      this.resetScrollbar();
+      this.hidden_bs_modal.emit(event);
+      this.unbindAllEventListenersUsed();
+    });
+  }
+
+  resetAdjustments() {
+    this.modalEl.style.paddingLeft = '';
+    this.modalEl.style.paddingRight = '';
+  }
+
+  show(passedRelatedTarget) {
     if (this.isTransitioning || this.isShown) {
       return;
     }
@@ -133,37 +195,103 @@ export class BsModal {
       return;
     }
     this.isShown = true;
-
     this.checkScrollbar();
     this.setScrollbar();
     this.adjustDialog();
-
     addClass(document.body, 'modal-open');
-
-    // this._setEscapeEvent(); // TODO
-    // this._setResizeEvent(); // TODO
-
-    // TODO: add all the bind events (make sure to remove the listeners in the unmounted life cycle)
-    // $$$1(this._element).on(Event.CLICK_DISMISS, Selector.DATA_DISMISS, function (event) {
-    //   return _this.hide(event);
-    // });
-    // $$$1(this._dialog).on(Event.MOUSEDOWN_DISMISS, function () {
-    //   $$$1(_this._element).one(Event.MOUSEUP_DISMISS, function (event) {
-    //     if ($$$1(event.target).is(_this._element)) {
-    //       _this._ignoreBackdropClick = true;
-    //     }
-    //   });
-    // });
-
-
-    // TODO: add backdrop with a callback and then show the actual modal
-    this.showBackdrop(config, () => this.showElement(config, eventWithRelatedTarget));
-
-
+    this.setEscapeEvent();
+    this.setResizeEvent();
+    this.setClicksThatCanCloseModalEvent();
+    // this.setIgnoreBackdropClickIfItIsOnModal();
+    this.showBackdrop(() => this.showElement(eventWithRelatedTarget));
   }
 
+  // handelSetIgnoreBackDropClickToTrue = (event) => {
+  //   // if (this.modalEl.contains(event.target)) {
+  //   if (this.modalEl === event.target) {
+  //     this.ignoreBackdropClick = true;
+  //   }
+  // }
+
+  // handleMouseDownIgnoreClickIfIsOnModal = (event) => {
+  //   this.modalEl.addEventListener('mouseup', this.handelSetIgnoreBackDropClickToTrue, { once: true });
+  // }
+
+  // setIgnoreBackdropClickIfItIsOnModal() {
+  //   const modalDialog = this.modalEl.querySelector('.modal-dialog');
+  //   if (modalDialog === null) {
+  //     return;
+  //   }
+  //   if (this.isShown) {
+  //     setTimeout(() => {
+  //       modalDialog.addEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
+  //     }, 0);
+  //   } else if (!this.isShown) {
+  //     modalDialog.removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
+  //   }
+  // }
+
+  elementIsOrInADataDismissForThisModal(element) {
+    const modalDataDismissArr = Array.prototype.slice.call(this.modalEl.querySelectorAll('[data-dismiss="modal"]'));
+    for (let j = 0, len = modalDataDismissArr.length; j < len; j++) {
+      if (modalDataDismissArr[j].contains(element)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  handleDataDismissModalClick = (event) => {
+    // close the modal if the backdrop is clicked on
+    if (!this.modalEl.contains(event.target)) {
+      this.hide();
+    }
+    // Close the modal if a [data-dismiss="modal"] is clicked on
+    if (this.elementIsOrInADataDismissForThisModal(event.target)) {
+      this.hide();
+    }
+  }
+
+  setClicksThatCanCloseModalEvent() {
+    if (this.isShown) {
+      setTimeout(() => {
+        document.addEventListener('click', this.handleDataDismissModalClick);
+      }, 0);
+    } else if (!this.isShown) {
+      document.removeEventListener('click', this.handleDataDismissModalClick);
+    }
+  }
+
+  handleResizeEvent = () => {
+    this.adjustDialog();
+  }
+
+  setResizeEvent() {
+    if (this.isShown) {
+      window.addEventListener('resize', this.handleResizeEvent);
+    } else {
+      window.removeEventListener('resize', this.handleResizeEvent);
+    }
+  }
+
+  hideModalBecauseEscapsepressed = (event) => {
+    let ESCAPE_KEYCODE = 27;
+    if (event.which === ESCAPE_KEYCODE) {
+      // event.preventDefault();
+      this.hide();
+    }
+  }
+
+  setEscapeEvent() {
+    if (this.isShown && this.config.keyboard) {
+      document.addEventListener('keydown', this.hideModalBecauseEscapsepressed);
+    } else if (!this.isShown) {
+      document.removeEventListener('keydown', this.hideModalBecauseEscapsepressed);
+    }
+  }
 
   getConfig(overrideConfig = {}) {
+    this.config = {};
     const config: any = {};
     if (has(overrideConfig, 'backdrop')) {
       const backdrop = toLower(get(overrideConfig, 'backdrop', 'true'));
@@ -195,93 +323,21 @@ export class BsModal {
     } else {
       config.show = true;
     }
-    return config;
+    this.config = config;
   };
 
-
-  // enforceFocus() {
-  //   document.removeEventListener('focusin', this.handleFocusIn);
-  //   document.addEventListener('focusin', this.handleFocusIn);
-  // };
-
-
-//   GetPlacementFlags (node1, node2) {
-//     var flags = [];
-//     var relation = node1.compareDocumentPosition (node2);
-//     if (relation & Node.DOCUMENT_POSITION_PRECEDING) {
-//         flags.push (" preceding");
-//     }
-//     if (relation & Node.DOCUMENT_POSITION_FOLLOWING) {
-//         flags.push (" following");
-//     }
-//     if (relation & Node.DOCUMENT_POSITION_CONTAINS) {
-//         flags.push (" contains");
-//     }
-//     if (relation & Node.DOCUMENT_POSITION_CONTAINED_BY) {
-//         flags.push (" contained by");
-//     }
-//     if (relation & Node.DOCUMENT_POSITION_DISCONNECTED) {
-//         flags.push (" disconnected");
-//     }
-//     if (relation & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC) {
-//         flags.push (" implementation specific");
-//     }
-//     return flags.toString ();
-// }
-
-  elementIsDescendant(firstEl, suspectedDescendantEl) {
-    if (firstEl.isEqualNode(suspectedDescendantEl)) {
-      // It is not a descendent if it's the same element
-      return false;
+  handleFocusIn = (event) => {
+    if (document !== event.target && !this.modalEl.contains(event.target)) {
+      this.modalEl.focus();
     }
-    return firstEl.contains(suspectedDescendantEl);
   }
 
+  enforceFocus() {
+    document.removeEventListener('focusin', this.handleFocusIn);
+    document.addEventListener('focusin', this.handleFocusIn);
+  };
 
-  // handleFocusIn = (event) => {
-  //   console.log('handleFocusIn event: ', event);
-  //   console.log('this.modalEl: ', this.modalEl);
-  //   // if (document !== event.target && this.modalEl !== event.target && this.modalEl.isEqualNode(event.target)) {
-
-
-  //     console.log('this.modalEl !== event.target', this.modalEl !== event.target);
-
-
-  //     // console.log('document.compareDocumentPosition(event.target)', document.compareDocumentPosition(event.target));
-
-  //     // const modalAndEventTargetRelation = document.compareDocumentPosition(event.target); // === Node.DOCUMENT_POSITION_CONTAINED_BY;
-
-
-  //     // const eventIsChildOfModal = (modalAndEventTargetRelation & Node.DOCUMENT_POSITION_CONTAINED_BY);
-
-  //     const eventIsDescendantOfModal = this.elementIsDescendant(this.modalEl, event.target)
-
-  //     console.log('eventIsDescendantOfModal: ', eventIsDescendantOfModal);
-
-
-  //     // if (document !== event.target && _this4._element !== event.target && $$$1(_this4._element).has(event.target).length === 0) {
-  //     if (document !== event.target && this.modalEl !== event.target && !this.elementIsDescendant(this.modalEl, event.target)) {
-  //     // if (document !== event.target && this.modalEl.isEqualNode(event.target)) {
-
-  //       console.log('Made it');
-  //       this.modalEl.focus();
-  //     }
-
-
-
-  //   // if (document !== event.target && !this.modalEl.contains(event.target)) {
-  //   // // } !== event.target && this.modalEl.isEqualNode(event.target)) {
-  //   //   console.log('Made it');
-  //   //   this.modalEl.focus();
-  //   // }
-
-
-
-  // }
-
-
-  showElement(config, eventWithRelatedTarget) {
-    // console.log('eventWithRelatedTarget: ', eventWithRelatedTarget);
+  showElement(eventWithRelatedTarget) {
     let transition = hasClass(this.modalEl, 'fade');
     if (!this.modalEl.parentNode || this.modalEl.parentNode.nodeType !== Node.ELEMENT_NODE) {
       // Don't move modal's DOM position
@@ -294,120 +350,92 @@ export class BsModal {
       reflow(this.modalEl);
     }
     addClass(this.modalEl, 'show');
-    // if (config.focus) {
-    //   this.enforceFocus();
-    // }
+    if (this.config.focus) {
+      this.enforceFocus();
+    }
     if (transition) {
       const transitionDuration = getTransitionDurationFromElement(this.modalEl);
       setTimeout(() => {
-        if (config.focus) {
+        if (this.config.focus) {
           this.modalEl.focus();
         }
         this.isTransitioning = false;
         this.shown_bs_modal.emit(eventWithRelatedTarget);
       }, transitionDuration);
     }
-
   }
 
-  showBackdrop(config, callback) {
-    // TODO: show the backdrop and do the callback after the transition finishes
+  backdropClickDismiss = (event) => {
+    // if (this.ignoreBackdropClick) {
+    //   this.ignoreBackdropClick = false;
+    //   return;
+    // }
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+    if (get(this.config, 'backdrop', '') === 'static') {
+      this.modalEl.focus();
+    } else {
+      this.hide();
+    }
+  }
 
-
+  showBackdrop(callback:Function = () => {}) {
     let animate = hasClass(this.modalEl, 'fade') ? 'fade' : '';
-
-    if (this.isShown && config.backdrop) {
+    if (this.isShown && this.config.backdrop) {
       this.backdrop = document.createElement('div');
       this.backdrop.className = 'modal-backdrop';
-
       if (animate) {
         this.backdrop.classList.add(animate);
       }
-
-      // this.backdrop.appendChild(document.body);
       document.body.appendChild(this.backdrop);
-      // $$$1(this._backdrop).appendTo(document.body);
-
-      // TODO: event listeners for click dismiss
-      // $$$1(this._element).on(Event.CLICK_DISMISS, function (event) {
-      //   if (_this8._ignoreBackdropClick) {
-      //     _this8._ignoreBackdropClick = false;
-      //     return;
-      //   }
-
-      //   if (event.target !== event.currentTarget) {
-      //     return;
-      //   }
-
-      //   if (_this8._config.backdrop === 'static') {
-      //     _this8._element.focus();
-      //   } else {
-      //     _this8.hide();
-      //   }
-      // });
-
+      this.modalEl.addEventListener('click', this.backdropClickDismiss);
       if (animate) {
         reflow(this.backdrop);
       }
-
       addClass(this.backdrop, 'show');
-
-      // $$$1(this._backdrop).addClass(ClassName.SHOW);
-
       if (!callback) {
         return;
       }
-
       if (!animate) {
         callback();
         return;
       }
-
-      // TODO: some sort of event gets fired here that does something
-      // var backdropTransitionDuration = Util.getTransitionDurationFromElement(this._backdrop);
-      // $$$1(this._backdrop).one(Util.TRANSITION_END, callback).emulateTransitionEnd(backdropTransitionDuration);
-
-
+      const backdropTransitionDuration = getTransitionDurationFromElement(this.backdrop);
+      setTimeout(() => {
+        callback();
+      }, backdropTransitionDuration);
     } else if (!this.isShown && this.backdrop) {
-
       removeClass(this.backdrop, 'show');
-      // $$$1(this._backdrop).removeClass(ClassName.SHOW);
-
-      // TODO: what is this callback remove thing?
-      // var callbackRemove = function callbackRemove() {
-      //   _this8._removeBackdrop();
-
-      //   if (callback) {
-      //     callback();
-      //   }
-      // };
-
-      // TODO: some sort of event to remove something with a transition duration here
-      // if ($$$1(this._element).hasClass(ClassName.FADE)) {
-      //   var _backdropTransitionDuration = Util.getTransitionDurationFromElement(this._backdrop);
-      //   $$$1(this._backdrop).one(Util.TRANSITION_END, callbackRemove).emulateTransitionEnd(_backdropTransitionDuration);
-      // } else {
-      //   callbackRemove();
-      // }
-
-
-    } else if (callback) {
+      const hasBackdropRemoveAnimation = hasClass(this.modalEl, 'fade');
+      if (hasBackdropRemoveAnimation) {
+        const removeBackdropTransitionDuration = getTransitionDurationFromElement(this.backdrop);
+        setTimeout(() => {
+          this.removeBackdrop(callback);
+        }, removeBackdropTransitionDuration);
+      } else {
+        this.removeBackdrop();
+      }
+    } else {
       callback();
     }
+  }
 
-
-
+  removeBackdrop(callback:Function = () => {}) {
+    if (this.backdrop) {
+      this.backdrop.parentNode.removeChild(this.backdrop);
+      this.backdrop = null;
+    }
     callback();
   }
 
   @Method()
   modalToggleButtonClicked(relatedTarget) {
-    // console.log('modalToggleButtonClicked');
     this.getConfig();
     if (this.isShown) {
       this.hide();
     } else {
-      this.show(this.getConfig(), relatedTarget);
+      this.show(relatedTarget);
     }
   }
 
