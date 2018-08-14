@@ -1,22 +1,26 @@
 Aren't we all tired of binding listeners on component ready for the bootstrap components and making sure you destroy them when the component is destroyed?
 
+---
+
+Note: Stenciljs (The S in BS-Components) does not support browsers older than IE11.
 
 ---
 
 TODO:
-* Modal
 * Popovers
 * Tooltips
-* Scrollspy
 * Alerts (dismissal with animation)
-* Buttons (toggle?)
-* Tabs (Navs & List group) - note most frameworks have a router solution for this problem
+* Buttons (toggle collapse?)
 * Forms? (html5 validation works or use framework solution) may want to do the tooltip part
+* Scrollspy
+* Tabs (Navs & List group) - note most frameworks have a router solution for this problem
 * carousel? (there are lots of solutions for this out in the world)
 
 Done (ish):
+* Modal
 * Dropdown
 * Collapse
+* Buttons
 
 nothing to do (css only):
 * badge
@@ -28,12 +32,6 @@ nothing to do (css only):
 * navbar
 * Pagination
 * Progress
-
-
-
-
-
-
 
 
 

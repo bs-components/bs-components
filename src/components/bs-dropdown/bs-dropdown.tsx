@@ -1,4 +1,4 @@
-import { Component, Prop, State, Element, Event, EventEmitter, Method } from '@stencil/core';
+import { Component, Prop, State, Element, Method } from '@stencil/core';
 import Popper from 'popper.js';
 
 import getPopperDropdownConfig from './get-popper-dropdown-config';
@@ -10,6 +10,7 @@ import hasClass from '../../utilities/has-class';
 import clickWasInside from '../../utilities/click-was-inside';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
+import customEvent from '../../utilities/custom-event';
 
 // TODO:
       // focus toggler (optional)
@@ -38,14 +39,20 @@ export class BsDropdown {
   @Prop() reference: any = 'toggle';
   @Prop() display: string = 'dynamic';
 
+  @Prop() showEventName: string = 'show.bs.dropdown';
+  @Prop() shownEventName: string = 'shown.bs.dropdown';
+  @Prop() hideEventName: string = 'hide.bs.dropdown';
+  @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
+
+
   @State() dropdownId: string;
   @State() inNavbar: boolean;
   @State() popperHandle: any;
 
-  @Event() show_bs_dropdown: EventEmitter;
-  @Event() shown_bs_dropdown: EventEmitter;
-  @Event() hide_bs_dropdown: EventEmitter;
-  @Event() hidden_bs_dropdown: EventEmitter;
+  // @Event() show_bs_dropdown: EventEmitter;
+  // @Event() shown_bs_dropdown: EventEmitter;
+  // @Event() hide_bs_dropdown: EventEmitter;
+  // @Event() hidden_bs_dropdown: EventEmitter;
 
   componentWillLoad() {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
@@ -126,7 +133,8 @@ export class BsDropdown {
 
   handleShowDropdown() {
     this.show = true;
-    this.show_bs_dropdown.emit(event);
+    // this.show_bs_dropdown.emit(event);
+    customEvent(this.dropdownEl, this.showEventName);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
@@ -142,13 +150,15 @@ export class BsDropdown {
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     this.initPopper(dropdownMenuEl);
     setTimeout(() => {
-      this.shown_bs_dropdown.emit(event);
+      customEvent(this.dropdownEl, this.shownEventName);
+      // this.shown_bs_dropdown.emit(event);
     }, dropdownMenuTransitionDuration);
   }
 
   handleHideDropdown() {
     this.show = false;
-    this.hide_bs_dropdown.emit(event);
+    customEvent(this.dropdownEl, this.hideEventName);
+    // this.hide_bs_dropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -159,7 +169,8 @@ export class BsDropdown {
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      this.hidden_bs_dropdown.emit(event);
+      // this.hidden_bs_dropdown.emit(event);
+      customEvent(this.dropdownEl, this.hiddenEventName);
     }, dropdownMenuTransitionDuration);
   }
 

@@ -1,4 +1,4 @@
-import { Component, Element, Method, State, Event, EventEmitter } from '@stencil/core';
+import { Component, Element, Method, State, Prop } from '@stencil/core';
 
 import get from 'lodash/get';
 import has from 'lodash/has';
@@ -9,33 +9,31 @@ import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
 import reflow from '../../utilities/reflow';
+import customEvent from '../../utilities/custom-event';
+import getConfigBoolean from '../../utilities/get-config-boolean';
 
 @Component({
   tag: 'bs-modal',
-  // styleUrl: 'my-component.css',
   shadow: false
 })
 export class BsModal {
-
   @Element() modalEl: HTMLElement;
+
+  @Prop() showEventName: string = 'show.bs.modal';
+  @Prop() shownEventName: string = 'shown.bs.modal';
+  @Prop() hideEventName: string = 'hide.bs.modal';
+  @Prop() hiddenEventName: string = 'hidden.bs.modal';
 
   @State() isShown: boolean;
   @State() isTransitioning: boolean;
   @State() isBodyOverflowing: boolean;
   @State() scrollbarWidth: number;
   @State() backdrop: any;
-  // @State() ignoreBackdropClick: boolean;
   @State() config: any;
-
-  @Event() show_bs_modal: EventEmitter;
-  @Event() shown_bs_modal: EventEmitter;
-  @Event() hide_bs_modal: EventEmitter;
-  @Event() hidden_bs_modal: EventEmitter;
 
   componentWillLoad() {
     this.isShown = hasClass(this.modalEl, 'show');
     this.isTransitioning = false;
-    // this.ignoreBackdropClick = false;
   }
 
   componentDidUnload() {
@@ -45,11 +43,9 @@ export class BsModal {
   unbindAllEventListenersUsed() {
     document.removeEventListener('focusin', this.handleFocusIn);
     this.modalEl.removeEventListener('click', this.backdropClickDismiss);
-    // this.modalEl.removeEventListener('mouseup', this.handelSetIgnoreBackDropClickToTrue);
-    // this.modalEl.querySelector('.modal-dialog').removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
     document.removeEventListener('click', this.handleDataDismissModalClick);
     window.removeEventListener('resize', this.handleResizeEvent);
-    document.removeEventListener('keydown', this.hideModalBecauseEscapsepressed);
+    document.removeEventListener('keydown', this.hideModalBecauseEscapePressed);
   }
 
   getScrollbarWidth() {
@@ -93,7 +89,6 @@ export class BsModal {
     }
   }
 
-
   resetScrollbar() {
     // Restore fixed content padding
     const fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
@@ -132,8 +127,8 @@ export class BsModal {
     if (this.isTransitioning || !this.isShown) {
       return;
     }
-    this.hide_bs_modal.emit(event);
-    if (!this.isShown || event.defaultPrevented) {
+    const hideEvent = customEvent(this.modalEl, this.hideEventName);
+    if (!this.isShown || hideEvent.defaultPrevented) {
       return;
     }
     this.isShown = false;
@@ -141,13 +136,13 @@ export class BsModal {
     if (transition) {
       this.isTransitioning = true;
     }
+
     this.setEscapeEvent();
+
     this.setResizeEvent();
     document.removeEventListener('focusin', this.handleFocusIn);
     removeClass(this.modalEl, 'show');
     document.removeEventListener('click', this.handleDataDismissModalClick);
-    // const modalDialog = this.modalEl.querySelector('.modal-dialog');
-    // modalDialog.removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
     if (transition) {
       const transitionDuration = getTransitionDurationFromElement(this.modalEl);
       setTimeout(() => {
@@ -166,7 +161,7 @@ export class BsModal {
       removeClass(document.body, 'modal-open')
       this.resetAdjustments();
       this.resetScrollbar();
-      this.hidden_bs_modal.emit(event);
+      customEvent(this.modalEl, this.hiddenEventName);
       this.unbindAllEventListenersUsed();
     });
   }
@@ -176,22 +171,15 @@ export class BsModal {
     this.modalEl.style.paddingRight = '';
   }
 
-  show(passedRelatedTarget) {
+  show(passedRelatedTarget = {}) {
     if (this.isTransitioning || this.isShown) {
       return;
     }
     if (hasClass(this.modalEl, 'fade')) {
       this.isTransitioning = true;
     }
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties
-    const eventWithRelatedTarget = Object.defineProperties(event, {
-      relatedTarget: {
-        value: passedRelatedTarget,
-        writable: true,
-      },
-    });
-    this.show_bs_modal.emit(eventWithRelatedTarget);
-    if (this.isShown || event.defaultPrevented) {
+    const showEvent = customEvent(this.modalEl, this.showEventName, {}, passedRelatedTarget);
+    if (this.isShown || showEvent.defaultPrevented) {
       return;
     }
     this.isShown = true;
@@ -202,34 +190,8 @@ export class BsModal {
     this.setEscapeEvent();
     this.setResizeEvent();
     this.setClicksThatCanCloseModalEvent();
-    // this.setIgnoreBackdropClickIfItIsOnModal();
-    this.showBackdrop(() => this.showElement(eventWithRelatedTarget));
+    this.showBackdrop(() => this.showElement(passedRelatedTarget));
   }
-
-  // handelSetIgnoreBackDropClickToTrue = (event) => {
-  //   // if (this.modalEl.contains(event.target)) {
-  //   if (this.modalEl === event.target) {
-  //     this.ignoreBackdropClick = true;
-  //   }
-  // }
-
-  // handleMouseDownIgnoreClickIfIsOnModal = (event) => {
-  //   this.modalEl.addEventListener('mouseup', this.handelSetIgnoreBackDropClickToTrue, { once: true });
-  // }
-
-  // setIgnoreBackdropClickIfItIsOnModal() {
-  //   const modalDialog = this.modalEl.querySelector('.modal-dialog');
-  //   if (modalDialog === null) {
-  //     return;
-  //   }
-  //   if (this.isShown) {
-  //     setTimeout(() => {
-  //       modalDialog.addEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
-  //     }, 0);
-  //   } else if (!this.isShown) {
-  //     modalDialog.removeEventListener('mousedown', this.handleMouseDownIgnoreClickIfIsOnModal);
-  //   }
-  // }
 
   elementIsOrInADataDismissForThisModal(element) {
     const modalDataDismissArr = Array.prototype.slice.call(this.modalEl.querySelectorAll('[data-dismiss="modal"]'));
@@ -274,9 +236,9 @@ export class BsModal {
     }
   }
 
-  hideModalBecauseEscapsepressed = (event) => {
-    let ESCAPE_KEYCODE = 27;
-    if (event.which === ESCAPE_KEYCODE) {
+  hideModalBecauseEscapePressed = (event) => {
+    const escapeKeycode = 27;
+    if (event.which === escapeKeycode) {
       // event.preventDefault();
       this.hide();
     }
@@ -284,42 +246,42 @@ export class BsModal {
 
   setEscapeEvent() {
     if (this.isShown && this.config.keyboard) {
-      document.addEventListener('keydown', this.hideModalBecauseEscapsepressed);
+      document.addEventListener('keydown', this.hideModalBecauseEscapePressed);
     } else if (!this.isShown) {
-      document.removeEventListener('keydown', this.hideModalBecauseEscapsepressed);
+      document.removeEventListener('keydown', this.hideModalBecauseEscapePressed);
     }
   }
 
-  getConfig(overrideConfig = {}) {
+  getConfig(overrideConfig:any = {}) {
     this.config = {};
     const config: any = {};
     if (has(overrideConfig, 'backdrop')) {
       const backdrop = toLower(get(overrideConfig, 'backdrop', 'true'));
-      config.backdrop = backdrop === 'static' ? 'static' : backdrop === 'true';
+      config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
     } else if (has(this.modalEl, 'dataset.backdrop')) {
       const backdrop = toLower(get(this.modalEl, 'dataset.backdrop', 'true'));
-      config.backdrop = backdrop === 'static' ? 'static' : backdrop === 'true';
+      config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
     } else {
       config.backdrop = true;
     }
     if (has(overrideConfig, 'focus')) {
-      config.focus = toLower(get(overrideConfig, 'dataset.focus', 'true')) === 'true';
+      config.focus = getConfigBoolean(get(overrideConfig, 'focus', true));
     } else if (has(this.modalEl, 'dataset.focus')) {
-      config.focus = toLower(get(this.modalEl, 'dataset.focus', 'true')) === 'true';
+      config.focus = getConfigBoolean(get(this.modalEl, 'dataset.focus', true));
     } else {
       config.focus = true;
     }
     if (has(overrideConfig, 'keyboard')) {
-      config.keyboard = toLower(get(overrideConfig, 'dataset.keyboard', 'true')) === 'true';
+      config.keyboard = getConfigBoolean(get(overrideConfig, 'keyboard', true));
     } else if (has(this.modalEl, 'dataset.keyboard')) {
-      config.keyboard = toLower(get(this.modalEl, 'dataset.keyboard', 'true')) === 'true';
+      config.keyboard = getConfigBoolean(get(this.modalEl, 'dataset.keyboard', true));
     } else {
       config.keyboard = true;
     }
     if (has(overrideConfig, 'show')) {
-      config.show = toLower(get(overrideConfig, 'dataset.show', 'true')) === 'true';
+      config.show = getConfigBoolean(get(overrideConfig, 'show', true));
     } else if (has(this.modalEl, 'dataset.show')) {
-      config.show = toLower(get(this.modalEl, 'dataset.show', 'true')) === 'true';
+      config.show = getConfigBoolean(get(this.modalEl, 'dataset.show', true));
     } else {
       config.show = true;
     }
@@ -337,7 +299,7 @@ export class BsModal {
     document.addEventListener('focusin', this.handleFocusIn);
   };
 
-  showElement(eventWithRelatedTarget) {
+  showElement(passedRelatedTarget = {}) {
     let transition = hasClass(this.modalEl, 'fade');
     if (!this.modalEl.parentNode || this.modalEl.parentNode.nodeType !== Node.ELEMENT_NODE) {
       // Don't move modal's DOM position
@@ -360,16 +322,12 @@ export class BsModal {
           this.modalEl.focus();
         }
         this.isTransitioning = false;
-        this.shown_bs_modal.emit(eventWithRelatedTarget);
+        customEvent(this.modalEl, this.shownEventName, {}, passedRelatedTarget);
       }, transitionDuration);
     }
   }
 
   backdropClickDismiss = (event) => {
-    // if (this.ignoreBackdropClick) {
-    //   this.ignoreBackdropClick = false;
-    //   return;
-    // }
     if (event.target !== event.currentTarget) {
       return;
     }
@@ -430,7 +388,7 @@ export class BsModal {
   }
 
   @Method()
-  modalToggleButtonClicked(relatedTarget) {
+  modalToggleButtonClicked(relatedTarget = {}) {
     this.getConfig();
     if (this.isShown) {
       this.hide();
@@ -440,15 +398,27 @@ export class BsModal {
   }
 
   @Method()
-  modal(modalOptions) {
-    console.log('modalOptions: ', modalOptions);
-
-  if (typeof modalOptions === 'object') {
-  } else if (typeof modalOptions === 'string') {
-
-  }
-
-    if (modalOptions === 'handleUpdate') {
+  modal(modalOptions = {}) {
+    // console.log('modalOptions: ', modalOptions);
+    if (typeof modalOptions === 'object') {
+      this.getConfig(modalOptions);
+      if (this.config.show && !this.isShown) {
+        this.show();
+      }
+    } else if (modalOptions === 'toggle' || modalOptions === {}) {
+      this.getConfig();
+      if (this.isShown) {
+        this.hide();
+      } else {
+        this.show();
+      }
+    } else if (modalOptions === 'show') {
+      this.getConfig();
+      this.show();
+    } else if (modalOptions === 'hide') {
+      // this.getConfig();
+      this.hide();
+    } else if (modalOptions === 'handleUpdate') {
       this.adjustDialog();
     }
   }

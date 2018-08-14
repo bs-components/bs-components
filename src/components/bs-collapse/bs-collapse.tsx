@@ -1,4 +1,4 @@
-import { Component, Element, Listen, Method } from '@stencil/core';
+import { Component, Element, Listen, Method, Prop } from '@stencil/core';
 
 import get from 'lodash/get';
 import has from 'lodash/has';
@@ -20,8 +20,12 @@ import reflow from '../../utilities/reflow';
   shadow: false
 })
 export class BsCollapse {
-
   @Element() collapseEl: HTMLElement;
+
+  @Prop() showEventName: string = 'show.bs.collapse';
+  @Prop() shownEventName: string = 'shown.bs.collapse';
+  @Prop() hideEventName: string = 'hide.bs.collapse';
+  @Prop() hiddenEventName: string = 'hidden.bs.collapse';
 
   componentDidUnload() {
     document.removeEventListener('click', this.removeFocusFromBsCollapseEl);
@@ -166,7 +170,7 @@ export class BsCollapse {
     if (hasClass(targetEl, 'show') || hasClass(targetEl, 'collapsing')) {
       return;
     }
-    customEvent(targetEl, 'show_bs_collapse');
+    customEvent(targetEl, this.showEventName);
     const dimension = this.getDimension(targetEl);
     const scrollSize = "scroll" + upperFirst(dimension);
     addClass(targetEl, 'collapsing');
@@ -177,7 +181,7 @@ export class BsCollapse {
       addClass(targetEl, 'collapse');
       addClass(targetEl, 'show');
       targetEl.style[dimension] = '';
-      customEvent(targetEl, 'shown_bs_collapse');
+      customEvent(targetEl, this.shownEventName);
     }, collapsingTransitionDuration);
     targetEl.style[dimension] = targetEl[scrollSize] + "px";
   }
@@ -186,7 +190,7 @@ export class BsCollapse {
     if (!hasClass(targetEl, 'show')) {
       return;
     }
-    customEvent(targetEl, 'hide_bs_collapse');
+    customEvent(targetEl, this.hideEventName);
     const dimension = this.getDimension(targetEl);
     targetEl.style[dimension] = targetEl.getBoundingClientRect()[dimension] + "px";
     reflow(targetEl);
@@ -198,7 +202,7 @@ export class BsCollapse {
     setTimeout(() => {
       removeClass(targetEl, 'collapsing');
       addClass(targetEl, 'collapse');
-      customEvent(targetEl, 'hidden_bs_collapse');
+      customEvent(targetEl, this.hiddenEventName);
     }, collapsingTransitionDuration);
   }
 

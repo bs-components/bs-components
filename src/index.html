@@ -16,6 +16,9 @@
 
   <script src="build/bscomponents.js"></script>
 
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+
+
 <style>
   /*
 .dropdown .dropdown-menu {
@@ -106,6 +109,8 @@
     data-whatever="yadda yada ya">
       Launch demo modal
   </bs-button>
+
+  <button id="open-modal" type="button" class="btn btn-default">JavaScript Open Modal</button>
 
   <!-- Modal -->
   <bs-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -315,8 +320,8 @@
   <script type="x/template" id="dropdown-vue-test">
     <div>
       <bs-dropdown ref="bsDropdownInVueExample" class="dropdown btn-group"
-        v-on:shown_bs_dropdown='handleShownBsDropdown'
-        v-on:hidden_bs_dropdown='handleHiddenBsDropdown'
+        show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
+        hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
       >
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Vue Dropdown button
@@ -407,10 +412,10 @@
 
 
 
-    document.getElementById("my-dropdown").addEventListener('show_bs_dropdown', handleMyComponentShow);
-    document.getElementById("my-dropdown").addEventListener('shown_bs_dropdown', handleMyComponentShown);
-    document.getElementById("my-dropdown").addEventListener('hide_bs_dropdown', handleMyComponentHide);
-    document.getElementById("my-dropdown").addEventListener('hidden_bs_dropdown', handleMyComponentHidden);
+    document.getElementById("my-dropdown").addEventListener('show.bs.dropdown', handleMyComponentShow);
+    document.getElementById("my-dropdown").addEventListener('shown.bs.dropdown', handleMyComponentShown);
+    document.getElementById("my-dropdown").addEventListener('hide.bs.dropdown', handleMyComponentHide);
+    document.getElementById("my-dropdown").addEventListener('hidden.bs.dropdown', handleMyComponentHidden);
 
     function handleMyCollapseShow(event) {
       console.log('handleMyCollapseShow');
@@ -425,10 +430,10 @@
       console.log('handleMyCollapseHidden');
     }
 
-    document.getElementById("multiCollapseExample2").addEventListener('show_bs_collapse', handleMyCollapseShow);
-    document.getElementById("multiCollapseExample2").addEventListener('shown_bs_collapse', handleMyCollapseShown);
-    document.getElementById("multiCollapseExample2").addEventListener('hide_bs_collapse', handleMyCollapseHide);
-    document.getElementById("multiCollapseExample2").addEventListener('hidden_bs_collapse', handleMyCollapseHidden);
+    document.getElementById("multiCollapseExample2").addEventListener('show.bs.collapse', handleMyCollapseShow);
+    document.getElementById("multiCollapseExample2").addEventListener('shown.bs.collapse', handleMyCollapseShown);
+    document.getElementById("multiCollapseExample2").addEventListener('hide.bs.collapse', handleMyCollapseHide);
+    document.getElementById("multiCollapseExample2").addEventListener('hidden.bs.collapse', handleMyCollapseHidden);
 
     function toggleSecondCollapse() {
       const el = document.getElementById("second-bs-collapse");
@@ -457,8 +462,34 @@
       el.toggle('.btn:nth-child(2)');
     }
 
+    function handleModalShow(event) {
+      // event.preventDefault();
+      // console.log('handleModalShow event: ', event);
+    }
 
+    function handleModalHide(event) {
+      // event.preventDefault();
+    }
 
+    function handleModalShown(event) {
+      // console.log('handleModalShown event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleOpenModalWithJavaScript() {
+      const el = document.getElementById("exampleModal");
+      el.modal();
+      // el.modal('toggle');
+
+      // setTimeout(() => {
+      //   el.modal('hide');
+      // }, 5 * 1000);
+
+      // el.modal('show');
+      // el.modal('hide');
+      // el.modal('handleUpdate');
+      // el.modal({ backdrop: true, keyboard: true, focus: true, show: true });
+    }
 
 
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
@@ -470,6 +501,17 @@
     document.getElementById("toggle-second-radio-button").addEventListener('click', toggleSecondRadioButton);
 
 
+    document.getElementById("exampleModal").addEventListener('show.bs.modal', handleModalShow);
+    document.getElementById("exampleModal").addEventListener('hide.bs.modal', handleModalHide);
+
+    document.getElementById("exampleModal").addEventListener('shown.bs.modal', handleModalShown);
+
+    document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
+
+
+    // $(document).ready(function() {
+    //   $('#exampleModal')[0].addEventListener('shown.bs.modal', handleModalShown);
+    // });
 
 
 

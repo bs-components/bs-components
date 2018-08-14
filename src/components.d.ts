@@ -31,26 +31,38 @@ declare global {
 
     interface BsCollapse {
       'collapse': (passedConfig: any) => void;
+      'hiddenEventName': string;
+      'hideEventName': string;
+      'showEventName': string;
+      'shownEventName': string;
     }
 
     interface BsDropdown {
       'boundary': any;
       'display': string;
       'flip': boolean;
+      'hiddenEventName': string;
       'hideDropdown': () => void;
+      'hideEventName': string;
       'keepOpen': boolean;
       'offset': any;
       'reference': any;
       'setDropdownVisibility': (toShow: any) => void;
       'show': boolean;
       'showDropdown': () => void;
+      'showEventName': string;
+      'shownEventName': string;
       'toggle': () => void;
       'update': () => void;
     }
 
     interface BsModal {
-      'modal': (modalOptions: any) => void;
-      'modalToggleButtonClicked': (relatedTarget: any) => void;
+      'hiddenEventName': string;
+      'hideEventName': string;
+      'modal': (modalOptions?: {}) => void;
+      'modalToggleButtonClicked': (relatedTarget?: {}) => void;
+      'showEventName': string;
+      'shownEventName': string;
     }
   }
 
@@ -104,28 +116,31 @@ declare global {
     }
 
     export interface BsCollapseAttributes extends HTMLAttributes {
-
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
+      'showEventName'?: string;
+      'shownEventName'?: string;
     }
 
     export interface BsDropdownAttributes extends HTMLAttributes {
       'boundary'?: any;
       'display'?: string;
       'flip'?: boolean;
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
       'keepOpen'?: boolean;
       'offset'?: any;
-      'onHidden_bs_dropdown'?: (event: CustomEvent) => void;
-      'onHide_bs_dropdown'?: (event: CustomEvent) => void;
-      'onShow_bs_dropdown'?: (event: CustomEvent) => void;
-      'onShown_bs_dropdown'?: (event: CustomEvent) => void;
       'reference'?: any;
       'show'?: boolean;
+      'showEventName'?: string;
+      'shownEventName'?: string;
     }
 
     export interface BsModalAttributes extends HTMLAttributes {
-      'onHidden_bs_modal'?: (event: CustomEvent) => void;
-      'onHide_bs_modal'?: (event: CustomEvent) => void;
-      'onShow_bs_modal'?: (event: CustomEvent) => void;
-      'onShown_bs_modal'?: (event: CustomEvent) => void;
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
+      'showEventName'?: string;
+      'shownEventName'?: string;
     }
   }
 

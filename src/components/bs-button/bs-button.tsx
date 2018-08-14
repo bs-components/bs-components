@@ -16,29 +16,40 @@ import customEvent from '../../utilities/custom-event';
   shadow: false
 })
 export class BsButton {
-
   @Element() bsButtonEl: HTMLElement;
 
   componentDidUnload() {
     document.removeEventListener('click', this.removeFocusFromBsButtonEl);
+
+    const buttonToggleData = get(event, 'target.dataset.toggle', '');
+
+    if (buttonToggleData === 'modal') {
+      const modalTargetSelector = get(event, 'target.dataset.target', '');
+      if (size(modalTargetSelector) > 0) {
+        const modalTarget = document.querySelector(modalTargetSelector);
+        if (modalTarget.modalToggleButtonClicked) {
+          const modalShownEventName = modalTarget.shownEventName;
+          if (size(modalShownEventName) > 0) {
+            modalTarget.removeEventListener(modalShownEventName, this.removeFocusFromBsButtonEl);
+          }
+          const modalHiddenEventName = modalTarget.hiddenEventName;
+          if (size(modalHiddenEventName) > 0) {
+            modalTarget.removeEventListener(modalHiddenEventName, this.addFocusToBsButtonEl);
+          }
+        }
+      }
+    }
+  }
+
+  addFocusToBsButtonEl = () => {
+    addClass(this.bsButtonEl, 'focus');
+    document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });
+    (document.activeElement as any).blur();
   }
 
   removeFocusFromBsButtonEl = () => {
+    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
     removeClass(this.bsButtonEl, 'focus');
-  }
-
-  getClosestButtonInsideComponent(element) {
-    let currentEl = element.parentElement || element.parentNode;
-    while (currentEl !== null && currentEl.nodeType === 1) {
-      if (elementMatches(currentEl, '.btn')) {
-        return currentEl;
-      }
-      if (this.bsButtonEl.isEqualNode(currentEl)) {
-        return null;
-      }
-      currentEl = element.parentElement || element.parentNode;
-    }
-    return null;
   }
 
   @Listen('focusin')
@@ -61,23 +72,42 @@ export class BsButton {
     if (!hasBtnClass) {
       return;
     }
-
     const buttonToggleData = get(event, 'target.dataset.toggle', '');
-
-
     this.handleToggle(event.target);
-
-
-
     if (buttonToggleData === 'modal') {
       const modalTargetSelector = get(event, 'target.dataset.target', '');
       if (size(modalTargetSelector) > 0) {
         const modalTarget = document.querySelector(modalTargetSelector);
         if (modalTarget.modalToggleButtonClicked) {
           modalTarget.modalToggleButtonClicked(event.target);
+
+          const modalShownEventName = modalTarget.shownEventName;
+          // console.log('modalShownEventName: ', modalShownEventName);
+          if (size(modalShownEventName) > 0) {
+            modalTarget.addEventListener(modalShownEventName, this.removeFocusFromBsButtonEl, { once: true });
+          }
+          const modalHiddenEventName = modalTarget.hiddenEventName;
+          // console.log('modalHiddenEventName: ', modalHiddenEventName);
+          if (size(modalHiddenEventName) > 0) {
+            modalTarget.addEventListener(modalHiddenEventName, this.addFocusToBsButtonEl, { once: true });
+          }
         }
       }
     }
+  }
+
+  getClosestButtonInsideComponent(element) {
+    let currentEl = element.parentElement || element.parentNode;
+    while (currentEl !== null && currentEl.nodeType === 1) {
+      if (elementMatches(currentEl, '.btn')) {
+        return currentEl;
+      }
+      if (this.bsButtonEl.isEqualNode(currentEl)) {
+        return null;
+      }
+      currentEl = element.parentElement || element.parentNode;
+    }
+    return null;
   }
 
   handleToggle(element) {
@@ -113,8 +143,7 @@ export class BsButton {
         triggerChangeEvent = false;
       }
       setTimeout(() => {
-        addClass(this.bsButtonEl, 'focus');
-        document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });
+        this.addFocusToBsButtonEl();
       }, 0);
     }
     if (addAriaPressed) {
