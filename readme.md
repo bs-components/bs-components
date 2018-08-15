@@ -7,8 +7,8 @@ Note: Stenciljs (The S in BS-Components) does not support browsers older than IE
 ---
 
 TODO:
-* Popovers
 * Tooltips
+* Popovers
 * Alerts (dismissal with animation)
 * Buttons (toggle collapse?)
 * Forms? (html5 validation works or use framework solution) may want to do the tooltip part
