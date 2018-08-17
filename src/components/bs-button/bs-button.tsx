@@ -18,50 +18,61 @@ import customEvent from '../../utilities/custom-event';
 export class BsButton {
   @Element() bsButtonEl: HTMLElement;
 
-  componentDidUnload() {
-    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
-
-    const buttonToggleData = get(event, 'target.dataset.toggle', '');
-
-    if (buttonToggleData === 'modal') {
-      const modalTargetSelector = get(event, 'target.dataset.target', '');
-      if (size(modalTargetSelector) > 0) {
-        const modalTarget = document.querySelector(modalTargetSelector);
-        if (modalTarget.modalToggleButtonClicked) {
-          const modalShownEventName = modalTarget.shownEventName;
-          if (size(modalShownEventName) > 0) {
-            modalTarget.removeEventListener(modalShownEventName, this.removeFocusFromBsButtonEl);
-          }
-          const modalHiddenEventName = modalTarget.hiddenEventName;
-          if (size(modalHiddenEventName) > 0) {
-            modalTarget.removeEventListener(modalHiddenEventName, this.addFocusToBsButtonEl);
-          }
-        }
-      }
+  componentDidLoad() {
+    const currentTabIndex = this.bsButtonEl.getAttribute('tabindex');
+    const buttonToggleData = get(this.bsButtonEl, 'dataset.toggle', '');
+    if (size(currentTabIndex) === 0 && buttonToggleData === 'button') {
+       // without tabindex set the bs-button can not receive focus
+      this.bsButtonEl.setAttribute('tabindex', '0');
     }
   }
 
-  addFocusToBsButtonEl = () => {
-    addClass(this.bsButtonEl, 'focus');
-    document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });
-    (document.activeElement as any).blur();
-  }
+  // componentDidUnload() {
+  //   document.removeEventListener('click', this.removeFocusFromBsButtonEl);
+  // }
 
-  removeFocusFromBsButtonEl = () => {
-    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
-    removeClass(this.bsButtonEl, 'focus');
-  }
+  // addFocusToBsButtonEl = () => {
+  //   addClass(this.bsButtonEl, 'focus');
+  //   document.addEventListener('click', this.removeFocusFromBsButtonEl, { once: true });
+  //   (document.activeElement as any).blur();
+  // }
+
+  // removeFocusFromBsButtonEl = () => {
+  //   document.removeEventListener('click', this.removeFocusFromBsButtonEl);
+  //   removeClass(this.bsButtonEl, 'focus');
+  // }
 
   @Listen('focusin')
   handleFocusIn(event) {
-    // only hit by input's inside the bs-button
+    const buttonToggleData = get(this.bsButtonEl, 'dataset.toggle', '');
+    if (buttonToggleData === 'button') {
+      // focus is handled by the tabindex attribute
+      const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+      if (isDisabled) {
+        // put the focus back where it was
+        if (event.relatedTarget) {
+          event.relatedTarget.focus();
+        } else {
+          (document.activeElement as any).blur();
+        }
+        event.preventDefault();
+        return;
+      }
+      // TODO: add listeners to keydown space and keydown enter to click to toggle
+      return;
+    }
     const closestButton = this.getClosestButtonInsideComponent(event.target);
     addClass(closestButton, 'focus');
   }
 
   @Listen('focusout')
   handleFocusOut(event) {
-    // only hit by input's inside the bs-button
+    const buttonToggleData = get(this.bsButtonEl, 'dataset.toggle', '');
+    if (buttonToggleData === 'button') {
+      // focus is handled by the tabindex attribute
+      // TODO: remove the listeners to keydown space and keydown enter
+      return;
+    }
     const closestButton = this.getClosestButtonInsideComponent(event.target);
     removeClass(closestButton, 'focus');
   }
@@ -72,6 +83,10 @@ export class BsButton {
     if (!hasBtnClass) {
       return;
     }
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
+      return;
+    }
     const buttonToggleData = get(event, 'target.dataset.toggle', '');
     this.handleToggle(event.target);
     if (buttonToggleData === 'modal') {
@@ -80,17 +95,6 @@ export class BsButton {
         const modalTarget = document.querySelector(modalTargetSelector);
         if (modalTarget.modalToggleButtonClicked) {
           modalTarget.modalToggleButtonClicked(event.target);
-
-          const modalShownEventName = modalTarget.shownEventName;
-          // console.log('modalShownEventName: ', modalShownEventName);
-          if (size(modalShownEventName) > 0) {
-            modalTarget.addEventListener(modalShownEventName, this.removeFocusFromBsButtonEl, { once: true });
-          }
-          const modalHiddenEventName = modalTarget.hiddenEventName;
-          // console.log('modalHiddenEventName: ', modalHiddenEventName);
-          if (size(modalHiddenEventName) > 0) {
-            modalTarget.addEventListener(modalHiddenEventName, this.addFocusToBsButtonEl, { once: true });
-          }
         }
       }
     }
@@ -138,13 +142,16 @@ export class BsButton {
         addAriaPressed = false;
       }
     } else {
+      // (this.bsButtonEl as any).tabStop = true;
+      // this.bsButtonEl.setAttribute('tabindex', '0');
+
       const buttonToggleData = get(this.bsButtonEl, 'dataset.toggle', '');
       if (buttonToggleData !== 'button') {
         triggerChangeEvent = false;
       }
-      setTimeout(() => {
-        this.addFocusToBsButtonEl();
-      }, 0);
+      // setTimeout(() => {
+      //   this.addFocusToBsButtonEl();
+      // }, 0);
     }
     if (addAriaPressed) {
       element.setAttribute('aria-pressed', !hasClass(element, 'active'));
@@ -154,11 +161,10 @@ export class BsButton {
     }
   }
 
-  @Method()
-  removeFocus() {
-    document.removeEventListener('click', this.removeFocusFromBsButtonEl);
-  }
-
+  // @Method()
+  // removeFocus() {
+  //   document.removeEventListener('click', this.removeFocusFromBsButtonEl);
+  // }
 
   @Method()
   toggle(selector) {
@@ -168,8 +174,6 @@ export class BsButton {
       this.handleToggle(this.bsButtonEl.querySelector(selector));
     }
   }
-
-
 
   render() {
     return ( <slot /> );

@@ -25,7 +25,6 @@ declare global {
   namespace StencilComponents {
 
     interface BsButton {
-      'removeFocus': () => void;
       'toggle': (selector: any) => void;
     }
 
@@ -64,6 +63,16 @@ declare global {
       'showEventName': string;
       'shownEventName': string;
     }
+
+    interface BsTooltip {
+      'enableOnLoad': boolean;
+      'hiddenEventName': string;
+      'hideEventName': string;
+      'insertedEventName': string;
+      'showEventName': string;
+      'shownEventName': string;
+      'tooltip': (tooltipOptions?: any) => void;
+    }
   }
 
 
@@ -99,6 +108,14 @@ declare global {
     };
     
 
+    interface HTMLBsTooltipElement extends StencilComponents.BsTooltip, HTMLStencilElement {}
+
+    var HTMLBsTooltipElement: {
+      prototype: HTMLBsTooltipElement;
+      new (): HTMLBsTooltipElement;
+    };
+    
+
   namespace JSX {
     interface Element {}
     export interface IntrinsicElements {
@@ -106,6 +123,7 @@ declare global {
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
     'bs-modal': JSXElements.BsModalAttributes;
+    'bs-tooltip': JSXElements.BsTooltipAttributes;
     }
   }
 
@@ -142,6 +160,15 @@ declare global {
       'showEventName'?: string;
       'shownEventName'?: string;
     }
+
+    export interface BsTooltipAttributes extends HTMLAttributes {
+      'enableOnLoad'?: boolean;
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
+      'insertedEventName'?: string;
+      'showEventName'?: string;
+      'shownEventName'?: string;
+    }
   }
 
   interface HTMLElementTagNameMap {
@@ -149,6 +176,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
     'bs-modal': HTMLBsModalElement
+    'bs-tooltip': HTMLBsTooltipElement
   }
 
   interface ElementTagNameMap {
@@ -156,6 +184,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;
     'bs-modal': HTMLBsModalElement;
+    'bs-tooltip': HTMLBsTooltipElement;
   }
 }
 declare global { namespace JSX { interface StencilJSX {} } }

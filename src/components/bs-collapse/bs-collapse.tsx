@@ -27,26 +27,55 @@ export class BsCollapse {
   @Prop() hideEventName: string = 'hide.bs.collapse';
   @Prop() hiddenEventName: string = 'hidden.bs.collapse';
 
-  componentDidUnload() {
-    document.removeEventListener('click', this.removeFocusFromBsCollapseEl);
+  componentDidLoad() {
+    const currentTabIndex = this.collapseEl.getAttribute('tabindex');
+    if (size(currentTabIndex) === 0) {
+       // without tabindex set the bs-collapse can not receive focus
+      this.collapseEl.setAttribute('tabindex', '0');
+    }
   }
+
+  // componentDidUnload() {
+  //   document.removeEventListener('click', this.removeFocusFromBsCollapseEl);
+  // }
+
+  @Listen('focusin')
+  handleFocusIn(event) {
+    // const buttonToggleData = get(this.collapseEl, 'dataset.toggle', '');
+    // if (buttonToggleData === 'collapse') {
+      // focus is handled by the tabindex attribute
+      const isDisabled = hasClass(this.collapseEl, 'disabled');
+      if (isDisabled) {
+        // put the focus back where it was
+        if (event.relatedTarget) {
+          event.relatedTarget.focus();
+        } else {
+          (document.activeElement as any).blur();
+        }
+        event.preventDefault();
+      }
+      // TODO: remove/add listeners to keydown space and keydown enter to click to toggle
+      // TODO: remove listeners on focus out
+    // }
+  }
+
 
   @Listen('click')
   handleClick() {
-    const isBtn = hasClass(this.collapseEl, 'btn');
-    const isBtnLink = hasClass(this.collapseEl, 'btn-link');
-    if (isBtn === true && isBtnLink !== true) {
-      setTimeout(() => {
-        addClass(this.collapseEl, 'focus');
-        document.addEventListener('click', this.removeFocusFromBsCollapseEl, { once: true });
-      }, 0);
-    }
+    // const isBtn = hasClass(this.collapseEl, 'btn');
+    // const isBtnLink = hasClass(this.collapseEl, 'btn-link');
+    // if (isBtn === true && isBtnLink !== true) {
+    //   setTimeout(() => {
+    //     addClass(this.collapseEl, 'focus');
+    //     document.addEventListener('click', this.removeFocusFromBsCollapseEl, { once: true });
+    //   }, 0);
+    // }
     this.handleToggle(this.getConfig());
   }
 
-  removeFocusFromBsCollapseEl = () => {
-    removeClass(this.collapseEl, 'focus');
-  }
+  // removeFocusFromBsCollapseEl = () => {
+  //   removeClass(this.collapseEl, 'focus');
+  // }
 
   getConfig(overrideConfig = {}) {
     const config: any = {};

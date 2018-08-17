@@ -13,7 +13,6 @@ import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
 
 // TODO:
-      // focus toggler (optional)
       // data-offset="10,20"
       // data-reference="parent"
       // popper.js stuff:
@@ -65,7 +64,8 @@ export class BsDropdown {
       }, 0);
     }
     this.dropdownId = getUniqueId('dropdown');
-    this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
+    this.dropdownEl.dataset.bsId = this.dropdownId;
+    // this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j++) {
       toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);

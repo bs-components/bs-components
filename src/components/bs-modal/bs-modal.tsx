@@ -258,30 +258,30 @@ export class BsModal {
     if (has(overrideConfig, 'backdrop')) {
       const backdrop = toLower(get(overrideConfig, 'backdrop', 'true'));
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
-    } else if (has(this.modalEl, 'dataset.backdrop')) {
-      const backdrop = toLower(get(this.modalEl, 'dataset.backdrop', 'true'));
+    } else if (has(this.modalEl.dataset, 'backdrop')) {
+      const backdrop = toLower(this.modalEl.dataset.backdrop);
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
     } else {
       config.backdrop = true;
     }
     if (has(overrideConfig, 'focus')) {
       config.focus = getConfigBoolean(get(overrideConfig, 'focus', true));
-    } else if (has(this.modalEl, 'dataset.focus')) {
-      config.focus = getConfigBoolean(get(this.modalEl, 'dataset.focus', true));
+    } else if (has(this.modalEl.dataset, 'focus')) {
+      config.focus = getConfigBoolean(this.modalEl.dataset.focus);
     } else {
       config.focus = true;
     }
     if (has(overrideConfig, 'keyboard')) {
       config.keyboard = getConfigBoolean(get(overrideConfig, 'keyboard', true));
-    } else if (has(this.modalEl, 'dataset.keyboard')) {
-      config.keyboard = getConfigBoolean(get(this.modalEl, 'dataset.keyboard', true));
+    } else if (has(this.modalEl.dataset, 'keyboard')) {
+      config.keyboard = getConfigBoolean(this.modalEl.dataset.keyboard);
     } else {
       config.keyboard = true;
     }
     if (has(overrideConfig, 'show')) {
       config.show = getConfigBoolean(get(overrideConfig, 'show', true));
-    } else if (has(this.modalEl, 'dataset.show')) {
-      config.show = getConfigBoolean(get(this.modalEl, 'dataset.show', true));
+    } else if (has(this.modalEl.dataset, 'show')) {
+      config.show = getConfigBoolean(this.modalEl.dataset.show);
     } else {
       config.show = true;
     }
