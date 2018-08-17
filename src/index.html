@@ -106,7 +106,7 @@
         </div>
     </bs-tooltip> -->
 
-    <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" enable-on-load data-placement="top" title="Tooltip on top">
+    <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" enable-on-load data-placement="top" title="Tooltip on top">
       Tooltip on top
     </bs-tooltip>
     <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
@@ -122,9 +122,12 @@
       Tooltip with HTML
     </button>
 
-    <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
+    <bs-tooltip class="d-inline-block" tabindex="0" data-trigger="click" data-toggle="tooltip" title="Disabled tooltip">
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
     </bs-tooltip>
+
+    <p>&nbsp;</p>
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">click top tooltip button</button>
 
     <hr>
 
@@ -528,6 +531,15 @@
     //   console.log('handleFocusIn event: ', event);
     // }
 
+    function handleClickOnTopTooltipButton() {
+
+      const el = document.getElementById("top-tooltip-button");
+      el.click();
+
+
+
+    }
+
 
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
 
@@ -545,7 +557,12 @@
 
     document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 
+
+    document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
+
+
 
 
 

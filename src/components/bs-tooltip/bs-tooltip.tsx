@@ -1,29 +1,34 @@
 import { Component, Prop, Element, Method, State } from '@stencil/core';
 
+import Popper from 'popper.js';
+
 import _size from 'lodash/size';
 import _get from 'lodash/get';
 import split from 'lodash/split';
-import toLower from 'lodash/toLower';
+import _toLower from 'lodash/toLower';
+import _toUpper from 'lodash/toUpper';
 import _has from 'lodash/has'
 import _toInteger from 'lodash/toInteger'
 import _isNaN from 'lodash/isNaN'
 import _toString from 'lodash/toString'
 import _isNumber from 'lodash/isNumber'
 import _includes from 'lodash/includes'
-import _some from 'lodash/some'
+// import _some from 'lodash/some'
 
-// import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
+import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 // import closest from '../../utilities/closest';
 // import elementMatches from '../../utilities/element-matches';
-// import hasClass from '../../utilities/has-class';
+import hasClass from '../../utilities/has-class';
 // import addClass from '../../utilities/add-class';
 // import removeClass from '../../utilities/remove-class';
 // import toggleClass from '../../utilities/toggle-class';
-// import customEvent from '../../utilities/custom-event';
+import customEvent from '../../utilities/custom-event';
 import getConfigBoolean from '../../utilities/get-config-boolean';
 // import reflow from '../../utilities/reflow';
 import parseJson from '../../utilities/parse-json';
 import getUniqueId from '../../utilities/get-unique-id';
+import removeClass from '../../utilities/remove-class';
+import addClass from '../../utilities/add-class';
 
 @Component({
   tag: 'bs-tooltip',
@@ -45,6 +50,7 @@ export class BsTooltip {
   @State() activeTrigger: any;
   @State() tooltipId: string;
   @State() tip: HTMLElement;
+  @State() popperHandle: any;
 
   componentDidLoad() {
     const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
@@ -102,9 +108,9 @@ export class BsTooltip {
 
 
       this.activeTrigger.click = !this.activeTrigger.click;
-      const hasAnActiveTrigger = _some(this.activeTrigger);
+      // const hasAnActiveTrigger = _some(this.activeTrigger);
       // context._activeTrigger.click = !context._activeTrigger.click;
-      if (hasAnActiveTrigger) {
+      if (this.isWithActiveTrigger()) {
         this.enter();
       } else {
         this.leave();
@@ -127,8 +133,18 @@ export class BsTooltip {
 
   }
 
+  isWithActiveTrigger() {
+    for (const trigger in this.activeTrigger) {
+      if (this.activeTrigger[trigger]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+
   enter(event: any = null) {
-    console.log('enter');
+    console.log('enter event: ', event);
     // var dataKey = this.constructor.DATA_KEY;
     // context = context || $$$1(event.currentTarget).data(dataKey);
 
@@ -168,18 +184,336 @@ export class BsTooltip {
 
   leave() {
     console.log('leave'); // TODO:
+    // var dataKey = this.constructor.DATA_KEY;
+    // context = context || $$$1(event.currentTarget).data(dataKey);
+
+    // if (!context) {
+    //   context = new this.constructor(event.currentTarget, this._getDelegateConfig());
+    //   $$$1(event.currentTarget).data(dataKey, context);
+    // }
+
+    // if (event) {
+    //   context._activeTrigger[event.type === 'focusout' ? Trigger.FOCUS : Trigger.HOVER] = false;
+    // }
+
+    if (this.isWithActiveTrigger()) {
+      return;
+    }
+
+    // clearTimeout(context._timeout);
+    // context._hoverState = HoverState.OUT;
+
+    if (!this.config.delay || !this.config.delay.hide) {
+      this.hide();
+      return;
+    }
+
+    // context._timeout = setTimeout(function () {
+    //   if (context._hoverState === HoverState.OUT) {
+    //     context.hide();
+    //   }
+    // }, context.config.delay.hide);
+
+
+
+
   }
 
   show() {
     // TODO:
+    console.log('show');
 
 
 
+    if (this.tooltipEl.style.display === 'none') {
+      throw new Error('Please use show on visible elements');
+    }
+
+    // var showEvent = $$$1.Event(this.constructor.Event.SHOW);
+
+    if (_size(this.config.title) > 0 && this.isEnabled) {
+
+      const showEvent = customEvent(this.tooltipEl, this.showEventName);
+      if (showEvent.defaultPrevented) {
+        return;
+      }
+
+      // $$$1(this.element).trigger(showEvent);
+      // var isInTheDom = $$$1.contains(this.element.ownerDocument.documentElement, this.element);
+
+      // if (showEvent.isDefaultPrevented() || !isInTheDom) {
+      //   return;
+      // }
+
+      const tip = this.getTipElement();
+      const tipId = this.tooltipId;
+      // var tipId = Util.getUID(this.constructor.NAME);
+      tip.setAttribute('id', tipId);
+      this.tooltipEl.setAttribute('aria-describedby', tipId);
+      this.setContent();
+
+      // if (this.config.animation) {
+      //   $$$1(tip).addClass(ClassName.FADE);
+      // }
+
+      const placement = typeof this.config.placement === 'function' ? this.config.placement.call(this, tip, this.tooltipEl) : this.config.placement;
+
+      // var attachment = this._getAttachment(placement);
+      const attachment = this.getAttachment(placement);
+
+      this.addAttachmentClass(attachment);
+      // var container = this.config.container === false ? document.body : $$$1(document).find(this.config.container);
+      // $$$1(tip).data(this.constructor.DATA_KEY, this);
+
+      // if (!$$$1.contains(this.element.ownerDocument.documentElement, this.tip)) {
+      //   $$$1(tip).appendTo(container);
+      // }
+
+      // $$$1(this.element).trigger(this.constructor.Event.INSERTED);
+      this.popperHandle = new Popper(this.tooltipEl, tip, {
+        placement: attachment,
+        modifiers: {
+          offset: {
+            offset: this.config.offset
+          },
+          flip: {
+            behavior: this.config.fallbackPlacement
+          },
+          arrow: {
+            element: '.arrow', //Selector.ARROW
+          },
+          preventOverflow: {
+            boundariesElement: this.config.boundary
+          }
+        },
+        onCreate: this.handlePopperOnCreate,
+        onUpdate: this.handlePopperOnUpdate,
+      });
+
+      addClass(tip, 'show');
+
+      // If this is a touch-enabled device we add extra
+      // empty mouseover listeners to the body's immediate children;
+      // only needed because of broken event delegation on iOS
+      // https://www.quirksmode.org/blog/archives/2014/02/mouse_event_bub.html
+      // TODO:
+      // if ('ontouchstart' in document.documentElement) {
+      //   $$$1(document.body).children().on('mouseover', null, $$$1.noop);
+      // }
+
+      if (hasClass(tip, 'fade')) {
+        const transitionDuration = getTransitionDurationFromElement(this.tip);
+        setTimeout(this.showComplete, transitionDuration);
+      } else {
+        this.showComplete();
+      }
+    }
+  }
+
+  showComplete() {
+    if (this.config.animation) {
+      this.fixTransition();
+    }
+
+    // var prevHoverState = _this._hoverState;
+    // _this._hoverState = null;
+
+    customEvent(this.tooltipEl, this.shownEventName);
+    // $$$1(_this.element).trigger(_this.constructor.Event.SHOWN);
+
+    // if (prevHoverState === HoverState.OUT) {
+    //   _this._leave(null, _this);
+    // }
+  }
+
+  hide(callback : any = () => {}) {
+    console.log('hide');
+
+
+    const tip = this.getTipElement();
+    // var hideEvent = $$$1.Event(this.constructor.Event.HIDE);
+
+
+
+    const hideEvent = customEvent(this.tooltipEl, this.hideEventName);
+    if (hideEvent.defaultPrevented) {
+      return;
+    }
+
+    removeClass(tip, 'show');
+
+    // $$$1(tip).removeClass(ClassName.SHOW); // If this is a touch-enabled device we remove the extra
+    // empty mouseover listeners we added for iOS support
+
+    // if ('ontouchstart' in document.documentElement) {
+    //   $$$1(document.body).children().off('mouseover', null, $$$1.noop);
+    // }
+
+    this.activeTrigger.click = false;
+    this.activeTrigger.focus = false;
+    this.activeTrigger.hover = false;
+
+    if (hasClass(tip, 'fade')) {
+      const transitionDuration = getTransitionDurationFromElement(tip);
+      setTimeout(() => {
+        this.hideComplete(callback);
+      }, transitionDuration);
+    } else {
+      this.hideComplete();
+    }
+
+
+    // if (hasClass(tip, 'fade')) {
+
+    // } else {
+    //   this.showComplete();
+    // }
+
+    // if ($$$1(this.tip).hasClass(ClassName.FADE)) {
+    //   var transitionDuration = Util.getTransitionDurationFromElement(tip);
+    //   $$$1(tip).one(Util.TRANSITION_END, complete).emulateTransitionEnd(transitionDuration);
+    // } else {
+    //   complete();
+    // }
+
+    // this._hoverState = '';
 
   }
 
+  hideComplete(callback : any = () => {}) {
+    // if (_this2._hoverState !== HoverState.SHOW && tip.parentNode) {
+    //   tip.parentNode.removeChild(tip);
+    // }
+
+    this.cleanTipClass();
+
+    this.tooltipEl.removeAttribute('aria-describedby');
+
+    // $$$1(_this2.element).trigger(_this2.constructor.Event.HIDDEN);
+    customEvent(this.tooltipEl, this.hiddenEventName);
+
+    if (this.popperHandle !== null) {
+      this.popperHandle.destroy();
+    }
+
+    if (callback) {
+      callback();
+    }
+  };
+
+
+
+  fixTransition() {
+    var tip = this.getTipElement();
+    var initConfigAnimation = this.config.animation;
+
+    if (tip.getAttribute('x-placement') !== null) {
+      return;
+    }
+    removeClass(tip, 'fade');
+    // $$$1(tip).removeClass(ClassName.FADE);
+    this.config.animation = false;
+    this.hide();
+    this.show();
+    this.config.animation = initConfigAnimation;
+  }
+
+
+
+  handlePopperOnCreate = (data) => {
+    if (data.originalPlacement !== data.placement) {
+      this.handlePopperPlacementChange(data);
+    }
+  }
+
+  handlePopperOnUpdate = (data) => {
+    this.handlePopperPlacementChange(data);
+  }
+
+  handlePopperPlacementChange(popperData) {
+    const popperInstance = popperData.instance;
+    this.tip = popperInstance.popper;
+    this.cleanTipClass();
+    this.addAttachmentClass(this.getAttachment(popperData.placement));
+  };
+
+  cleanTipClass() {
+    const tip = this.getTipElement();
+    // var $tip = $$$1(this.getTipElement());
+    var CLASS_PREFIX = 'bs-tooltip';
+    var BSCLS_PREFIX_REGEX = new RegExp("(^|\\s)" + CLASS_PREFIX + "\\S+", 'g');
+
+    // console.log('BSCLS_PREFIX_REGEX: ', BSCLS_PREFIX_REGEX);
+
+    var tabClass = tip.getAttribute('class').match(BSCLS_PREFIX_REGEX).map(x => x.trim());
+
+    console.log('tabClass: ', tabClass);
+
+    if (tabClass !== null && tabClass.length) {
+      removeClass(tip, tabClass);
+      // $tip.removeClass(tabClass.join(''));
+    }
+  };
+
+
+  addAttachmentClass(attachment) {
+    const CLASS_PREFIX = 'bs-tooltip';
+    addClass(this.getTipElement(), CLASS_PREFIX + "-" + attachment);
+    // $$$1(this.getTipElement()).addClass(CLASS_PREFIX + "-" + attachment);
+  };
+
+  getAttachment(placement) {
+    const AttachmentMap = {
+      AUTO: 'auto',
+      TOP: 'top',
+      RIGHT: 'right',
+      BOTTOM: 'bottom',
+      LEFT: 'left'
+    };
+    return AttachmentMap[_toUpper(placement)];
+  };
+
+  setContent() {
+    var tip = this.getTipElement();
+    this.setElementContent(this.tooltipEl.querySelector('.tooltip-inner'), this.getTitle());
+    removeClass(tip, 'fade');
+    removeClass(tip, 'show');
+    // $$$1(tip).removeClass(ClassName.FADE + " " + ClassName.SHOW);
+  };
+
+
+  setElementContent(el, content) {
+    // var html = this.config.html;
+    if (this.config.html) {
+      el.innerHTML = content;
+      // if (!$$$1(content).parent().is($element)) {
+      //   $element.empty().append(content);
+      // }
+    } else {
+      el.textContent = content;
+      // $element.text($$$1(content).text());
+    }
+
+    // if (typeof content === 'object' && (content.nodeType || content.jquery)) {
+    //   // Content is a DOM node or a jQuery
+
+    // } else {
+    //   $element[html ? 'html' : 'text'](content);
+    // }
+  };
+
+  getTitle() {
+    let title = this.tooltipEl.dataset.originalTitle;
+    if (!title) {
+      title = typeof this.config.title === 'function' ? this.config.title.call(this.tooltipEl) : this.config.title;
+    }
+    return title;
+  };
+
+
+
   setListeners() {
-    const triggers = split(toLower(this.config.trigger), ' ');
+    const triggers = split(_toLower(this.config.trigger), ' ');
     console.log('this.config: ', this.config);
     console.log('triggers: ', triggers);
     if (_includes(triggers, 'manual')) {
@@ -197,7 +531,6 @@ export class BsTooltip {
     if (_includes(triggers, 'focus')) {
       console.log('bind trigger: focus');
     }
-
   }
 
 
