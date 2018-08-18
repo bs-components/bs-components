@@ -49,6 +49,8 @@ export class BsTooltip {
   @State() timeout: any;
   @State() disposeTimeout: any;
 
+  // TODO: a stencil watch on a prop to update the title on change would be nice. . .
+
   componentDidLoad() {
     const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
     if (_size(currentTabIndex) === 0) {
@@ -73,13 +75,6 @@ export class BsTooltip {
     this.tip = null;
     this.getConfig(overrideConfig);
     this.setListeners();
-  }
-
-  getTemplateSelector() {
-    if (_has(this.tooltipEl.dataset, 'templateSelector')) {
-      return this.tooltipEl.dataset.templateSelector;
-    }
-    return '';
   }
 
   makeTip() {
@@ -241,7 +236,7 @@ export class BsTooltip {
             behavior: this.config.fallbackPlacement
           },
           arrow: {
-            element: '.arrow', //Selector.ARROW
+            element: '.arrow',
           },
           preventOverflow: {
             boundariesElement: this.config.boundary
@@ -481,6 +476,9 @@ export class BsTooltip {
     }
 
     // TODO: what if the selector is set
+    // https://github.com/twbs/bootstrap/issues/4215
+    // well if it's a dynamic html element. . .
+    // we can just add and remove bs-tooltip tags as needed. . .
 
     this.fixTitle();
   }
