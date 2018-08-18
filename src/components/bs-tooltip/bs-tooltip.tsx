@@ -6,7 +6,6 @@ import _size from 'lodash/size';
 import _get from 'lodash/get';
 import _split from 'lodash/split';
 import _toLower from 'lodash/toLower';
-// import _toUpper from 'lodash/toUpper';
 import _has from 'lodash/has'
 import _toInteger from 'lodash/toInteger'
 import _isNaN from 'lodash/isNaN'
@@ -14,23 +13,16 @@ import _toString from 'lodash/toString'
 import _isNumber from 'lodash/isNumber'
 import _includes from 'lodash/includes'
 import _intersection from 'lodash/intersection'
-// import _some from 'lodash/some'
-// import _findIndex from 'lodash/findIndex';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
-// import closest from '../../utilities/closest';
-// import elementMatches from '../../utilities/element-matches';
+import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
-// import addClass from '../../utilities/add-class';
-// import removeClass from '../../utilities/remove-class';
-// import toggleClass from '../../utilities/toggle-class';
-import customEvent from '../../utilities/custom-event';
-import getConfigBoolean from '../../utilities/get-config-boolean';
-// import reflow from '../../utilities/reflow';
-import parseJson from '../../utilities/parse-json';
-import getUniqueId from '../../utilities/get-unique-id';
 import removeClass from '../../utilities/remove-class';
 import addClass from '../../utilities/add-class';
+import customEvent from '../../utilities/custom-event';
+import getConfigBoolean from '../../utilities/get-config-boolean';
+import parseJson from '../../utilities/parse-json';
+import getUniqueId from '../../utilities/get-unique-id';
 
 @Component({
   tag: 'bs-tooltip',
@@ -51,12 +43,11 @@ export class BsTooltip {
   @State() isEnabled: boolean;
   @State() activeTrigger: any;
   @State() tooltipId: string;
-  // @State() tipTemplate: HTMLElement;
   @State() tip: HTMLElement;
   @State() popperHandle: any;
   @State() hoverState: string;
   @State() timeout: any;
-
+  @State() disposeTimeout: any;
 
   componentDidLoad() {
     const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
@@ -80,52 +71,6 @@ export class BsTooltip {
     this.tooltipId = getUniqueId('tooltip');
     this.tooltipEl.dataset.bsId = this.tooltipId;
     this.tip = null;
-    // console.log('this.tooltipEl.children: ', this.tooltipEl.children);
-
-    // const userSelectedTemplate = this.getTemplateSelector();
-    // if (_size(userSelectedTemplate) > 0) {
-    //   this.tip = document.querySelector(userSelectedTemplate);
-    // }
-
-
-    // const tipArr = this.getBsTooltipTemplates();
-
-    // // console.log('tipArr: ', tipArr);
-    // // console.log('tipArr.length: ', tipArr.length);
-    // // let templateWrapper;
-    // if (tipArr.length === 1) {
-    //   this.tipTemplate = tipArr[0];
-    // } else if (tipArr.length === 0) {
-    //   // insert default template and set this.tip to it
-
-    //   const bsTooltipTemplate = document.createElement("bs-tooltip-template");
-    //   // addClass(this.tip, 'tooltip');
-    //   // this.tip.setAttribute('role', 'tooltip');
-    //   bsTooltipTemplate.innerHTML = '<div class="tooltip" role="tooltip">' + '<div class="arrow"></div>' + '<div class="tooltip-inner"></div></div>';
-    //   this.tooltipEl.appendChild(bsTooltipTemplate);
-    //   const newTipArr = this.getBsTooltipTemplates();
-    //   this.tipTemplate = newTipArr[0];
-    // } else {
-    //   throw new Error('You may only have one bs-tooltip-template');
-    // }
-    // // console.log('templateWrapper: ', templateWrapper);
-    // this.tip = this.tipTemplate.querySelector('.tooltip');
-    // console.log('this.tip: ', this.tip);
-
-    // const bsTooltipNamedTemplates = Array.prototype.slice.call(this.tooltipEl.querySelectorAll('[name="tooltip-template"]'));
-    // console.log('bsTooltipNamedTemplates: ', bsTooltipNamedTemplates);
-    // if (bsTooltipNamedTemplates.length !== 1) {
-    //   throw new Error('Unable to locate tooltip-template for tooltip');
-    // }
-    // if (bsTooltipNamedTemplates[0].children.length !== 1) {
-    //   throw new Error('there must be a single html element within the tooltip-template');
-    // }
-    // this.tip = bsTooltipNamedTemplates[0].children[0];
-
-
-    // console.log('bsTooltipTemplateEl: ', bsTooltipTemplateEl);
-    // this.tipTemplate.style.display = 'none';
-
     this.getConfig(overrideConfig);
     this.setListeners();
   }
@@ -153,23 +98,10 @@ export class BsTooltip {
   }
 
   getTipElement() {
+    clearTimeout(this.disposeTimeout);
     this.tip = this.tip || this.makeTip();
     return this.tip;
   };
-
-
-
-  // getBsTooltipTemplates() {
-  //   const tooltipChildren = Array.prototype.slice.call(this.tooltipEl.children);
-  //   const tipArr = [];
-  //   for (let j = 0, len = tooltipChildren.length; j < len; j++) {
-  //     if (_toLower(tooltipChildren[j].tagName) === 'bs-tooltip-template') {
-  //       tipArr.push(tooltipChildren[j]);
-  //     }
-  //   }
-  //   return tipArr;
-  // }
-
 
   disableTooltip() {
     this.isEnabled = false;
@@ -177,28 +109,27 @@ export class BsTooltip {
     this.tooltipEl.removeEventListener('click', this.handleClickTrigger);
     this.tooltipEl.removeEventListener('mouseenter', this.handleMouseEnter);
     this.tooltipEl.removeEventListener('mouseleave', this.handleMouseLeave);
-    // this.tip.removeEventListener('mouseenter', this.handleMouseLeave);
     this.tooltipEl.removeEventListener('focusin', this.handleFocusIn);
     this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
+    const closestModal = closest(this.tooltipEl, '.modal');
+    if (closestModal) {
+      const modalHideEventName = closestModal.hideEventName;
+      if (modalHideEventName) {
+        closestModal.removeEventListener(closestModal.hideEventName, this.handleModalHide);
+      }
+    }
     this.activeTrigger = {};
     this.hoverState = '';
-    // this.tipTemplate.style.display = 'none';
+    clearTimeout(this.disposeTimeout);
+    this.removeTooltipFromDom();
   }
 
-  // getTipElement() {
-  //   this.tip = this.tip || this.tooltipEl.querySelector('.tooltip');
-  //   return this.tip;
-  // };
-
-  toggle(event: any) {
-    // console.log('toggle event: ', event);
+  toggle(event: any = null) {
     if (!this.isEnabled) {
       return;
     }
     if (event) {
       this.activeTrigger.click = !this.activeTrigger.click;
-      // const hasAnActiveTrigger = _some(this.activeTrigger);
-      // context._activeTrigger.click = !context._activeTrigger.click;
       if (this.isWithActiveTrigger()) {
         this.enter();
       } else {
@@ -222,17 +153,7 @@ export class BsTooltip {
     return false;
   };
 
-
   enter(event: any = null) {
-    // console.log('enter event: ', event);
-    // var dataKey = this.constructor.DATA_KEY;
-    // context = context || $$$1(event.currentTarget).data(dataKey);
-
-    // if (!context) {
-    //   context = new this.constructor(event.currentTarget, this._getDelegateConfig());
-    //   $$$1(event.currentTarget).data(dataKey, context);
-    // }
-
     if (event) {
       const eventType = event.type === 'focusin' ? 'focus' : 'hover';
       this.activeTrigger[eventType] = true;
@@ -244,6 +165,7 @@ export class BsTooltip {
     }
 
     clearTimeout(this.timeout);
+
     this.hoverState = 'show';
 
     if (!this.config.delay || !this.config.delay.show) {
@@ -285,8 +207,6 @@ export class BsTooltip {
   }
 
   show() {
-    // console.log('show');
-
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
@@ -298,12 +218,8 @@ export class BsTooltip {
         return;
       }
 
-      // const tipId = this.tooltipId;
-      // this.tip.setAttribute('id', tipId);
-      // this.tooltipEl.setAttribute('aria-describedby', tipId);
       const tip = this.getTipElement();
       this.setContent();
-
 
       if (this.config.animation) {
         addClass(tip, 'fade');
@@ -314,13 +230,6 @@ export class BsTooltip {
       const attachment = this.getAttachment(placement);
 
       this.addAttachmentClass(attachment);
-      // var container = this.config.container === false ? document.body : $$$1(document).find(this.config.container);
-      // $$$1(tip).data(this.constructor.DATA_KEY, this);
-
-      // if (!$$$1.contains(this.element.ownerDocument.documentElement, this.tip)) {
-      //   $$$1(tip).appendTo(container);
-      // }
-
 
       this.popperHandle = new Popper(this.tooltipEl, tip, {
         placement: attachment,
@@ -342,7 +251,6 @@ export class BsTooltip {
         onUpdate: this.handlePopperOnUpdate,
       });
 
-      // this.tipTemplate.style.display = 'block';
       addClass(tip, 'show');
 
       // If this is a touch-enabled device we add extra
@@ -377,7 +285,6 @@ export class BsTooltip {
   }
 
   hide(callback : any = () => {}) {
-    // console.log('hide');
     const tip = this.getTipElement();
     const hideEvent = customEvent(this.tooltipEl, this.hideEventName);
     if (hideEvent.defaultPrevented) {
@@ -385,7 +292,6 @@ export class BsTooltip {
     }
 
     removeClass(tip, 'show');
-    // this.tipTemplate.style.display = 'none';
 
     // If this is a touch-enabled device we remove the extra
     // empty mouseover listeners we added for iOS support
@@ -409,25 +315,27 @@ export class BsTooltip {
   }
 
   hideComplete(callback : any = () => {}) {
-    const tip = this.getTipElement();
-    // if (this.hoverState !== 'show' && tip.parentNode) {
-    //   tip.parentNode.removeChild(tip);
-    // }
-
-    if (this.hoverState !== 'show' && tip.parentNode) {
-      tip.parentNode.removeChild(tip);
-      this.tip = null;
-    } else {
-      this.cleanTipClass();
-    }
+    this.cleanTipClass();
 
     this.tooltipEl.removeAttribute('aria-describedby');
     customEvent(this.tooltipEl, this.hiddenEventName);
     if (this.popperHandle !== null) {
       this.popperHandle.destroy();
     }
+
+    this.disposeTimeout = setTimeout(() => {
+      this.removeTooltipFromDom();
+    }, this.config.disposeTimeToWait);
+
     callback();
   };
+
+  removeTooltipFromDom() {
+    if (this.tip && this.hoverState !== 'show' && this.tip.parentNode) {
+      this.tip.parentNode.removeChild(this.tip);
+      this.tip = null;
+    }
+  }
 
   fixTransition() {
     const tip = this.getTipElement();
@@ -468,7 +376,6 @@ export class BsTooltip {
       'bs-tooltip-bottom',
       'bs-tooltip-left'
     ];
-    // const tip = this.getTipElement();
     const classesToRemove = _intersection(bsTooltipPositionClasses, tip.classList);
     for (let j = 0, len = classesToRemove.length; j < len; j++) {
       removeClass(tip, classesToRemove[j]);
@@ -514,8 +421,6 @@ export class BsTooltip {
     return title;
   };
 
-
-
   handleClickTrigger = (event) => {
     this.toggle(event);
   }
@@ -536,10 +441,13 @@ export class BsTooltip {
     this.leave(event);
   }
 
+  handleModalHide = (event) => {
+    this.activeTrigger.click = false;
+    this.leave(event);
+  }
+
   setListeners() {
     const triggers = _split(_toLower(this.config.trigger), ' ');
-    // console.log('this.config: ', this.config);
-    // console.log('triggers: ', triggers);
     if (_includes(triggers, 'click')) {
       this.tooltipEl.removeEventListener('click', this.handleClickTrigger);
       this.tooltipEl.addEventListener('click', this.handleClickTrigger);
@@ -560,8 +468,30 @@ export class BsTooltip {
       this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
       this.tooltipEl.addEventListener('focusout', this.handleFocusOut);
     }
+
+    const closestModal = closest(this.tooltipEl, '.modal');
+    if (closestModal) {
+      const modalHideEventName = closestModal.hideEventName;
+      // console.log('closestModal: ', closestModal);
+      // console.log('closestModal.hideEventName: ', closestModal.hideEventName);
+      if (modalHideEventName) {
+        closestModal.removeEventListener(closestModal.hideEventName, this.handleModalHide);
+        closestModal.addEventListener(closestModal.hideEventName, this.handleModalHide);
+      }
+    }
+
+    // TODO: what if the selector is set
+
+    this.fixTitle();
   }
 
+  fixTitle() {
+    const titleType = typeof this.tooltipEl.dataset.originalTitle;
+    if (this.tooltipEl.title || titleType !== 'string') {
+      this.tooltipEl.dataset.originalTitle = this.tooltipEl.title || '';
+      this.tooltipEl.title = '';
+    }
+  }
 
   getConfig(overrideConfig:any = {}) {
     const defaultConfig = {
@@ -577,6 +507,7 @@ export class BsTooltip {
       container: false,
       fallbackPlacement: 'flip',
       boundary: 'scrollParent',
+      disposeTimeToWait: 5000,
     };
 
     this.config = {};
@@ -698,38 +629,62 @@ export class BsTooltip {
       config.boundary = defaultConfig.boundary;
     }
 
+    if (_has(overrideConfig, 'disposeTimeToWait')) {
+      config.disposeTimeToWait = _toInteger(overrideConfig.disposeTimeToWait);
+    } else if (_has(this.tooltipEl.dataset, 'disposeTimeToWait')) {
+      config.disposeTimeToWait = _toInteger(this.tooltipEl.dataset.disposeTimeToWait);
+    } else {
+      config.disposeTimeToWait = defaultConfig.disposeTimeToWait;
+    }
+    if (_isNaN(config.disposeTimeToWait)) {
+      config.disposeTimeToWait = defaultConfig.disposeTimeToWait;
+    }
+
     this.config = config;
   };
 
 
   @Method()
   tooltip(tooltipOptions:any = {}) {
-    if (!this.isEnabled) {
+    if (_size(tooltipOptions) === 0) {
+      if (!this.isEnabled) {
+        this.enableTooltip();
+      }
+    } else if (tooltipOptions === 'enable') {
       this.enableTooltip();
+    } else if (tooltipOptions === 'disable') {
+      this.disableTooltip();
+    } else if (tooltipOptions === 'toggleEnabled') {
+      if (this.isEnabled) {
+        this.disableTooltip();
+      } else {
+        this.enableTooltip();
+      }
+    } else if (tooltipOptions === 'show') {
+      if (!this.isEnabled) {
+        this.enableTooltip();
+      }
+      this.enter();
+    } else if (tooltipOptions === 'hide') {
+      if (!this.isEnabled) {
+        this.enableTooltip();
+      }
+      this.leave();
+    } else if (tooltipOptions === 'toggle') {
+      if (!this.isEnabled) {
+        this.enableTooltip();
+      }
+      this.toggle();
+    } else if (tooltipOptions === 'update') {
+      if (this.popperHandle !== null) {
+        this.popperHandle.scheduleUpdate();
+      }
+    } else {
+      this.enableTooltip(tooltipOptions);
     }
-
-    // show
-    // hide
-    // toggle
-    // enable
-    // disable
-    // toggleEnabled
-    // update
-    console.log('tooltipOptions: ', tooltipOptions);
   }
 
   render() {
     return ( <slot /> );
   }
-
-  // render() {
-  //   // // https://developers.google.com/web/fundamentals/web-components/shadowdom#slots
-  //   // return [
-  //   //   <slot />,
-  //   //     <div class="tooltip" role="tooltip">
-  //   //       <div class="arrow"></div>
-  //   //       <div class="tooltip-inner"></div>
-  //   //     </div>
-  //   // ]
-  // }
 }

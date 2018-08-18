@@ -96,23 +96,17 @@
   <div class="container mt-5">
 
 
-    <!-- <bs-tooltip>
-        <button type="button" class="btn btn-default">has tooltip</button>
-        <div slot="tooltip-template">
-          <div class="tooltip" role="tooltip">
-            <div class="arrow"></div>
-            <div class="tooltip-inner"></div>
-          </div>
-        </div>
-    </bs-tooltip> -->
+
+
+
 
     <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
       Tooltip on top
     </bs-tooltip>
-    <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+    <bs-tooltip id="right-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
       Tooltip on right
     </bs-tooltip>
-    <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
+    <bs-tooltip id="bottom-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
       Tooltip on bottom
     </bs-tooltip>
     <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
@@ -121,16 +115,14 @@
     <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
       Tooltip with HTML
     </bs-tooltip>
-
-
-
-
     <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
     </bs-tooltip>
-
     <p>&nbsp;</p>
-    <button id="click-top-tooltip-button" type="button" class="btn btn-default">click top tooltip button</button>
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
+
+    <button id="show-right-tooltip-button" type="button" class="btn btn-default">show right tooltip</button>
+    <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
 
     <hr>
 
@@ -163,6 +155,9 @@
         </div>
         <div class="modal-body">
           ...
+          <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+            click triggered tooltip
+          </bs-tooltip>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -535,12 +530,18 @@
     // }
 
     function handleClickOnTopTooltipButton() {
-
       const el = document.getElementById("top-tooltip-button");
-      el.click();
+      el.focus();
+    }
 
+    function handleShowRightTooltip() {
+      const el = document.getElementById("right-tooltip-button");
+      el.tooltip('show');
+    }
 
-
+    function handleToggleBottomTooltip() {
+      const el = document.getElementById("bottom-tooltip-button");
+      el.tooltip('toggle');
     }
 
 
@@ -562,6 +563,12 @@
 
 
     document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+    document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
+    document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+
+
+
+
 
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
 
