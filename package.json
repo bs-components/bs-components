@@ -1,6 +1,6 @@
 {
   "name": "bs-components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Bootstrap Stenciljs Components",
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/JasonCubic/bs-components",
   "jest": {
+    "testURL": "http://localhost/",
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
     },

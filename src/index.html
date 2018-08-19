@@ -94,7 +94,7 @@
 
 
   <div class="container mt-5">
-
+<!--
 
     <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
       Tooltip on top
@@ -115,7 +115,7 @@
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
     </bs-tooltip>
     <p>&nbsp;</p>
-    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button> -->
 
     <button id="show-right-tooltip-button" type="button" class="btn btn-default">show right tooltip</button>
     <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
@@ -151,9 +151,9 @@
         </div>
         <div class="modal-body">
           ...
-          <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+          <!-- <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
             click triggered tooltip
-          </bs-tooltip>
+          </bs-tooltip> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -362,7 +362,18 @@
             <a class="dropdown-item" href="#">Something else here</a>
           </div>
       </bs-dropdown>
+
+      <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" title="asdfadfs">
+        Vue Tooltip
+      </bs-tooltip>
+
+
+
+
+
       <p>&nbsp;</p>
+      <input v-model="tooltipValue">
+      {{ tooltipValue }}
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
@@ -404,6 +415,7 @@
       data: {
         message: 'Hello Vue!',
         showDropdown: 'false',
+        tooltipValue: 'vue tooltip',
       },
       methods: {
         handleShownBsDropdown: handleShownBsDropdown,
@@ -558,9 +570,9 @@
     document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 
 
-    document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
-    document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
-    document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+    // document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+    // document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
+    // document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
 
 
 

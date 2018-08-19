@@ -6,6 +6,10 @@ Note: Stenciljs (The S in BS-Components) does not support browsers older than IE
 
 ---
 
+Put a script tag similar to this <script src='https://unpkg.com/bs-components@0.0.1/dist/bscomponents.js'></script> in the head of your index.html
+
+---
+
 TODO:
 * Tooltips
 * Popovers

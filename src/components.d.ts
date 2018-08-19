@@ -72,6 +72,7 @@ declare global {
       'showEventName': string;
       'shownEventName': string;
       'tooltip': (tooltipOptions?: any) => void;
+      'tooltipContent': string;
     }
   }
 
@@ -168,6 +169,7 @@ declare global {
       'noEnableOnLoad'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;
+      'tooltipContent'?: string;
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Method, State } from '@stencil/core';
+import { Component, Prop, Element, Method, State, Watch } from '@stencil/core';
 
 import Popper from 'popper.js';
 
@@ -32,12 +32,12 @@ export class BsTooltip {
   @Element() tooltipEl: HTMLElement;
 
   @Prop() noEnableOnLoad: boolean = false;
-
   @Prop() showEventName: string = 'show.bs.tooltip';
   @Prop() shownEventName: string = 'shown.bs.tooltip';
   @Prop() hideEventName: string = 'hide.bs.tooltip';
   @Prop() hiddenEventName: string = 'hidden.bs.tooltip';
   @Prop() insertedEventName: string = 'inserted.bs.tooltip';
+  @Prop({ mutable: true, reflectToAttr: true }) tooltipContent: string = '';
 
   @State() config: any;
   @State() isEnabled: boolean;
@@ -48,8 +48,6 @@ export class BsTooltip {
   @State() hoverState: string;
   @State() timeout: any;
   @State() disposeTimeout: any;
-
-  // TODO: a stencil watch on a prop to update the title on change would be nice. . .
 
   componentDidLoad() {
     const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
@@ -409,12 +407,38 @@ export class BsTooltip {
   };
 
   getTitle() {
-    let title = this.tooltipEl.dataset.originalTitle;
-    if (!title) {
-      title = typeof this.config.title === 'function' ? this.config.title.call(this.tooltipEl) : this.config.title;
+    if (this.config.title) {
+      if (typeof this.config.title === 'function') {
+        return this.config.title.call(this.tooltipEl);
+      } else {
+        return this.config.title;
+      }
+    } else if (this.tooltipEl.dataset.originalTitle) {
+      return this.tooltipEl.dataset.originalTitle;
+    } else {
+      return '';
     }
-    return title;
+    // let title = this.tooltipEl.dataset.originalTitle;
+    // if (!title) {
+    //   title = typeof this.config.title === 'function' ? this.config.title.call(this.tooltipEl) : this.config.title;
+    // }
+    // return title;
   };
+
+
+  @Watch('tooltipContent')
+  handleWatchTooltipContent(newValue /* , oldValue */ ) {
+    if (!this.isEnabled) {
+      return;
+    }
+    this.config.title = newValue;
+    const tip = this.getTipElement();
+    this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
+    if (this.popperHandle && this.popperHandle.scheduleUpdate) {
+      this.popperHandle.scheduleUpdate();
+    }
+  }
+
 
   handleClickTrigger = (event) => {
     this.toggle(event);
@@ -484,10 +508,12 @@ export class BsTooltip {
   }
 
   fixTitle() {
-    const titleType = typeof this.tooltipEl.dataset.originalTitle;
-    if (this.tooltipEl.title || titleType !== 'string') {
+    // console.log('this.tooltipEl.title: ', this.tooltipEl.title);
+    // console.log('_size(this.tooltipEl.title): ', _size(this.tooltipEl.title));
+    // const titleType = typeof this.tooltipEl.dataset.originalTitle;
+    if (_size(this.tooltipEl.title) > 0) {
       this.tooltipEl.dataset.originalTitle = this.tooltipEl.title || '';
-      this.tooltipEl.title = '';
+      this.tooltipEl.removeAttribute('title');
     }
   }
 
@@ -530,6 +556,9 @@ export class BsTooltip {
     const titleAttribute = this.tooltipEl.getAttribute('title');
     if (_has(overrideConfig, 'title')) {
       config.title = overrideConfig.title;
+      this.tooltipContent = overrideConfig.title;
+    } else if (_size(this.tooltipContent) > 0) {
+      config.title = this.tooltipContent;
     } else if (_has(this.tooltipEl.dataset, 'title')) {
       config.title = this.tooltipEl.dataset.title;
     } else if (titleAttribute) {
@@ -639,6 +668,7 @@ export class BsTooltip {
     }
 
     this.config = config;
+    // console.log('this.config: ', this.config);
   };
 
 
