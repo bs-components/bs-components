@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Method, State, Watch } from '@stencil/core';
+import { Component, Prop, Element, Method, State, Watch, Event, EventEmitter } from '@stencil/core';
 
 import Popper from 'popper.js';
 
@@ -38,6 +38,22 @@ export class BsTooltip {
   @Prop() hiddenEventName: string = 'hidden.bs.tooltip';
   @Prop() insertedEventName: string = 'inserted.bs.tooltip';
   @Prop({ mutable: true, reflectToAttr: true }) tooltipContent: string = '';
+  @Prop({ mutable: true }) defaults = {
+    animation: true,
+    template: '<div class="tooltip" role="tooltip">' + '<div class="arrow"></div>' + '<div class="tooltip-inner"></div></div>',
+    trigger: 'hover focus',
+    title: '',
+    delay: 0,
+    html: false,
+    selector: false,
+    placement: 'top',
+    offset: 0,
+    container: false,
+    fallbackPlacement: 'flip',
+    boundary: 'scrollParent',
+    disposeTimeToWait: 5000,
+  };
+
 
   @State() config: any;
   @State() isEnabled: boolean;
@@ -48,6 +64,13 @@ export class BsTooltip {
   @State() hoverState: string;
   @State() timeout: any;
   @State() disposeTimeout: any;
+
+
+  @Event({eventName: 'show.bs.tooltip' }) showEventEmitter: EventEmitter;
+
+
+  // @Event() showEventEmitter: EventEmitter;
+  // @Event({eventName: this.getShowEventName() }) showEventEmitter: EventEmitter;
 
   componentDidLoad() {
     const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
@@ -76,18 +99,41 @@ export class BsTooltip {
   }
 
   makeTip() {
-    const container = this.config.container === false ? document.body : document.querySelector(this.config.container);
-    const tip = document.createElement("div");
-    addClass(tip, 'tooltip');
-    tip.setAttribute('role', 'tooltip');
-    tip.setAttribute('id', this.tooltipId);
-    this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
-    tip.innerHTML = '<div class="arrow"></div>' + '<div class="tooltip-inner"></div>';
-    if (!this.tooltipEl.ownerDocument.documentElement.contains(tip)) {
+    const container = !this.config.container ? document.body : document.querySelector(this.config.container);
+    // const tip = document.createElement("div");
+    // addClass(tip, 'tooltip');
+    // tip.setAttribute('role', 'tooltip');
+
+    // tip.innerHTML = '<div class="arrow"></div>' + '<div class="tooltip-inner"></div>';
+
+
+    const template = document.createElement('template');
+    // html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = this.config.template;
+
+    template.content.querySelector('.tooltip').setAttribute('id', this.tooltipId);
+    const tip = template.content.firstChild;
+
+    // tip.setAttribute('id', this.tooltipId);
+    // this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
+
+    // console.log('typeof tip: ', typeof tip);
+    // console.log('this.tooltipEl.ownerDocument: ', this.tooltipEl.ownerDocument);
+    // console.log('this.tooltipEl.ownerDocument.documentElement: ', this.tooltipEl.ownerDocument.documentElement);
+    // const closestBody = closest(this.tooltipEl, 'body');
+    // console.log('closestBody: ', closestBody);
+    // const isInSameDomBody = closestBody.parentNode.contains(tip);
+
+    const tipThatIsAlreadyInTheDom = document.getElementById(this.tooltipId)
+    // this.tooltipEl.ownerDocument.documentElement.contains(tip);
+
+    if (!tipThatIsAlreadyInTheDom) {
+    // if (!isInSameDomBody) {
       customEvent(this.tooltipEl, this.insertedEventName);
-      container.appendChild(tip);
+      const newTip = container.appendChild(tip);
+      return newTip;
     }
-    return tip;
+    return tipThatIsAlreadyInTheDom; //document.getElementById(this.tooltipId)
   }
 
   getTipElement() {
@@ -205,8 +251,42 @@ export class BsTooltip {
     }
 
     if (_size(this.config.title) > 0 && this.isEnabled) {
+
+
+
+
+
+      // this.showEvent.defaultPrevent = false;
+
+      // console.log('myEvent: ', myEvent);
+
       const showEvent = customEvent(this.tooltipEl, this.showEventName);
+
+      this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
+
+      // showEvent.type= ;
+
+      // console.log('showEvent: ', showEvent);
+
+      // const showEvent = event;
+
+
+      //
+      // const myEventHandle =
+      // this.showEventEmitter.emit();
+
+      // console.log('showEvent: ', showEvent);
+
+      // showEvent.defaultPrevented
+
+
+      // console.log('this.showEvent: ', this.showEvent);
+
+      // const showEvent = customEvent(this.tooltipEl, this.showEventName);
+
+
       const isInTheDom = this.tooltipEl.ownerDocument.documentElement.contains(this.tooltipEl);
+      // console.log('isInTheDom: ', isInTheDom);
       if (showEvent.defaultPrevented || !isInTheDom) {
         return;
       }
@@ -295,6 +375,7 @@ export class BsTooltip {
     this.activeTrigger.click = false;
     this.activeTrigger.focus = false;
     this.activeTrigger.hover = false;
+    this.tooltipEl.removeAttribute('aria-describedby');
 
     if (hasClass(tip, 'fade')) {
       const transitionDuration = getTransitionDurationFromElement(tip);
@@ -310,9 +391,9 @@ export class BsTooltip {
   hideComplete(callback : any = () => {}) {
     this.cleanTipClass();
 
-    this.tooltipEl.removeAttribute('aria-describedby');
+    // this.tooltipEl.removeAttribute('aria-describedby');
     customEvent(this.tooltipEl, this.hiddenEventName);
-    if (this.popperHandle !== null) {
+    if (this.popperHandle && this.popperHandle.destroy) {
       this.popperHandle.destroy();
     }
 
@@ -513,26 +594,13 @@ export class BsTooltip {
     // const titleType = typeof this.tooltipEl.dataset.originalTitle;
     if (_size(this.tooltipEl.title) > 0) {
       this.tooltipEl.dataset.originalTitle = this.tooltipEl.title || '';
-      this.tooltipEl.removeAttribute('title');
+      // this.tooltipEl.removeAttribute('title');
+      this.tooltipEl.title = '';
     }
   }
 
   getConfig(overrideConfig:any = {}) {
-    const defaultConfig = {
-      animation: true,
-      template: '<div class="tooltip" role="tooltip">' + '<div class="arrow"></div>' + '<div class="tooltip-inner"></div></div>',
-      trigger: 'hover focus',
-      title: '',
-      delay: 0,
-      html: false,
-      selector: false,
-      placement: 'top',
-      offset: 0,
-      container: false,
-      fallbackPlacement: 'flip',
-      boundary: 'scrollParent',
-      disposeTimeToWait: 5000,
-    };
+
 
     this.config = {};
     const config: any = {};
@@ -542,7 +610,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'animation')) {
       config.animation = getConfigBoolean(this.tooltipEl.dataset.animation);
     } else {
-      config.animation = defaultConfig.animation;
+      config.animation = this.defaults.animation;
     }
 
     if (_has(overrideConfig, 'trigger')) {
@@ -550,7 +618,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'trigger')) {
       config.trigger = this.tooltipEl.dataset.trigger;
     } else {
-      config.trigger = defaultConfig.trigger;
+      config.trigger = this.defaults.trigger;
     }
 
     const titleAttribute = this.tooltipEl.getAttribute('title');
@@ -564,7 +632,7 @@ export class BsTooltip {
     } else if (titleAttribute) {
       config.title = titleAttribute;
     } else {
-      config.title = defaultConfig.title;
+      config.title = this.defaults.title;
     }
     if (_isNumber(config.title)) {
       config.title = _toString(config.title);
@@ -586,14 +654,14 @@ export class BsTooltip {
         };
       } else if (configDelayObj !== false) {
         config.delay = {
-          show: _get(configDelayObj, 'show', defaultConfig.delay),
-          hide: _get(configDelayObj, 'hide', defaultConfig.delay),
+          show: _get(configDelayObj, 'show', this.defaults.delay),
+          hide: _get(configDelayObj, 'hide', this.defaults.delay),
         };
       }
     } else {
       config.delay = {
-        show: defaultConfig.delay,
-        hide: defaultConfig.delay
+        show: this.defaults.delay,
+        hide: this.defaults.delay
       };
     }
 
@@ -602,7 +670,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'html')) {
       config.html = getConfigBoolean(this.tooltipEl.dataset.html);
     } else {
-      config.html = defaultConfig.html;
+      config.html = this.defaults.html;
     }
 
     if (_has(overrideConfig, 'selector')) {
@@ -610,7 +678,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'selector')) {
       config.selector = this.tooltipEl.dataset.selector;
     } else {
-      config.selector = defaultConfig.selector;
+      config.selector = this.defaults.selector;
     }
 
     if (_has(overrideConfig, 'placement')) {
@@ -618,7 +686,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'placement')) {
       config.placement = this.tooltipEl.dataset.placement;
     } else {
-      config.placement = defaultConfig.placement;
+      config.placement = this.defaults.placement;
     }
 
     if (_has(overrideConfig, 'offset')) {
@@ -626,10 +694,10 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'offset')) {
       config.offset = _toInteger(this.tooltipEl.dataset.offset);
     } else {
-      config.offset = defaultConfig.offset;
+      config.offset = this.defaults.offset;
     }
     if (_isNaN(config.offset)) {
-      config.offset = defaultConfig.offset;
+      config.offset = this.defaults.offset;
     }
 
     if (_has(overrideConfig, 'container')) {
@@ -637,7 +705,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'container')) {
       config.container = getConfigBoolean(this.tooltipEl.dataset.container);
     } else {
-      config.container = defaultConfig.container;
+      config.container = this.defaults.container;
     }
 
     if (_has(overrideConfig, 'fallbackPlacement')) {
@@ -645,7 +713,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'fallbackPlacement')) {
       config.fallbackPlacement = this.tooltipEl.dataset.fallbackPlacement;
     } else {
-      config.fallbackPlacement = defaultConfig.fallbackPlacement;
+      config.fallbackPlacement = this.defaults.fallbackPlacement;
     }
 
     if (_has(overrideConfig, 'boundary')) {
@@ -653,7 +721,7 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'boundary')) {
       config.boundary = this.tooltipEl.dataset.boundary;
     } else {
-      config.boundary = defaultConfig.boundary;
+      config.boundary = this.defaults.boundary;
     }
 
     if (_has(overrideConfig, 'disposeTimeToWait')) {
@@ -661,11 +729,20 @@ export class BsTooltip {
     } else if (_has(this.tooltipEl.dataset, 'disposeTimeToWait')) {
       config.disposeTimeToWait = _toInteger(this.tooltipEl.dataset.disposeTimeToWait);
     } else {
-      config.disposeTimeToWait = defaultConfig.disposeTimeToWait;
+      config.disposeTimeToWait = this.defaults.disposeTimeToWait;
     }
     if (_isNaN(config.disposeTimeToWait)) {
-      config.disposeTimeToWait = defaultConfig.disposeTimeToWait;
+      config.disposeTimeToWait = this.defaults.disposeTimeToWait;
     }
+
+    if (_has(overrideConfig, 'template')) {
+      config.template = overrideConfig.template;
+    } else if (_has(this.tooltipEl.dataset, 'template')) {
+      config.template = this.tooltipEl.dataset.template;
+    } else {
+      config.template = this.defaults.template;
+    }
+
 
     this.config = config;
     // console.log('this.config: ', this.config);
@@ -678,6 +755,7 @@ export class BsTooltip {
       if (!this.isEnabled) {
         this.enableTooltip();
       }
+      return this.tooltipEl;
     } else if (tooltipOptions === 'enable') {
       this.enableTooltip();
     } else if (tooltipOptions === 'disable') {
@@ -690,25 +768,23 @@ export class BsTooltip {
       }
     } else if (tooltipOptions === 'show') {
       if (!this.isEnabled) {
-        this.enableTooltip();
+        return;
       }
       this.enter();
     } else if (tooltipOptions === 'hide') {
       if (!this.isEnabled) {
-        this.enableTooltip();
+        return;
       }
       this.leave();
     } else if (tooltipOptions === 'toggle') {
       if (!this.isEnabled) {
-        this.enableTooltip();
+        return;
       }
       this.toggle();
     } else if (tooltipOptions === 'update') {
-      if (this.popperHandle !== null) {
+      if (this.popperHandle && this.popperHandle.scheduleUpdate) {
         this.popperHandle.scheduleUpdate();
       }
-    } else {
-      this.enableTooltip(tooltipOptions);
     }
   }
 

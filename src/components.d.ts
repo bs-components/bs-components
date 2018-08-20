@@ -65,13 +65,14 @@ declare global {
     }
 
     interface BsTooltip {
+      'defaults': any;
       'hiddenEventName': string;
       'hideEventName': string;
       'insertedEventName': string;
       'noEnableOnLoad': boolean;
       'showEventName': string;
       'shownEventName': string;
-      'tooltip': (tooltipOptions?: any) => void;
+      'tooltip': (tooltipOptions?: any) => HTMLElement;
       'tooltipContent': string;
     }
   }
@@ -163,10 +164,12 @@ declare global {
     }
 
     export interface BsTooltipAttributes extends HTMLAttributes {
+      'defaults'?: any;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'insertedEventName'?: string;
       'noEnableOnLoad'?: boolean;
+      'onShow.bs.tooltip'?: (event: CustomEvent) => void;
       'showEventName'?: string;
       'shownEventName'?: string;
       'tooltipContent'?: string;

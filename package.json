@@ -15,7 +15,8 @@
     "start": "stencil build --dev --watch --serve",
     "start-es5": "stencil build --dev --watch --serve --es5",
     "test": "jest",
-    "test.watch": "jest --watch"
+    "test.watch": "jest --watch",
+    "test-bs-tooltip": "stencil build && testcafe chrome ./tests/test-bs-tooltip.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",
@@ -25,7 +26,8 @@
     "@stencil/core": "^0.11.0",
     "@types/jest": "^23.3.1",
     "@types/lodash": "^4.14.116",
-    "jest": "^23.4.2"
+    "jest": "^23.4.2",
+    "testcafe": "^0.21.1"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,7 @@
   "homepage": "https://github.com/JasonCubic/bs-components",
   "jest": {
     "testURL": "http://localhost/",
+    "testEnvironment": "jsdom",
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
     },

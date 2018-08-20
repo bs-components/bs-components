@@ -94,12 +94,15 @@
 
 
   <div class="container mt-5">
-<!--
+
 
     <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
       Tooltip on top
     </bs-tooltip>
-    <bs-tooltip id="right-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+
+    <bs-tooltip id="another-tooltip" title="Another tooltip"></bs-tooltip>
+
+    <bs-tooltip id="right-tooltip-button" class="btn btn-secondary" data-dispose-time-to-wait="0" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
       Tooltip on right
     </bs-tooltip>
     <bs-tooltip id="bottom-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
@@ -108,15 +111,15 @@
     <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
       Tooltip on left
     </bs-tooltip>
-    <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
+    <bs-tooltip id="tooltip-with-html" class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
       Tooltip with HTML
     </bs-tooltip>
     <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
     </bs-tooltip>
     <p>&nbsp;</p>
-    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button> -->
 
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
     <button id="show-right-tooltip-button" type="button" class="btn btn-default">show right tooltip</button>
     <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
 
@@ -552,6 +555,11 @@
       el.tooltip('toggle');
     }
 
+    function handleTooltipWithHtmlShown(event) {
+      console.log('handleTooltipWithHtmlShown event: ', event);
+      // event.preventDefault();
+    }
+
 
     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
 
@@ -570,9 +578,15 @@
     document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 
 
-    // document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
-    // document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
-    // document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+    document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+    document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
+    document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+
+
+    document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
+
+
+
 
 
 
