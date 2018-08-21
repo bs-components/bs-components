@@ -96,12 +96,14 @@
   <div class="container mt-5">
 
     <p>
-      should throw an error when show is called on hidden elements
-      <bs-tooltip id="tooltip-with-display-none" title="tooltip title" style="display: none;">Can not be seen</bs-tooltip>
+      should add position class before positioning so that position-specific styles are taken into account
+      <bs-tooltip id="very-very-long-tooltip" title="very very very very very very very very long tooltip in one line">
+        add position class before positioning
+      </bs-tooltip>
     </p>
 
 
-    <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
+    <!-- <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
       Tooltip on top
     </bs-tooltip>
 
@@ -121,7 +123,7 @@
     </bs-tooltip>
     <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
-    </bs-tooltip>
+    </bs-tooltip> -->
     <p>&nbsp;</p>
 
     <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
@@ -159,9 +161,9 @@
         </div>
         <div class="modal-body">
           ...
-          <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+          <!-- <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
             click triggered tooltip
-          </bs-tooltip>
+          </bs-tooltip> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -371,9 +373,9 @@
           </div>
       </bs-dropdown>
 
-      <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" title="asdfadfs">
+      <!-- <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" title="asdfadfs">
         Vue Tooltip
-      </bs-tooltip>
+      </bs-tooltip> -->
 
 
 
@@ -598,6 +600,33 @@
 
 
     // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
+
+
+  // const addStylesToHead = () => {
+  //   const template = document.createElement('template');
+  //   template.innerHTML = '<style>' +
+  //   '.bs-tooltip-right { white-space: nowrap; }' +
+  //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
+  //   '</style>';
+  //   const styles = template.content.firstChild;
+  //   if (document.head.appendChild(styles)) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
+
+  // setTimeout(() => {
+  //   addStylesToHead();
+  //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
+  //   console.log('setupReturn: ', setupReturn);
+  //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
+  //   console.log('showReturn: ', showReturn);
+  // }, 2000)
+
+  // setTimeout(() => {
+  //   document.getElementById('very-very-long-tooltip').tooltip({ delay: 1500 });
+  // }, 150)
 
 
 

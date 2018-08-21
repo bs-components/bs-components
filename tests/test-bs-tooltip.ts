@@ -2,15 +2,22 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture `bs-components tooltip tests`.page `./test-bs-tooltip.html`;
+fixture `bs-components tooltip tests`
+  .page `./test-bs-tooltip.html`;
+
 
   // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tooltip.js
+  // NOTE: Ideally, every test should leave the page state the same way it was before the test started.
 
 
 const callTooltipById = ClientFunction((id, passedOption) => {
   const tooltipEl:any = document.getElementById(id);
   try {
-    return tooltipEl.tooltip(passedOption);
+    if (tooltipEl.tooltip(passedOption)) {
+      return true;
+    } else {
+      return false;
+    }
   } catch(err) {
     return err;
   }
@@ -18,36 +25,62 @@ const callTooltipById = ClientFunction((id, passedOption) => {
 
 const waitForEventOnElementById = ClientFunction((id, eventName) => {
   return new Promise((resolve) => {
-    document.getElementById(id).addEventListener(eventName, (event) => {
-      resolve(event);
-    }, { once: true });
+    const myTimeout = setTimeout(() => {
+      // 6 seconds should be more than long enough for any reasonable real world transition
+      document.getElementById(id).removeEventListener(eventName, handleEventHappened);
+      resolve(false);
+    }, 6000);
+    const handleEventHappened = (event) => {
+      clearTimeout(myTimeout);
+      resolve(true);
+    };
+    document.getElementById(id).addEventListener(eventName, handleEventHappened);
   });
 });
 
 const runTooltipMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => {
   return new Promise((resolve) => {
-    document.getElementById(id).addEventListener(eventName, (event) => {
+    const myTimeout = setTimeout(() => {
+      // 6 seconds should be more than long enough for any reasonable real world transition
+      document.getElementById(id).removeEventListener(eventName, handleEventHappened);
+      resolve(false);
+    }, 6000);
+    const handleEventHappened = (event) => {
+      clearTimeout(myTimeout);
       resolve(true);
-    }, { once: true });
+    };
+    document.getElementById(id).addEventListener(eventName, handleEventHappened, { once: true });
     const tooltipEl:any = document.getElementById(id);
     tooltipEl.tooltip(passedOption);
-    // setTimeout(() => {
-    //   resolve(false);
-    // }, 6000);
   });
 });
 
+// const triggerEventById = ClientFunction((id, eventName) => {
+//   if (document.getElementById(id).dispatchEvent(new Event('eventName'))) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// });
 
-test('tooltip method is defined', async t => {
-  // http://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client/examples-of-using-client-functions.html
-  const hasTooltipMethod = ClientFunction(() => {
-    const topTooltip:any = document.getElementById('top-tooltip-button'); // .parentElement.innerHTML;
-    return typeof topTooltip.tooltip;
-  });
-  await t
-  .expect(await Selector('#top-tooltip-button').visible).ok()
-  .expect(await hasTooltipMethod()).eql('function');
+
+
+test('refresh page to clear cache', async t => {
+  await t.eval(() => location.reload(true));
+  await t.expect(true).ok()
 });
+
+
+// test('tooltip method is defined', async t => {
+//   // http://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client/examples-of-using-client-functions.html
+//   const hasTooltipMethod = ClientFunction(() => {
+//     const topTooltip:any = document.getElementById('top-tooltip-button'); // .parentElement.innerHTML;
+//     return typeof topTooltip.tooltip;
+//   });
+//   await t
+//   .expect(await Selector('#top-tooltip-button').visible).ok()
+//   .expect(await hasTooltipMethod()).eql('function');
+// });
 
 // test('should throw explicit error on undefined method', async t => {
 //   await t
@@ -175,7 +208,6 @@ test('tooltip method is defined', async t => {
 //   .expect(await runTooltipMethodAndWaitForEventById('dom-title-tooltip-button', 'hide', 'hidden.bs.tooltip')).ok()
 //   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip removed');
 // });
-
 
 // test('should allow DOMElement title (html: true)', async t => {
 //   const setTextNode = ClientFunction((id, text) => {
@@ -339,7 +371,6 @@ test('tooltip method is defined', async t => {
 //       }, 6000);
 //     });
 //   });
-
 //   await t
 //   .expect(await runTooltipMethodAndWaitForEventById('tooltip-with-custom-class', 'show', 'shown.bs.tooltip')).ok()
 //   .expect(await shouldNotFireHiddenEventWhenHideWasPrevented()).ok()
@@ -347,34 +378,224 @@ test('tooltip method is defined', async t => {
 
 
 
-test('should destroy tooltip', async t => {
-  // note this only unloads all memory items.
-  // to truely destroy this webcomponent delete it from the dom and the unload events will release the
-  // same rerources as .tooltip('disable')
+// test('should destroy tooltip', async t => {
+//   // note this only unloads all memory items.
+//   // to truly destroy this web component delete it from the dom and the unload events will release the
+//   // same resources as .tooltip('disable')
+//   await t
+//   .expect(await Selector('#tooltip-with-custom-class').visible).ok()
+//   .expect(await runTooltipMethodAndWaitForEventById('tooltip-with-custom-class', 'show', 'shown.bs.tooltip')).ok();
+//   const tooltipId = await Selector('#tooltip-with-custom-class').getAttribute('data-bs-id');
+//   await t
+//   .expect(await callTooltipById('tooltip-with-custom-class', 'disable')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
+//   .hover('#tooltip-with-custom-class')
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
+//   .click('#tooltip-with-custom-class')
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
+//   .expect(await callTooltipById('tooltip-with-custom-class', 'enable')).ok(); // just leaving it as we found it
+// });
+
+
+// test('should show tooltip when toggle is called', async t => {
+//   await t
+//   .expect(await Selector('#should-fire-shown-tooltip').visible).ok();
+//   const tooltipId = await Selector('#should-fire-shown-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'toggle', 'shown.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).ok('tooltip is visible')
+//   .expect(await Selector(`#${tooltipId}`).hasClass('fade')).ok('tooltip is faded active')
+//   .expect(await Selector(`#${tooltipId}`).hasClass('show')).ok('tooltip is faded active');
+// });
+
+
+// test('should hide previously shown tooltip when toggle is called on tooltip', async t => {
+//   await t
+//   .expect(await Selector('#should-fire-shown-tooltip').visible).ok();
+//   const tooltipId = await Selector('#should-fire-shown-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'show', 'shown.bs.tooltip')).ok()
+//   .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'toggle', 'hidden.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip is not in dom tree')
+//   // .expect(await Selector(`#${tooltipId}`).hasClass('fade')).notOk('tooltip was faded out')
+//   // .expect(await Selector(`#${tooltipId}`).hasClass('show')).notOk('tooltip was faded out');
+// });
+
+
+// test('should place tooltips inside body when container is body', async t => {
+//   await t
+//   .expect(await Selector('#should-fire-shown-tooltip').visible).ok()
+//   .expect(await callTooltipById('bottom-tooltip-button', { container: 'body' })).ok(); // gives it a new id
+//   const tooltipId = await Selector('#should-fire-shown-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'show', 'shown.bs.tooltip')).ok()
+//   .expect(await Selector(`body > #${tooltipId}`).exists).ok('tooltip is not in parent')
+//   .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'hide', 'hidden.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip is not in dom tree')
+// });
+
+
+// test('should add position class before positioning so that position-specific styles are taken into account', async t => {
+//   const addStylesToHead = ClientFunction(() => {
+//     const template = document.createElement('template');
+//     template.innerHTML = '<style>' +
+//     '.bs-tooltip-right { white-space: nowrap; }' +
+//     '.bs-tooltip-right .tooltip-inner { max-width: 0px; }' +
+//     '</style>';
+//     const styles = template.content.firstChild;
+//     if (document.head.appendChild(styles)) {
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   });
+//   const removeStylesFromHead = ClientFunction(() => {
+//     const styleEl = document.head.querySelector('style');
+//     if (styleEl) {
+//       styleEl.parentNode.removeChild(styleEl);
+//       return true;
+//     }
+//     return false;
+//   });
+//   await t
+//   .expect(await Selector('#very-very-long-tooltip').visible).ok()
+//   .expect(await addStylesToHead()).ok()
+//   .expect(await callTooltipById('very-very-long-tooltip', { placement: 'right', trigger: 'manual' })).ok(); // gives it a new id
+//   const tooltipId = await Selector('#very-very-long-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(await runTooltipMethodAndWaitForEventById('very-very-long-tooltip', 'show', 'inserted.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).hasClass('bs-tooltip-right')).ok()
+//   .expect(await removeStylesFromHead()).ok()
+// });
+
+
+
+// test('should use title attribute for tooltip text', async t => {
+//   await t
+//   .expect(await Selector('#simple-tooltip').visible).ok();
+//   const tooltipId = await Selector('#simple-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(tooltipId.length).gt(0)
+//   .expect(await runTooltipMethodAndWaitForEventById('simple-tooltip', 'show', 'shown.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('Simple tooltip', 'title from title attribute is set')
+//   .expect(await runTooltipMethodAndWaitForEventById('simple-tooltip', 'hide', 'hidden.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip removed');
+// });
+
+
+
+// test('should prefer title attribute over title option', async t => {
+//   await t
+//   .expect(await Selector('#simple-tooltip').visible).ok()
+//   .expect(await callTooltipById('simple-tooltip', { title: 'This is a tooltip with some content' })).ok(); // gives it a new id
+//   const tooltipId = await Selector('#simple-tooltip').getAttribute('data-bs-id');
+//   await t
+//   .expect(tooltipId.length).gt(0)
+//   .expect(await runTooltipMethodAndWaitForEventById('simple-tooltip', 'show', 'shown.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('Simple tooltip', 'title from title attribute is set')
+//   .expect(await runTooltipMethodAndWaitForEventById('simple-tooltip', 'hide', 'hidden.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip removed');
+// });
+
+
+// test('should use title option', async t => {
+//   const id = 'should-use-title-option-tooltip';
+//   await t
+//   .expect(await Selector(`#${id}`).visible).ok()
+//   .expect(await callTooltipById(id, { title: 'This is a tooltip with some content' })).ok(); // gives it a new id
+//   const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+//   await t
+//   .expect(tooltipId.length).gt(0)
+//   .expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('This is a tooltip with some content', 'title from title option is set')
+//   .expect(await runTooltipMethodAndWaitForEventById(id, 'hide', 'hidden.bs.tooltip')).ok()
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip removed');
+// });
+
+// // 'should not error when trying to show a top-placed tooltip that has been removed from the dom'
+// // The code for a web component lives inside the element.  so if the element is removed
+// // from the dom then there is nothing to throw an error.  Skipping this test.
+
+// test('should show tooltip if leave event has not occurred before delay expires', async t => {
+//   const id = 'another-tooltip';
+//   await t
+//   .expect(await Selector(`#${id}`).visible).ok()
+//   .expect(await callTooltipById(id, { delay: 150 })).ok(); // gives it a new id
+//   const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+//   await t
+//   .expect(tooltipId.length).gt(0)
+//   .hover(`#${id}`)
+//   .wait(100)
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('100ms: tooltip is not present')
+//   .wait(100);
+//   await t
+//   .expect(await Selector(`#${tooltipId}`).exists).ok('200ms: tooltip is present')
+//   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
+// });
+
+
+// test('should not show tooltip if leave event occurs before delay expires', async t => {
+//   const id = 'top-tooltip-button';
+//   await t
+//   .expect(await Selector(`#${id}`).visible).ok()
+//   .expect(await callTooltipById(id, { animation: false, delay: 150 })).ok(); // gives it a new id
+//   const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+//   await t
+//   .expect(tooltipId.length).gt(0)
+//   .hover(`#${id}`)
+//   .wait(100)
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('100ms: tooltip is not present')
+//   .hover('#not-a-tooltip')
+//   .wait(100);
+//   await t
+//   .expect(await Selector(`#${tooltipId}`).exists).notOk('200ms: tooltip is present')
+//   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
+// });
+
+
+test('should not hide tooltip if leave event occurs and enter event occurs within the hide delay', async t => {
+  const id = 'top-tooltip-button';
   await t
-  .expect(await Selector('#tooltip-with-custom-class').visible).ok()
-  .expect(await runTooltipMethodAndWaitForEventById('tooltip-with-custom-class', 'show', 'shown.bs.tooltip')).ok();
-  const tooltipId = await Selector('#tooltip-with-custom-class').getAttribute('data-bs-id');
+  .expect(await Selector(`#${id}`).visible).ok()
+  .expect(await callTooltipById(id, { delay: { show: 0, hide: 150 } })).ok(); // gives it a new id
+  const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+  await t.expect(tooltipId.length).gt(0)
+  .hover(`#${id}`)
+  .wait(1);
   await t
-  .expect(await callTooltipById('tooltip-with-custom-class', 'disable')).ok()
-  .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
-  .hover('#tooltip-with-custom-class')
-  .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
-  .click('#tooltip-with-custom-class')
-  .expect(await Selector(`#${tooltipId}`).exists).notOk('No tooltip was shown')
-  .expect(await callTooltipById('tooltip-with-custom-class', 'enable')).ok(); // just leaving it as we found it
+  .expect(await Selector(`#${tooltipId}`).exists).ok('1ms: tooltip is present')
+  .hover('#not-a-tooltip')
+  .wait(100);
+  await t
+  .expect(await Selector(`#${tooltipId}`).exists).ok('100ms: tooltip is still present')
+  .hover(`#${id}`)
+  .wait(100);
+  await t
+  .expect(await Selector(`#${tooltipId}`).exists).ok('200ms: tooltip is still present')
+  .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
 
 
-test('should show tooltip when toggle is called', async t => {
+test('should not show tooltip if leave event occurs before delay expires, even if hide delay is 0', async t => {
+  const id = 'top-tooltip-button';
   await t
-  .expect(await Selector('#should-fire-shown-tooltip').visible).ok();
-  const tooltipId = await Selector('#should-fire-shown-tooltip').getAttribute('data-bs-id');
+  .expect(await Selector(`#${id}`).visible).ok()
+  .expect(await callTooltipById(id, { animation: false, delay: { show: 150, hide: 0 } })).ok(); // gives it a new id
+  const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
   await t
-  .expect(await runTooltipMethodAndWaitForEventById('should-fire-shown-tooltip', 'toggle', 'shown.bs.tooltip')).ok()
-  .expect(await Selector(`#${tooltipId}`).exists).ok('tooltip is visisble')
-  .expect(await Selector(`#${tooltipId}`).hasClass('fade')).ok('tooltip is faded active')
-  .expect(await Selector(`#${tooltipId}`).hasClass('show')).ok('tooltip is faded active');
+  .expect(tooltipId.length).gt(0)
+  .hover(`#${id}`)
+  .wait(100)
+  .expect(await Selector(`#${tooltipId}`).exists).notOk('100ms: tooltip is not present')
+  .hover('#not-a-tooltip')
+  .wait(100);
+  await t
+  .expect(await Selector(`#${tooltipId}`).exists).notOk('200ms: tooltip is present')
+  .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
 
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tooltip.js#L382
+
+// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tooltip.js#L651
+
+
+
