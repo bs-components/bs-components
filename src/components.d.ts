@@ -169,7 +169,6 @@ declare global {
       'hideEventName'?: string;
       'insertedEventName'?: string;
       'noEnableOnLoad'?: boolean;
-      'onShow.bs.tooltip'?: (event: CustomEvent) => void;
       'showEventName'?: string;
       'shownEventName'?: string;
       'tooltipContent'?: string;

@@ -50,14 +50,14 @@
 
     <p>
       should allow DOMElement title (html: false)
-      <bs-tooltip id="dom-title-tooltip-button">
+      <bs-tooltip id="dom-title-tooltip-button" title="abc123">
         DOMElement title
       </bs-tooltip>
     </p>
 
     <p>
       should allow DOMElement title (html: true)
-      <bs-tooltip id="dom-title-with-html-tooltip">DOMElement title with html</bs-tooltip>
+      <bs-tooltip id="dom-title-with-html-tooltip" title="abc123">DOMElement title with html</bs-tooltip>
     </p>
 
     <p>
@@ -68,7 +68,7 @@
 
     <p>
       should throw an error when show is called on hidden elements
-      <bs-tooltip id="tooltip-with-display-none" title="tooltip title" style="display: none;">Can not be seen</bs-tooltip>
+      <bs-tooltip id="tooltip-with-display-none" title="tooltip title">Can not be seen</bs-tooltip>
     </p>
 
     <p>
@@ -82,6 +82,23 @@
         Tooltip on left
       </bs-tooltip>
     </p>
+
+    <p>
+      should fire shown event
+      <bs-tooltip id="should-fire-shown-tooltip" title="Tooltip title">
+        shown nuff
+      </bs-tooltip>
+    </p>
+
+
+    <p>
+      should not fire shown event when show was prevented
+      <bs-tooltip id="should-not-show-tooltip" title="Tooltip title">
+        no show
+      </bs-tooltip>
+    </p>
+
+
 
 
 

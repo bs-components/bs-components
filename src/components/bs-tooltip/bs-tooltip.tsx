@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Method, State, Watch, Event, EventEmitter } from '@stencil/core';
+import { Component, Prop, Element, Method, State, Watch } from '@stencil/core';
 
 import Popper from 'popper.js';
 
@@ -34,11 +34,13 @@ export class BsTooltip {
   @Element() tooltipEl: HTMLElement;
 
   @Prop() noEnableOnLoad: boolean = false;
+
   @Prop() showEventName: string = 'show.bs.tooltip';
   @Prop() shownEventName: string = 'shown.bs.tooltip';
   @Prop() hideEventName: string = 'hide.bs.tooltip';
   @Prop() hiddenEventName: string = 'hidden.bs.tooltip';
   @Prop() insertedEventName: string = 'inserted.bs.tooltip';
+
   @Prop({ mutable: true, reflectToAttr: true }) tooltipContent: string = '';
   @Prop({ mutable: true }) defaults = {
     animation: true,
@@ -68,7 +70,7 @@ export class BsTooltip {
   @State() disposeTimeout: any;
 
 
-  @Event({eventName: 'show.bs.tooltip' }) showEventEmitter: EventEmitter;
+  // @Event({eventName: 'show.bs.tooltip' }) showEventEmitter: EventEmitter;
 
 
   // @Event() showEventEmitter: EventEmitter;
@@ -101,6 +103,9 @@ export class BsTooltip {
   }
 
   makeTip() {
+    if (this.tooltipEl.style.display === 'none') {
+      throw new Error('Please use show on visible elements');
+    }
     const container = !this.config.container ? document.body : document.querySelector(this.config.container);
     // const tip = document.createElement("div");
     // addClass(tip, 'tooltip');
@@ -519,19 +524,21 @@ export class BsTooltip {
 
   @Watch('tooltipContent')
   handleWatchTooltipContent(newValue /* , oldValue */ ) {
-    // console.log('newValue: ', newValue);
     if (!this.isEnabled) {
       return;
     }
-    this.config.title = newValue;
-    const tip = this.getTipElement();
-    // console.log('tip: ', tip);
-    this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
-    if (this.popperHandle && this.popperHandle.scheduleUpdate) {
-      this.popperHandle.scheduleUpdate();
+    if (this.config.title !== newValue) {
+      this.config.title = newValue;
+    }
+    if (this.isWithActiveTrigger()) {
+      const tip = this.getTipElement();
+      // console.log('tip: ', tip);
+      this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
+      if (this.popperHandle && this.popperHandle.scheduleUpdate) {
+        this.popperHandle.scheduleUpdate();
+      }
     }
   }
-
 
   handleClickTrigger = (event) => {
     this.toggle(event);

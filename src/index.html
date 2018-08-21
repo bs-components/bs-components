@@ -95,12 +95,10 @@
 
   <div class="container mt-5">
 
-      <p>
-          should allow DOMElement title (html: false)
-          <bs-tooltip id="dom-title-tooltip-button">
-            DOMElement title
-          </bs-tooltip>
-        </p>
+    <p>
+      should throw an error when show is called on hidden elements
+      <bs-tooltip id="tooltip-with-display-none" title="tooltip title" style="display: none;">Can not be seen</bs-tooltip>
+    </p>
 
 
     <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
@@ -588,6 +586,15 @@
     document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
     document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
     document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+
+
+    // function handleInsertedTopTooltip(event) {
+    //   console.log('handleInsertedTopTooltip event: ', event);
+    // }
+    // document.getElementById("top-tooltip-button").addEventListener('inserted.bs.tooltip', handleInsertedTopTooltip);
+    // setTimeout(() => {
+    //   document.getElementById("top-tooltip-button").tooltip('show');
+    // }, 4000)
 
 
     // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
