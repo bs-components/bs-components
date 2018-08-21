@@ -95,6 +95,13 @@
 
   <div class="container mt-5">
 
+      <p>
+          should allow DOMElement title (html: false)
+          <bs-tooltip id="dom-title-tooltip-button">
+            DOMElement title
+          </bs-tooltip>
+        </p>
+
 
     <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
       Tooltip on top
@@ -154,9 +161,9 @@
         </div>
         <div class="modal-body">
           ...
-          <!-- <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+          <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
             click triggered tooltip
-          </bs-tooltip> -->
+          </bs-tooltip>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -583,7 +590,7 @@
     document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
 
 
-    document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
+    // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
 
 
 

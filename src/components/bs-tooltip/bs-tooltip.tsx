@@ -14,6 +14,8 @@ import _isNumber from 'lodash/isNumber'
 import _includes from 'lodash/includes'
 import _intersection from 'lodash/intersection'
 
+// import _isElement from 'lodash/isElement'
+
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
@@ -51,7 +53,7 @@ export class BsTooltip {
     container: false,
     fallbackPlacement: 'flip',
     boundary: 'scrollParent',
-    disposeTimeToWait: 5000,
+    disposeTimeToWait: 0,
   };
 
 
@@ -111,6 +113,8 @@ export class BsTooltip {
     // html = html.trim(); // Never return a text node of whitespace as the result
     template.innerHTML = this.config.template;
 
+    // console.log('template: ', template);
+
     template.content.querySelector('.tooltip').setAttribute('id', this.tooltipId);
     const tip = template.content.firstChild;
 
@@ -138,6 +142,7 @@ export class BsTooltip {
 
   getTipElement() {
     clearTimeout(this.disposeTimeout);
+    // console.log('this.config: ', this.config);
     this.tip = this.tip || this.makeTip();
     return this.tip;
   };
@@ -150,6 +155,10 @@ export class BsTooltip {
     this.tooltipEl.removeEventListener('mouseleave', this.handleMouseLeave);
     this.tooltipEl.removeEventListener('focusin', this.handleFocusIn);
     this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
+    const originalTitle = this.tooltipEl.dataset.originalTitle;
+    if (_size(originalTitle) > 0) {
+      this.tooltipEl.title = originalTitle;
+    }
     const closestModal = closest(this.tooltipEl, '.modal');
     if (closestModal) {
       const modalHideEventName = closestModal.hideEventName;
@@ -249,11 +258,7 @@ export class BsTooltip {
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
-
     if (_size(this.config.title) > 0 && this.isEnabled) {
-
-
-
 
 
       // this.showEvent.defaultPrevent = false;
@@ -301,6 +306,8 @@ export class BsTooltip {
       const placement = typeof this.config.placement === 'function' ? this.config.placement.call(this, tip, this.tooltipEl) : this.config.placement;
 
       const attachment = this.getAttachment(placement);
+
+      // console.log('attachment: ', attachment);
 
       this.addAttachmentClass(attachment);
 
@@ -488,6 +495,9 @@ export class BsTooltip {
   };
 
   getTitle() {
+    // console.log('this.config.title: ', this.config.title);
+    // console.log('typeof this.config.title: ', typeof this.config.title);
+    // console.log('this.config.title.toString(): ', this.config.title.toString());
     if (this.config.title) {
       if (typeof this.config.title === 'function') {
         return this.config.title.call(this.tooltipEl);
@@ -509,11 +519,13 @@ export class BsTooltip {
 
   @Watch('tooltipContent')
   handleWatchTooltipContent(newValue /* , oldValue */ ) {
+    // console.log('newValue: ', newValue);
     if (!this.isEnabled) {
       return;
     }
     this.config.title = newValue;
     const tip = this.getTipElement();
+    // console.log('tip: ', tip);
     this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
     if (this.popperHandle && this.popperHandle.scheduleUpdate) {
       this.popperHandle.scheduleUpdate();
@@ -600,10 +612,10 @@ export class BsTooltip {
   }
 
   getConfig(overrideConfig:any = {}) {
-
-
     this.config = {};
     const config: any = {};
+
+
 
     if (_has(overrideConfig, 'animation')) {
       config.animation = getConfigBoolean(overrideConfig.animation);
@@ -612,6 +624,8 @@ export class BsTooltip {
     } else {
       config.animation = this.defaults.animation;
     }
+
+
 
     if (_has(overrideConfig, 'trigger')) {
       config.trigger = overrideConfig.trigger;
@@ -623,8 +637,22 @@ export class BsTooltip {
 
     const titleAttribute = this.tooltipEl.getAttribute('title');
     if (_has(overrideConfig, 'title')) {
-      config.title = overrideConfig.title;
-      this.tooltipContent = overrideConfig.title;
+
+      if (typeof overrideConfig.title === 'object' && overrideConfig.title.nodeValue) {
+        config.title = overrideConfig.title.nodeValue;
+      } else {
+        config.title = overrideConfig.title;
+      }
+
+      // title.nodeValue
+      // console.log('overrideConfig: ', overrideConfig);
+      // console.log('overrideConfig: ', overrideConfig);
+      // console.log('overrideConfig.title: ', overrideConfig.title);
+      // console.log('typeof overrideConfig.title: ', typeof overrideConfig.title);
+      // console.log('_toString(overrideConfig.title): ', _toString(overrideConfig.title));
+      // console.log('_isElement(overrideConfig.title): ', _isElement(overrideConfig.title.toString()));
+      // console.log('overrideConfig.title.nodeValue: ', overrideConfig.title.nodeValue);
+
     } else if (_size(this.tooltipContent) > 0) {
       config.title = this.tooltipContent;
     } else if (_has(this.tooltipEl.dataset, 'title')) {
@@ -743,8 +771,10 @@ export class BsTooltip {
       config.template = this.defaults.template;
     }
 
+    // console.log('config: ', config);
 
     this.config = config;
+    this.tooltipContent = this.config.title;
     // console.log('this.config: ', this.config);
   };
 
@@ -754,37 +784,61 @@ export class BsTooltip {
     if (_size(tooltipOptions) === 0) {
       if (!this.isEnabled) {
         this.enableTooltip();
+        return true;
       }
       return this.tooltipEl;
     } else if (tooltipOptions === 'enable') {
       this.enableTooltip();
+      return true;
     } else if (tooltipOptions === 'disable') {
       this.disableTooltip();
+      return true;
     } else if (tooltipOptions === 'toggleEnabled') {
       if (this.isEnabled) {
         this.disableTooltip();
       } else {
         this.enableTooltip();
       }
+      return true;
     } else if (tooltipOptions === 'show') {
       if (!this.isEnabled) {
-        return;
+        return null;
       }
       this.enter();
+      return true;
     } else if (tooltipOptions === 'hide') {
       if (!this.isEnabled) {
-        return;
+        return null;
       }
       this.leave();
+      return true;
     } else if (tooltipOptions === 'toggle') {
       if (!this.isEnabled) {
-        return;
+        return null;
       }
       this.toggle();
+      return true;
     } else if (tooltipOptions === 'update') {
       if (this.popperHandle && this.popperHandle.scheduleUpdate) {
         this.popperHandle.scheduleUpdate();
+        return true;
       }
+      return false;
+    } else if (typeof tooltipOptions === 'object') {
+      if (!this.isEnabled) {
+        this.enableTooltip(tooltipOptions);
+
+      } else {
+        this.disableTooltip();
+        // console.log('this.config: ', this.config);
+        // setTimeout(() => {
+          this.enableTooltip(tooltipOptions);
+        // }, 0);
+      }
+      return true;
+      // this.enableTooltip(tooltipOptions);
+    } else if (typeof tooltipOptions === 'string') {
+      throw new Error(`No method named "${tooltipOptions}"`);
     }
   }
 

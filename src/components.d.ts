@@ -72,7 +72,7 @@ declare global {
       'noEnableOnLoad': boolean;
       'showEventName': string;
       'shownEventName': string;
-      'tooltip': (tooltipOptions?: any) => HTMLElement;
+      'tooltip': (tooltipOptions?: any) => boolean | HTMLElement;
       'tooltipContent': string;
     }
   }
