@@ -17,6 +17,7 @@ import _trim from 'lodash/trim';
 import _isInteger from 'lodash/isInteger';
 import _isObject from 'lodash/isObject';
 import _isString from 'lodash/isString';
+// import _isFunction from 'lodash/isFunction';
 
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
@@ -180,6 +181,7 @@ export class BsTooltip {
   }
 
   enter(event: any = null) {
+    console.log('enter');
     if (event) {
       if (event.type === 'focusin') {
         this.activeTrigger.focus = true;
@@ -239,10 +241,11 @@ export class BsTooltip {
   }
 
   show() {
+    // console.log('show');
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
-    if (_size(this.config.title) > 0 && this.isEnabled) {
+    if (_size(this.getTitle()) > 0 && this.isEnabled) {
 
 
       // this.showEvent.defaultPrevent = false;
@@ -488,6 +491,7 @@ export class BsTooltip {
     // console.log('this.config.title: ', this.config.title);
     // console.log('typeof this.config.title: ', typeof this.config.title);
     // console.log('this.config.title.toString(): ', this.config.title.toString());
+    // debugger;
     if (this.config.title) {
       if (typeof this.config.title === 'function') {
         return this.config.title.call(this.tooltipEl);
@@ -530,6 +534,7 @@ export class BsTooltip {
   }
 
   handleMouseEnter = (event) => {
+    console.log('Made it');
     this.enter(event);
   }
 
@@ -546,11 +551,30 @@ export class BsTooltip {
   }
 
   handleModalHide = (event) => {
-    this.activeTrigger.click = false;
+    console.log('handleModalHide');
+    this.activeTrigger = {};
     this.leave(event);
   }
 
   setListeners() {
+    const closestModal = closest(this.tooltipEl, '.modal');
+    if (closestModal) {
+      const modalHideEventName = closestModal.hideEventName;
+      // console.log('closestModal: ', closestModal);
+      // console.log('closestModal.hideEventName: ', closestModal.hideEventName);
+      if (modalHideEventName) {
+        closestModal.removeEventListener(closestModal.hideEventName, this.handleModalHide);
+        closestModal.addEventListener(closestModal.hideEventName, this.handleModalHide);
+      }
+    }
+
+    // TODO: what if the selector is set
+    // https://github.com/twbs/bootstrap/issues/4215
+    // well if it's a dynamic html element. . .
+    // we can just add and remove bs-tooltip tags as needed. . .
+
+    this.fixTitle();
+
     const triggers = _split(_toLower(this.config.trigger), ' ');
     if (_includes(triggers, 'click')) {
       this.tooltipEl.removeEventListener('click', this.handleClickTrigger);
@@ -572,24 +596,6 @@ export class BsTooltip {
       this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
       this.tooltipEl.addEventListener('focusout', this.handleFocusOut);
     }
-
-    const closestModal = closest(this.tooltipEl, '.modal');
-    if (closestModal) {
-      const modalHideEventName = closestModal.hideEventName;
-      // console.log('closestModal: ', closestModal);
-      // console.log('closestModal.hideEventName: ', closestModal.hideEventName);
-      if (modalHideEventName) {
-        closestModal.removeEventListener(closestModal.hideEventName, this.handleModalHide);
-        closestModal.addEventListener(closestModal.hideEventName, this.handleModalHide);
-      }
-    }
-
-    // TODO: what if the selector is set
-    // https://github.com/twbs/bootstrap/issues/4215
-    // well if it's a dynamic html element. . .
-    // we can just add and remove bs-tooltip tags as needed. . .
-
-    this.fixTitle();
   }
 
   fixTitle() {
@@ -631,6 +637,7 @@ export class BsTooltip {
     } else if (titleAttribute) {
       config.title = titleAttribute;
     } else if (_has(overrideConfig, 'title')) {
+
       if (typeof overrideConfig.title === 'object' && overrideConfig.title.nodeValue) {
         config.title = overrideConfig.title.nodeValue;
       } else {
@@ -796,6 +803,7 @@ export class BsTooltip {
       this.enter();
       return true;
     } else if (tooltipOptions === 'hide') {
+      this.activeTrigger = {};
       if (!this.isEnabled) {
         return null;
       }

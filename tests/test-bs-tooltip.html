@@ -15,8 +15,10 @@
 <body>
   <div class="container mt-5">
 
+      <span id="not-a-tooltip">Not a tooltip</span>
+
     <p>
-        <span id="not-a-tooltip">tooltip method is defined</span>, should return the element, should expose default settings, should empty title attribute
+        tooltip method is defined, should return the element, should expose default settings, should empty title attribute
       <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" title="Tooltip on top">
         Tooltip on top
       </bs-tooltip>
@@ -50,14 +52,14 @@
 
     <p>
       should allow DOMElement title (html: false)
-      <bs-tooltip id="dom-title-tooltip-button" title="abc123">
+      <bs-tooltip id="dom-title-tooltip-button">
         DOMElement title
       </bs-tooltip>
     </p>
 
     <p>
       should allow DOMElement title (html: true)
-      <bs-tooltip id="dom-title-with-html-tooltip" title="abc123">DOMElement title with html</bs-tooltip>
+      <bs-tooltip id="dom-title-with-html-tooltip">DOMElement title with html</bs-tooltip>
     </p>
 
     <p>
@@ -121,33 +123,27 @@
     </p>
 
 
-    <!-- <bs-tooltip id="tooltip-with-html" class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
-      Tooltip with HTML
-    </bs-tooltip>
-    <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
-      <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
-    </bs-tooltip> -->
-    <p>&nbsp;</p>
+    <p>
+      should not reload the tooltip on subsequent mouseenter events
+      <bs-tooltip id="tt-outer" data-trigger="hover" data-placement="top">
+        some text
+      </bs-tooltip>
+    </p>
 
+    <p>
+        should convert number in title to string
+      <bs-tooltip id="num-to-string-tooltip" title="7">
+        num to string
+      </bs-tooltip>
+    </p>
 
 
     <hr>
 
-
-
-
     <!-- Button trigger modal -->
-    <bs-button class="btn btn-primary" id="example-modal-button" data-toggle="modal" data-target="#exampleModal"
-      data-keyboard="true"
-      data-focus="true"
-      data-show="false"
-
-      data-backdrop="true"
-
-      data-whatever="yadda yada ya">
+    <bs-button class="btn btn-primary" id="example-modal-button" data-toggle="modal" data-target="#exampleModal">
         Launch demo modal
     </bs-button>
-
 
     <!-- Modal -->
     <bs-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -161,12 +157,12 @@
           </div>
           <div class="modal-body">
             ...
-            <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
-              click triggered tooltip
+            <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" title="Tooltip inside a modal">
+              modal tooltip button
             </bs-tooltip>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>

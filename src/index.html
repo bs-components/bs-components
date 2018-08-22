@@ -95,12 +95,12 @@
 
   <div class="container mt-5">
 
-    <p>
-      should add position class before positioning so that position-specific styles are taken into account
-      <bs-tooltip id="very-very-long-tooltip" title="very very very very very very very very long tooltip in one line">
-        add position class before positioning
-      </bs-tooltip>
-    </p>
+      <p>
+          should not reload the tooltip on subsequent mouseenter events
+          <bs-tooltip id="tt-outer" no-enable-on-load data-trigger="hover" data-placement="top">
+            some text
+          </bs-tooltip>
+        </p>
 
 
     <!-- <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
@@ -161,9 +161,9 @@
         </div>
         <div class="modal-body">
           ...
-          <!-- <bs-tooltip class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
-            click triggered tooltip
-          </bs-tooltip> -->
+          <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" data-trigger="manual" title="Tooltip on right">
+            manual triggered tooltip
+          </bs-tooltip>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -624,9 +624,9 @@
   //   console.log('showReturn: ', showReturn);
   // }, 2000)
 
-  // setTimeout(() => {
-  //   document.getElementById('very-very-long-tooltip').tooltip({ delay: 1500 });
-  // }, 150)
+  setTimeout(() => {
+    setupTooltip();
+  }, 500)
 
 
 
@@ -638,7 +638,43 @@
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
 
 
+const titleHtml = () => {
+  var uid = btoa(Math.random().toString()).substring(5, 10);
+  return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
+}
 
+function setupTooltip() {
+  console.log('setupTooltip');
+
+  const mySetupResults = document.getElementById("tt-outer").tooltip({
+    html: true,
+    animation: false,
+    trigger: 'hover',
+    delay: {
+      show: 0,
+      hide: 500
+    },
+    title: titleHtml
+  });
+
+  // console.log('mySetupResults: ', mySetupResults);
+
+  // console.log('document.getElementById("tt-outer"): ', document.getElementById("tt-outer"));
+
+
+
+    // setTimeout(function () {
+    //   assert.ok(!$('.tooltip').is('.fade.show'), '100ms: tooltip not faded active')
+    //   $tooltip.trigger('mouseout')
+    // }, 100)
+
+    // setTimeout(function () {
+    //   assert.ok(!$('.tooltip').is('.fade.show'), '200ms: tooltip not faded active')
+    //   done()
+    // }, 200)
+
+
+}
 
 
 
