@@ -65,6 +65,8 @@ declare global {
     }
 
     interface BsTooltip {
+      'bsContent': string;
+      'bsTitle': string;
       'defaults': any;
       'hiddenEventName': string;
       'hideEventName': string;
@@ -73,7 +75,6 @@ declare global {
       'showEventName': string;
       'shownEventName': string;
       'tooltip': (tooltipOptions?: any) => boolean | HTMLElement;
-      'tooltipContent': string;
     }
   }
 
@@ -164,6 +165,8 @@ declare global {
     }
 
     export interface BsTooltipAttributes extends HTMLAttributes {
+      'bsContent'?: string;
+      'bsTitle'?: string;
       'defaults'?: any;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
@@ -171,7 +174,6 @@ declare global {
       'noEnableOnLoad'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;
-      'tooltipContent'?: string;
     }
   }
 

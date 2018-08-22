@@ -17,8 +17,6 @@ import _trim from 'lodash/trim';
 import _isInteger from 'lodash/isInteger';
 import _isObject from 'lodash/isObject';
 import _isString from 'lodash/isString';
-// import _isFunction from 'lodash/isFunction';
-
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
@@ -30,6 +28,7 @@ import getConfigBoolean from '../../utilities/get-config-boolean';
 import parseJson from '../../utilities/parse-json';
 import getUniqueId from '../../utilities/get-unique-id';
 
+// TODO: what is the selector data option for?
 @Component({
   tag: 'bs-tooltip',
   shadow: false
@@ -45,21 +44,29 @@ export class BsTooltip {
   @Prop() hiddenEventName: string = 'hidden.bs.tooltip';
   @Prop() insertedEventName: string = 'inserted.bs.tooltip';
 
-  @Prop({ mutable: true, reflectToAttr: true }) tooltipContent: string = '';
+  // @Prop({ mutable: true, reflectToAttr: true }) tooltipContent: string = '';
+  @Prop({ mutable: true }) bsContent: string = '';
+  @Prop({ mutable: true }) bsTitle: string = '';
+
   @Prop({ mutable: true }) defaults = {
     animation: true,
     template: '<div class="tooltip" role="tooltip">' + '<div class="arrow"></div>' + '<div class="tooltip-inner"></div></div>',
+    popoverTemplate: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
     trigger: 'hover focus',
+    popoverTrigger: 'click',
     title: '',
     delay: 0,
     html: false,
     selector: false,
     placement: 'top',
+    popoverPlacement: 'right',
     offset: 0,
     container: false,
     fallbackPlacement: 'flip',
     boundary: 'scrollParent',
     disposeTimeToWait: 0,
+    toggle: 'tooltip',
+    content: '',
   };
 
   @State() config: any;
@@ -127,11 +134,16 @@ export class BsTooltip {
     const container = !this.config.container ? document.body : document.querySelector(this.config.container);
     const template = document.createElement('template');
     template.innerHTML = _trim(this.config.template);
-    template.content.querySelector('.tooltip').setAttribute('id', this.tooltipId);
+    // const innerTemplateTooltip = template.content.firstChild;
+    // if (innerTemplateTooltip) {
+    //   innerTemplateTooltip.setAttribute('id', this.tooltipId);
+    // }
     const tip = template.content.firstChild;
+    const att = document.createAttribute('id');
+    att.value = this.tooltipId;
+    (tip as any).setAttributeNode(att);
     const tipThatIsAlreadyInTheDom = document.getElementById(this.tooltipId)
     if (!tipThatIsAlreadyInTheDom) {
-
       const newTip = container.appendChild(tip);
       return newTip;
     }
@@ -181,7 +193,6 @@ export class BsTooltip {
   }
 
   enter(event: any = null) {
-    console.log('enter');
     if (event) {
       if (event.type === 'focusin') {
         this.activeTrigger.focus = true;
@@ -212,7 +223,6 @@ export class BsTooltip {
   }
 
   leave(event: any = null) {
-    // console.log('leave');
     if (event) {
       if (event.type === 'focusout') {
         this.activeTrigger.focus = false;
@@ -241,65 +251,26 @@ export class BsTooltip {
   }
 
   show() {
-    // console.log('show');
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
-    if (_size(this.getTitle()) > 0 && this.isEnabled) {
-
-
-      // this.showEvent.defaultPrevent = false;
-
-      // console.log('myEvent: ', myEvent);
-
+    if ((_size(this.getTitle()) > 0 || _size(this.getContent()) > 0) && this.isEnabled) {
       const showEvent = customEvent(this.tooltipEl, this.showEventName);
-
       this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
-
-      // showEvent.type= ;
-
-      // console.log('showEvent: ', showEvent);
-
-      // const showEvent = event;
-
-
-      //
-      // const myEventHandle =
-      // this.showEventEmitter.emit();
-
-      // console.log('showEvent: ', showEvent);
-
-      // showEvent.defaultPrevented
-
-
-      // console.log('this.showEvent: ', this.showEvent);
-
-      // const showEvent = customEvent(this.tooltipEl, this.showEventName);
-
-
       const isInTheDom = this.tooltipEl.ownerDocument.documentElement.contains(this.tooltipEl);
-      // console.log('isInTheDom: ', isInTheDom);
       if (showEvent.defaultPrevented || !isInTheDom) {
         return;
       }
-
+      // debugger;
       const tip = this.getTipElement();
       this.setContent();
-
       if (this.config.animation) {
         addClass(tip, 'fade');
       }
-
       const placement = typeof this.config.placement === 'function' ? this.config.placement.call(this, tip, this.tooltipEl) : this.config.placement;
-
       const attachment = this.getAttachment(placement);
-
-      // console.log('attachment: ', attachment);
-
       this.addAttachmentClass(attachment);
-
       // the point of inserted event is to know when the tip is in the dom but before it has been placed using popper
-
       customEvent(this.tooltipEl, this.insertedEventName);
 
 
@@ -324,7 +295,6 @@ export class BsTooltip {
         onCreate: this.handlePopperOnCreate,
         onUpdate: this.handlePopperOnUpdate,
       });
-
       addClass(tip, 'show');
 
       // If this is a touch-enabled device we add extra
@@ -345,6 +315,23 @@ export class BsTooltip {
       }
     }
   }
+
+  handlePopperOnCreate = (data) => {
+    if (data.originalPlacement !== data.placement) {
+      this.handlePopperPlacementChange(data);
+    }
+  }
+
+  handlePopperOnUpdate = (data) => {
+    this.handlePopperPlacementChange(data);
+  }
+
+  handlePopperPlacementChange(popperData) {
+    const popperInstance = popperData.instance;
+    this.tip = popperInstance.popper;
+    this.cleanTipClass();
+    this.addAttachmentClass(this.getAttachment(popperData.placement));
+  };
 
   showComplete() {
     if (this.config.animation) {
@@ -428,7 +415,6 @@ export class BsTooltip {
       this.tip.parentNode.removeChild(this.tip);
       this.tip = null;
     }
-
   }
 
   fixTransition() {
@@ -444,23 +430,6 @@ export class BsTooltip {
     this.config.animation = initConfigAnimation;
   }
 
-  handlePopperOnCreate = (data) => {
-    if (data.originalPlacement !== data.placement) {
-      this.handlePopperPlacementChange(data);
-    }
-  }
-
-  handlePopperOnUpdate = (data) => {
-    this.handlePopperPlacementChange(data);
-  }
-
-  handlePopperPlacementChange(popperData) {
-    const popperInstance = popperData.instance;
-    this.tip = popperInstance.popper;
-    this.cleanTipClass();
-    this.addAttachmentClass(this.getAttachment(popperData.placement));
-  };
-
   cleanTipClass() {
     const tip = this.getTipElement();
     const bsTooltipPositionClasses = [
@@ -468,7 +437,12 @@ export class BsTooltip {
       'bs-tooltip-top',
       'bs-tooltip-right',
       'bs-tooltip-bottom',
-      'bs-tooltip-left'
+      'bs-tooltip-left',
+      'bs-popover-auto',
+      'bs-popover-top',
+      'bs-popover-right',
+      'bs-popover-bottom',
+      'bs-popover-left',
     ];
     const classesToRemove = _intersection(bsTooltipPositionClasses, tip.classList);
     for (let j = 0, len = classesToRemove.length; j < len; j++) {
@@ -477,7 +451,8 @@ export class BsTooltip {
   };
 
   addAttachmentClass(attachment) {
-    addClass(this.getTipElement(), 'bs-tooltip-' + attachment);
+    // debugger;
+    addClass(this.getTipElement(), `bs-${this.config.toggle}-${attachment}`);
   };
 
   getAttachment(placement) {
@@ -493,7 +468,20 @@ export class BsTooltip {
 
   setContent() {
     const tip = this.getTipElement();
-    this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
+    let tooltipTitleEl;
+    let tooltipContentEl;
+    if (this.config.toggle === 'tooltip') {
+      tooltipTitleEl = tip.querySelector('.tooltip-inner');
+    } else if (this.config.toggle === 'popover') {
+      tooltipTitleEl = tip.querySelector('.popover-header');
+      tooltipContentEl = tip.querySelector('.popover-body');
+    }
+    if (tooltipTitleEl) {
+      this.setElementContent(tooltipTitleEl, this.getTitle());
+    }
+    if (tooltipContentEl) {
+      this.setElementContent(tooltipContentEl, this.getContent());
+    }
     removeClass(tip, 'fade');
     removeClass(tip, 'show');
   };
@@ -506,11 +494,21 @@ export class BsTooltip {
     }
   };
 
+  getContent() {
+    if (this.config.content) {
+      if (typeof this.config.content === 'function') {
+        return this.config.content.call(this.tooltipEl);
+      } else {
+        return this.config.content;
+      }
+    // } else if (_size(this.bsContent) > 0) {
+    //   return this.bsContent;
+    } else {
+      return '';
+    }
+  }
+
   getTitle() {
-    // console.log('this.config.title: ', this.config.title);
-    // console.log('typeof this.config.title: ', typeof this.config.title);
-    // console.log('this.config.title.toString(): ', this.config.title.toString());
-    // debugger;
     if (this.config.title) {
       if (typeof this.config.title === 'function') {
         return this.config.title.call(this.tooltipEl);
@@ -522,44 +520,64 @@ export class BsTooltip {
     } else {
       return '';
     }
-    // let title = this.tooltipEl.dataset.originalTitle;
-    // if (!title) {
-    //   title = typeof this.config.title === 'function' ? this.config.title.call(this.tooltipEl) : this.config.title;
-    // }
-    // return title;
   };
 
 
-  @Watch('tooltipContent')
-  handleWatchTooltipContent(newValue /* , oldValue */ ) {
+  @Watch('bsTitle')
+  handleWatchBsTitle(newValue /* , oldValue */ ) {
     if (!this.isEnabled) {
       return;
     }
     if (this.config.title !== newValue) {
       this.config.title = newValue;
     }
-    //  else if (_size(newValue) === 0) {
-    //   this.config.title = this.getTitle();
-    // } else {
-    //   return;
-    // }
-
     if (this.isWithActiveTrigger() || this.tipHasClass('show') || this.hoverState === 'show') {
       const tip = this.getTipElement();
-      // console.log('tip: ', tip);
-      this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
-      if (this.popperHandle && this.popperHandle.scheduleUpdate) {
-        this.popperHandle.scheduleUpdate();
+      let innerContentEl;
+      if (this.config.toggle === 'tooltip') {
+        innerContentEl = tip.querySelector('.tooltip-inner');
+      } else if (this.config.toggle === 'popover') {
+        innerContentEl = tip.querySelector('.popover-header');
+      }
+      if (innerContentEl) {
+        this.setElementContent(innerContentEl, this.getTitle());
+        if (this.popperHandle && this.popperHandle.scheduleUpdate) {
+          this.popperHandle.scheduleUpdate();
+        }
       }
     }
   }
+
+  @Watch('bsContent')
+  handleWatchBsContent(newValue /* , oldValue */ ) {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (this.config.toggle === 'tooltip') {
+      return;
+    }
+    if (this.config.content !== newValue) {
+      this.config.content = newValue;
+    }
+    if (this.isWithActiveTrigger() || this.tipHasClass('show') || this.hoverState === 'show') {
+      const tip = this.getTipElement();
+      const innerContentEl = tip.querySelector('.popover-body');
+      if (innerContentEl) {
+        this.setElementContent(innerContentEl, this.getContent());
+        if (this.popperHandle && this.popperHandle.scheduleUpdate) {
+          this.popperHandle.scheduleUpdate();
+        }
+      }
+    }
+  }
+
+
 
   handleClickTrigger = (event) => {
     this.toggle(event);
   }
 
   handleMouseEnter = (event) => {
-    console.log('Made it');
     this.enter(event);
   }
 
@@ -585,18 +603,11 @@ export class BsTooltip {
     const closestModal = closest(this.tooltipEl, '.modal');
     if (closestModal) {
       const modalHideEventName = closestModal.hideEventName;
-      // console.log('closestModal: ', closestModal);
-      // console.log('closestModal.hideEventName: ', closestModal.hideEventName);
       if (modalHideEventName) {
         closestModal.removeEventListener(closestModal.hideEventName, this.handleModalHide);
         closestModal.addEventListener(closestModal.hideEventName, this.handleModalHide);
       }
     }
-
-    // TODO: what if the selector is set
-    // https://github.com/twbs/bootstrap/issues/4215
-    // well if it's a dynamic html element. . .
-    // we can just add and remove bs-tooltip tags as needed. . .
 
     this.fixTitle();
 
@@ -624,12 +635,8 @@ export class BsTooltip {
   }
 
   fixTitle() {
-    // console.log('this.tooltipEl.title: ', this.tooltipEl.title);
-    // console.log('_size(this.tooltipEl.title): ', _size(this.tooltipEl.title));
-    // const titleType = typeof this.tooltipEl.dataset.originalTitle;
     if (_size(this.tooltipEl.title) > 0) {
       this.tooltipEl.dataset.originalTitle = this.tooltipEl.title || '';
-      // this.tooltipEl.removeAttribute('title');
       this.tooltipEl.title = '';
     }
   }
@@ -637,6 +644,12 @@ export class BsTooltip {
   getConfig(overrideConfig:any = {}) {
     this.config = {};
     const config: any = {};
+
+    if (_has(this.tooltipEl.dataset, 'toggle')) {
+      config.toggle = this.tooltipEl.dataset.toggle;
+    } else {
+      config.toggle = this.defaults.toggle;
+    }
 
     if (_has(overrideConfig, 'animation')) {
       config.animation = getConfigBoolean(overrideConfig.animation);
@@ -650,13 +663,15 @@ export class BsTooltip {
       config.trigger = overrideConfig.trigger;
     } else if (_has(this.tooltipEl.dataset, 'trigger')) {
       config.trigger = this.tooltipEl.dataset.trigger;
+    } else if (config.toggle === 'popover') {
+      config.trigger = this.defaults.popoverTrigger;
     } else {
       config.trigger = this.defaults.trigger;
     }
 
     const titleAttribute = this.tooltipEl.getAttribute('title');
-    if (_size(this.tooltipContent) > 0) {
-      config.title = this.tooltipContent;
+    if (_size(this.bsTitle) > 0) {
+      config.title = this.bsTitle;
     } else if (titleAttribute) {
       config.title = titleAttribute;
     } else if (_has(overrideConfig, 'title')) {
@@ -673,6 +688,22 @@ export class BsTooltip {
     }
     if (_isNumber(config.title)) {
       config.title = _toString(config.title);
+    }
+
+    // debugger;
+
+    if (_size(this.bsContent) > 0) {
+      config.content = this.bsContent;
+    } else if (_has(overrideConfig, 'content')) {
+      if (typeof overrideConfig.content === 'object' && overrideConfig.content.nodeValue) {
+        config.content = overrideConfig.content.nodeValue;
+      } else {
+        config.content = overrideConfig.content;
+      }
+    } else if (_has(this.tooltipEl.dataset, 'content')) {
+      config.content = this.tooltipEl.dataset.content;
+    } else {
+      config.content = this.defaults.content;
     }
 
     let newConfigDelay;
@@ -732,6 +763,8 @@ export class BsTooltip {
       config.placement = overrideConfig.placement;
     } else if (_has(this.tooltipEl.dataset, 'placement')) {
       config.placement = this.tooltipEl.dataset.placement;
+    } else if (config.toggle === 'popover') {
+      config.placement = this.defaults.popoverPlacement;
     } else {
       config.placement = this.defaults.placement;
     }
@@ -786,15 +819,16 @@ export class BsTooltip {
       config.template = overrideConfig.template;
     } else if (_has(this.tooltipEl.dataset, 'template')) {
       config.template = this.tooltipEl.dataset.template;
+    } else if (config.toggle === 'popover') {
+      config.template = this.defaults.popoverTemplate;
     } else {
       config.template = this.defaults.template;
     }
 
-    // console.log('config: ', config);
-
+    // What is this pure function thing everyone has been talking about?
     this.config = config;
-    this.tooltipContent = this.config.title;
-    console.log('this.config: ', this.config);
+    // this.bsTitle = this.config.content;
+    // console.log('this.config: ', this.config);
   };
 
 

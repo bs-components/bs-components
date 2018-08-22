@@ -585,7 +585,6 @@ test('should not hide tooltip if leave event occurs and enter event occurs withi
   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
 
-
 test('should not show tooltip if leave event occurs before delay expires, even if hide delay is 0', async t => {
   const id = 'top-tooltip-button';
   await t
@@ -597,14 +596,12 @@ test('should not show tooltip if leave event occurs before delay expires, even i
   .expect(tooltipId.length).gt(0)
   .hover(`#${id}`)
   .wait(400)
-  .expect(await Selector(`#${tooltipId}`).exists).notOk(`${new Date().getTime()} - startTimems: tooltip is not present`)
+  .expect(await Selector(`#${tooltipId}`).exists).notOk(`${new Date().getTime() - startTime}ms: tooltip is not present`)
   .hover('#not-a-tooltip')
   .wait(400)
   .expect(await Selector(`#${tooltipId}`).exists).notOk(`${new Date().getTime() - startTime}ms: tooltip is present`)
   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
-
-
 
 test('should wait 900ms before hiding the tooltip', async t => {
   const id = 'right-tooltip-button';
@@ -628,8 +625,6 @@ test('should wait 900ms before hiding the tooltip', async t => {
   .expect(await Selector(`#${tooltipId}`).exists).notOk(`${new Date().getTime() - startTime}ms: tooltip removed`)
   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
-
-
 
 test('should not reload the tooltip on subsequent mouseenter events', async t => {
   const id = 'tt-outer';
@@ -679,7 +674,6 @@ test('should not reload the tooltip on subsequent mouseenter events', async t =>
   .expect(await Selector('#tt-content').innerText).eql(startingUid)
   .expect(await callTooltipById(id, {})).ok(); // gives it a new id
 });
-
 
 test('should not reload the tooltip if the mouse leaves and re-enters before hiding', async t => {
   const id = 'tt-outer';
@@ -903,7 +897,7 @@ test('change event names using event name attributes', async t => {
   await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'hide', 'customHide')).ok('changed hide event name')
   await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'show', 'customShow')).ok('changed show event name')
   await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'hide', 'customHidden')).ok('changed hidden event name')
-  .wait(10)
+  .wait(200)
   await t.expect(await Selector(`#${tooltipId}.show`).exists).notOk('tooltip is hidden');
   await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'show', 'customShown')).ok('changed shown event name')
   await t.expect(await Selector(`#${tooltipId}.show`).exists).ok('tooltip is shown');
@@ -912,15 +906,15 @@ test('change event names using event name attributes', async t => {
 });
 
 
-test('should prefer tooltip-content attribute dynamically over title attribute', async t => {
+test('should prefer bs-title attribute dynamically over title attribute', async t => {
   const prependTooltip = ClientFunction((id) => {
     const template = document.createElement('template');
     template.innerHTML = '<p id="custom-tooltip-wrapper">' +
-    'should prefer tooltip-content attribute over title attribute' +
+    'should prefer bs-title attribute over title attribute' +
     '<bs-tooltip id="' + id + '" class="btn btn-primary" title="default to title" ' +
-    'tooltip-content="set using tooltip-content" ' +
+    'bs-title="set using bs-title" ' +
     '>' +
-    'tooltip-content test' +
+    'bs-title test' +
     '</bs-tooltip>' +
     '</p>';
     const tooltipEl = template.content.firstChild;
@@ -939,16 +933,16 @@ test('should prefer tooltip-content attribute dynamically over title attribute',
       return false;
     }
   });
-  const id = 'tooltip-content-tooltip'
+  const id = 'bs-title-tooltip'
   await t.expect(await prependTooltip(id)).ok()
   await t.expect(await Selector(`#${id}`).visible).ok()
   const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
   await t.expect(tooltipId.length).gt(0)
   await t.expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
-  await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('set using tooltip-content', 'tooltip-content attribute is set')
-  await t.expect(await setAttributeById(id, 'tooltip-content', 'abc123')).ok()
+  await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('set using bs-title', 'bs-title attribute is set')
+  await t.expect(await setAttributeById(id, 'bs-title', 'abc123')).ok()
   await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('abc123', 'tooltip self updated')
-  await t.expect(await removeAttributeById(id, 'tooltip-content')).ok()
+  await t.expect(await removeAttributeById(id, 'bs-title')).ok()
   await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('default to title', 'back to using title now that attribute is gone')
   await t.expect(await removeTooltip()).ok();
   await t.expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip not in dom ("componentDidUnload" ran correctly)');

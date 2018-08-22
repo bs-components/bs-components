@@ -95,15 +95,45 @@
 
   <div class="container mt-5">
 
-      <p>
+      <p>Popovers</p>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" bs-title="" bs-content="" data-placement="top" data-title="abc123" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on top
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on right
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+      sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on bottom
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on left
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</bs-tooltip>
+
+      <bs-tooltip class="d-inline-block" data-toggle="popover" data-content="Disabled popover">
+        <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+      </bs-tooltip>
+
+
+    <p>&nbsp;</p>
+    <p>Tooltips</p>
+
+
+      <!-- <p>
           should not reload the tooltip on subsequent mouseenter events
           <bs-tooltip id="tt-outer" no-enable-on-load data-trigger="hover" data-placement="top">
             some text
           </bs-tooltip>
-        </p>
+        </p> -->
 
 
-    <!-- <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
+    <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
       Tooltip on top
     </bs-tooltip>
 
@@ -123,7 +153,7 @@
     </bs-tooltip>
     <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
       <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
-    </bs-tooltip> -->
+    </bs-tooltip>
     <p>&nbsp;</p>
 
     <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
@@ -131,6 +161,7 @@
     <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
 
     <hr>
+    <p>Modal</p>
 
 
 
@@ -161,9 +192,9 @@
         </div>
         <div class="modal-body">
           ...
-          <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" data-trigger="manual" title="Tooltip on right">
+          <!-- <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" data-trigger="manual" title="Tooltip on right">
             manual triggered tooltip
-          </bs-tooltip>
+          </bs-tooltip> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -174,6 +205,7 @@
   </bs-modal>
 
   <p>&nbsp;</p>
+  <p>Buttons</p>
 
     <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
       Single toggle
@@ -207,6 +239,8 @@
     <button id="toggle-second-radio-button" type="button" class="btn btn-default">press Second Radio Button</button>
 
     <p>&nbsp;</p>
+
+    <p>Collapse</p>
 
 
     <p>
@@ -293,6 +327,7 @@
 
 
 
+    <p>Dropdowns</p>
 
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
 
@@ -373,7 +408,9 @@
           </div>
       </bs-dropdown>
 
-      <bs-tooltip id="vue-test-tooltip" class="btn btn-secondary" data-trigger="click" data-toggle="tooltip" v-bind:tooltip-content="tooltipValue" title="asdfadfs">
+      <bs-tooltip id="vue-test-tooltip" class="btn btn-secondary" data-toggle="popover"
+      v-bind:bs-title="tooltipTitle" title="fallback default title"
+      v-bind:bs-content="tooltipContent" data-content="fallback default content"      >
         Vue Tooltip
       </bs-tooltip>
 
@@ -381,10 +418,8 @@
 
 
 
-      <p>&nbsp;</p>
-      <input v-model="tooltipValue">
-      {{ tooltipValue }}
-      <p>&nbsp;</p>
+      <p>tooltipTitle:<input v-model="tooltipTitle">{{ tooltipTitle }}</p>
+      <p>tooltipContent:<input v-model="tooltipContent">{{ tooltipContent }}</p>
       <p>&nbsp;</p>
       <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
     </div>
@@ -425,7 +460,8 @@
       data: {
         message: 'Hello Vue!',
         showDropdown: 'false',
-        tooltipValue: 'vue tooltip',
+        tooltipTitle: 'vue tooltip title',
+        tooltipContent: 'vue tooltip content',
       },
       methods: {
         handleShownBsDropdown: handleShownBsDropdown,
@@ -624,57 +660,33 @@
   //   console.log('showReturn: ', showReturn);
   // }, 2000)
 
-  setTimeout(() => {
-    setupTooltip();
-  }, 500)
-
-
-
-
-
-
+  // setTimeout(() => {
+  //   setupTooltip();
+  // }, 500)
 
 
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
 
 
-const titleHtml = () => {
-  var uid = btoa(Math.random().toString()).substring(5, 10);
-  return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
-}
+// const titleHtml = () => {
+//   var uid = btoa(Math.random().toString()).substring(5, 10);
+//   return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
+// }
 
-function setupTooltip() {
-  console.log('setupTooltip');
+// function setupTooltip() {
+//   console.log('setupTooltip');
 
-  const mySetupResults = document.getElementById("tt-outer").tooltip({
-    html: true,
-    animation: false,
-    trigger: 'hover',
-    delay: {
-      show: 0,
-      hide: 500
-    },
-    title: titleHtml
-  });
-
-  // console.log('mySetupResults: ', mySetupResults);
-
-  // console.log('document.getElementById("tt-outer"): ', document.getElementById("tt-outer"));
-
-
-
-    // setTimeout(function () {
-    //   assert.ok(!$('.tooltip').is('.fade.show'), '100ms: tooltip not faded active')
-    //   $tooltip.trigger('mouseout')
-    // }, 100)
-
-    // setTimeout(function () {
-    //   assert.ok(!$('.tooltip').is('.fade.show'), '200ms: tooltip not faded active')
-    //   done()
-    // }, 200)
-
-
-}
+//   const mySetupResults = document.getElementById("tt-outer").tooltip({
+//     html: true,
+//     animation: false,
+//     trigger: 'hover',
+//     delay: {
+//       show: 0,
+//       hide: 500
+//     },
+//     title: titleHtml
+//   });
+// }
 
 
 
