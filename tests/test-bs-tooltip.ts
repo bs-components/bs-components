@@ -2,13 +2,11 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture `bs-components tooltip tests`
-  .page `./test-bs-tooltip.html`;
-
+fixture `bs-components tooltip tests`.page `./test-bs-tooltip.html`;
 
   // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tooltip.js
   // NOTE: Ideally, every test should leave the page state the same way it was before the test started.
-  // NOTE: times were increased to make up for testcafe slowness compared tp jsdom based unit tests
+  // NOTE: times were increased to make up for testcafe platform compared tp jsdom based unit tests
 
 const callTooltipById = ClientFunction((id, passedOption) => {
   const tooltipEl:any = document.getElementById(id);
@@ -55,18 +53,6 @@ const runTooltipMethodAndWaitForEventById = ClientFunction((id, passedOption, ev
   });
 });
 
-// const triggerEventById = ClientFunction((id, eventName) => {
-//   // For a full list of event types: https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
-//   const event = document.createEvent('HTMLEvents');
-//   event.initEvent(eventName, true, false);
-//   document.getElementById(id).dispatchEvent(event);
-//   return true;
-//   // if (document.getElementById(id).dispatchEvent(new Event('eventName'))) {
-//   //   return true;
-//   // } else {
-//   //   return false;
-//   // }
-// });
 
 const focusById = ClientFunction((id) => {
   document.getElementById(id).focus();
@@ -78,10 +64,21 @@ const blurById = ClientFunction((id) => {
   return true;
 });
 
-// test('refresh page to clear cache', async t => {
-//   await t.eval(() => location.reload(true));
-//   await t.expect(true).ok()
-// });
+const setAttributeById = ClientFunction((id, attribute, value) => {
+  document.getElementById(id).setAttribute(attribute, value);
+  return true;
+});
+
+const removeAttributeById = ClientFunction((id, attribute) => {
+  document.getElementById(id).removeAttribute(attribute);
+  return true;
+});
+
+
+test('refresh page to clear cache', async t => {
+  await t.eval(() => location.reload(true));
+  await t.expect(true).ok()
+});
 
 
 test('tooltip method is defined', async t => {
@@ -851,12 +848,11 @@ test('should convert number in title to string', async t => {
 
 test('tooltip should be shown right away after the call of disable/enable', async t => {
   const id = 'top-tooltip-button';
-  await t
-  .expect(await Selector(`#${id}`).visible).ok()
-  .expect(await callTooltipById(id, {})).ok() // gives it a new id
-  .expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
-  .expect(await callTooltipById(id, 'disable')).ok()
-  .expect(await callTooltipById(id, 'enable')).ok();
+  await t.expect(await Selector(`#${id}`).visible).ok()
+  await t.expect(await callTooltipById(id, {})).ok() // gives it a new id
+  await t.expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
+  await t.expect(await callTooltipById(id, 'disable')).ok()
+  await t.expect(await callTooltipById(id, 'enable')).ok();
   const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
   await t.expect(tooltipId.length).gt(0)
   await t.click(`#${id}`);
@@ -864,3 +860,96 @@ test('tooltip should be shown right away after the call of disable/enable', asyn
   .expect(await callTooltipById(id, {})).ok(); // just leaving it as we found it
 });
 
+
+test('change event names using event name attributes', async t => {
+  const prependTooltip = ClientFunction(() => {
+    const template = document.createElement('template');
+    template.innerHTML = '<p id="custom-tooltip-wrapper">' +
+    'change event names' +
+    '<bs-tooltip id="custom-events-tooltip" class="btn btn-primary" title="has custom events" ' +
+    'show-event-name="customShow" ' +
+    'shown-event-name="customShown" ' +
+    'hide-event-name="customHide" ' +
+    'hidden-event-name="customHidden" ' +
+    'inserted-event-name="customInserted" ' +
+    '>' +
+    'custom Tooltip' +
+    '</bs-tooltip>' +
+    '</p>';
+    const tooltipEl = template.content.firstChild;
+    const parent = document.getElementById('page-container');
+    if (parent.insertBefore(tooltipEl, parent.firstChild)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  const removeTooltip = ClientFunction(() => {
+    const tooltipWrapperEl = document.getElementById('custom-tooltip-wrapper');
+    if (tooltipWrapperEl.parentNode.removeChild(tooltipWrapperEl)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  await t
+  .expect(await prependTooltip()).ok()
+  .expect(await Selector('#custom-events-tooltip').visible).ok()
+  const tooltipId = await Selector('#custom-events-tooltip').getAttribute('data-bs-id');
+  // console.log('tooltipId: ', tooltipId);
+  await t.expect(tooltipId.length).gt(0)
+  await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'show', 'customInserted')).ok('changed inserted event name')
+  await t.expect(await Selector(`#${tooltipId}`).exists).ok('tooltip in dom');
+  await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'hide', 'customHide')).ok('changed hide event name')
+  await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'show', 'customShow')).ok('changed show event name')
+  await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'hide', 'customHidden')).ok('changed hidden event name')
+  .wait(10)
+  await t.expect(await Selector(`#${tooltipId}.show`).exists).notOk('tooltip is hidden');
+  await t.expect(await runTooltipMethodAndWaitForEventById('custom-events-tooltip', 'show', 'customShown')).ok('changed shown event name')
+  await t.expect(await Selector(`#${tooltipId}.show`).exists).ok('tooltip is shown');
+  await t.expect(await removeTooltip()).ok();
+  await t.expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip not in dom ("componentDidUnload" ran correctly)');
+});
+
+
+test('should prefer tooltip-content attribute dynamically over title attribute', async t => {
+  const prependTooltip = ClientFunction((id) => {
+    const template = document.createElement('template');
+    template.innerHTML = '<p id="custom-tooltip-wrapper">' +
+    'should prefer tooltip-content attribute over title attribute' +
+    '<bs-tooltip id="' + id + '" class="btn btn-primary" title="default to title" ' +
+    'tooltip-content="set using tooltip-content" ' +
+    '>' +
+    'tooltip-content test' +
+    '</bs-tooltip>' +
+    '</p>';
+    const tooltipEl = template.content.firstChild;
+    const parent = document.getElementById('page-container');
+    if (parent.insertBefore(tooltipEl, parent.firstChild)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  const removeTooltip = ClientFunction(() => {
+    const tooltipWrapperEl = document.getElementById('custom-tooltip-wrapper');
+    if (tooltipWrapperEl.parentNode.removeChild(tooltipWrapperEl)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  const id = 'tooltip-content-tooltip'
+  await t.expect(await prependTooltip(id)).ok()
+  await t.expect(await Selector(`#${id}`).visible).ok()
+  const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+  await t.expect(tooltipId.length).gt(0)
+  await t.expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
+  await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('set using tooltip-content', 'tooltip-content attribute is set')
+  await t.expect(await setAttributeById(id, 'tooltip-content', 'abc123')).ok()
+  await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('abc123', 'tooltip self updated')
+  await t.expect(await removeAttributeById(id, 'tooltip-content')).ok()
+  await t.expect(await Selector(`#${tooltipId} .tooltip-inner`).nth(0).innerText).eql('default to title', 'back to using title now that attribute is gone')
+  await t.expect(await removeTooltip()).ok();
+  await t.expect(await Selector(`#${tooltipId}`).exists).notOk('tooltip not in dom ("componentDidUnload" ran correctly)');
+});

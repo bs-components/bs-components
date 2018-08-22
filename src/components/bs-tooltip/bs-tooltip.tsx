@@ -352,7 +352,16 @@ export class BsTooltip {
     }
     const prevHoverState = this.hoverState;
     this.hoverState = null;
-    customEvent(this.tooltipEl, this.shownEventName);
+
+    window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+      window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+        setTimeout(() => {
+          // all page updates are completed and event loop is empty
+          customEvent(this.tooltipEl, this.shownEventName);
+        }, 0);
+      });
+    });
+
     if (prevHoverState === 'out') {
       this.leave();
     }
@@ -393,7 +402,7 @@ export class BsTooltip {
     this.cleanTipClass();
 
     // this.tooltipEl.removeAttribute('aria-describedby');
-    customEvent(this.tooltipEl, this.hiddenEventName);
+
     if (this.popperHandle && this.popperHandle.destroy) {
       this.popperHandle.destroy();
     }
@@ -401,6 +410,15 @@ export class BsTooltip {
     this.disposeTimeout = setTimeout(() => {
       this.removeTooltipFromDom();
     }, this.config.disposeTimeToWait);
+
+    window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+      window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+        setTimeout(() => {
+          // all page updates are completed and event loop is empty
+          customEvent(this.tooltipEl, this.hiddenEventName);
+        }, 0);
+      });
+    });
 
     callback();
   };
@@ -410,6 +428,7 @@ export class BsTooltip {
       this.tip.parentNode.removeChild(this.tip);
       this.tip = null;
     }
+
   }
 
   fixTransition() {
@@ -519,7 +538,13 @@ export class BsTooltip {
     if (this.config.title !== newValue) {
       this.config.title = newValue;
     }
-    if (this.isWithActiveTrigger()) {
+    //  else if (_size(newValue) === 0) {
+    //   this.config.title = this.getTitle();
+    // } else {
+    //   return;
+    // }
+
+    if (this.isWithActiveTrigger() || this.tipHasClass('show') || this.hoverState === 'show') {
       const tip = this.getTipElement();
       // console.log('tip: ', tip);
       this.setElementContent(tip.querySelector('.tooltip-inner'), this.getTitle());
@@ -612,8 +637,6 @@ export class BsTooltip {
   getConfig(overrideConfig:any = {}) {
     this.config = {};
     const config: any = {};
-
-
 
     if (_has(overrideConfig, 'animation')) {
       config.animation = getConfigBoolean(overrideConfig.animation);
