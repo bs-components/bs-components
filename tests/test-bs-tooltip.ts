@@ -36,7 +36,7 @@ const waitForEventOnElementById = ClientFunction((id, eventName) => {
   });
 });
 
-const runTooltipMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => {
+const runTooltipMethodAndWaitForEventById = ClientFunction(function (id, passedOption, eventName) {
   return new Promise((resolve) => {
     const myTimeout = setTimeout(() => {
       // 6 seconds should be more than long enough for any reasonable real world transition
@@ -134,13 +134,16 @@ test('should add data attribute for referencing original title', async t => {
 
 
 test('should add aria-describedby to the trigger on show', async t => {
-  await t
-  .expect(await Selector('#top-tooltip-button').visible).ok()
-  .expect(await callTooltipById('top-tooltip-button', 'show')).ok()
-  .expect(await waitForEventOnElementById('top-tooltip-button', 'shown.bs.tooltip')).ok()
-  .expect((await Selector('#top-tooltip-button').getAttribute('aria-describedby')).length > 0).ok()
-  .expect((await Selector('.tooltip').getAttribute('id')).length > 0).ok()
-  .expect(await Selector('#top-tooltip-button').getAttribute('aria-describedby')).eql(await Selector('.tooltip').getAttribute('id'))
+  const id = 'top-tooltip-button';
+  await t.expect(await Selector(`#${id}`).visible).ok()
+  await t.expect(await runTooltipMethodAndWaitForEventById(id, 'show', 'shown.bs.tooltip')).ok()
+  // .expect(await callTooltipById(id, 'show')).ok()
+  // .expect(await waitForEventOnElementById('top-tooltip-button', 'shown.bs.tooltip')).ok()
+  // await t.expect((await Selector(`#${id}`).getAttribute('aria-describedby')).length > 0).ok()
+  const tooltipId = await Selector(`#${id}`).getAttribute('data-bs-id');
+  await t.expect(tooltipId.length).gt(0)
+  // .expect((await Selector('.tooltip').getAttribute('id')).length > 0).ok()
+  .expect(await Selector(`#${id}`).getAttribute('aria-describedby')).eql(tooltipId)
 });
 
 
@@ -447,12 +450,12 @@ test('should place tooltips inside body when container is body', async t => {
 
 test('should add position class before positioning so that position-specific styles are taken into account', async t => {
   const addStylesToHead = ClientFunction(() => {
-    const template = document.createElement('template');
+    const template = document.createElement('div');
     template.innerHTML = '<style>' +
     '.bs-tooltip-right { white-space: nowrap; }' +
     '.bs-tooltip-right .tooltip-inner { max-width: 0px; }' +
     '</style>';
-    const styles = template.content.firstChild;
+    const styles = template.firstChild;
     if (document.head.appendChild(styles)) {
       return true;
     } else {
@@ -857,7 +860,7 @@ test('tooltip should be shown right away after the call of disable/enable', asyn
 
 test('change event names using event name attributes', async t => {
   const prependTooltip = ClientFunction(() => {
-    const template = document.createElement('template');
+    const template = document.createElement('div');
     template.innerHTML = '<p id="custom-tooltip-wrapper">' +
     'change event names' +
     '<bs-tooltip id="custom-events-tooltip" class="btn btn-primary" title="has custom events" ' +
@@ -870,7 +873,7 @@ test('change event names using event name attributes', async t => {
     'custom Tooltip' +
     '</bs-tooltip>' +
     '</p>';
-    const tooltipEl = template.content.firstChild;
+    const tooltipEl = template.firstChild;
     const parent = document.getElementById('page-container');
     if (parent.insertBefore(tooltipEl, parent.firstChild)) {
       return true;
@@ -908,7 +911,7 @@ test('change event names using event name attributes', async t => {
 
 test('should prefer bs-title attribute dynamically over title attribute', async t => {
   const prependTooltip = ClientFunction((id) => {
-    const template = document.createElement('template');
+    const template = document.createElement('div');
     template.innerHTML = '<p id="custom-tooltip-wrapper">' +
     'should prefer bs-title attribute over title attribute' +
     '<bs-tooltip id="' + id + '" class="btn btn-primary" title="default to title" ' +
@@ -917,7 +920,7 @@ test('should prefer bs-title attribute dynamically over title attribute', async 
     'bs-title test' +
     '</bs-tooltip>' +
     '</p>';
-    const tooltipEl = template.content.firstChild;
+    const tooltipEl = template.firstChild;
     const parent = document.getElementById('page-container');
     if (parent.insertBefore(tooltipEl, parent.firstChild)) {
       return true;

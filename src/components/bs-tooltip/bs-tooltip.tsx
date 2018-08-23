@@ -131,23 +131,17 @@ export class BsTooltip {
   }
 
   makeTip() {
-    const container = !this.config.container ? document.body : document.querySelector(this.config.container);
-    const template = document.createElement('template');
-    template.innerHTML = _trim(this.config.template);
-    // const innerTemplateTooltip = template.content.firstChild;
-    // if (innerTemplateTooltip) {
-    //   innerTemplateTooltip.setAttribute('id', this.tooltipId);
-    // }
-    const tip = template.content.firstChild;
-    const att = document.createAttribute('id');
-    att.value = this.tooltipId;
-    (tip as any).setAttributeNode(att);
     const tipThatIsAlreadyInTheDom = document.getElementById(this.tooltipId)
-    if (!tipThatIsAlreadyInTheDom) {
-      const newTip = container.appendChild(tip);
-      return newTip;
+    if (tipThatIsAlreadyInTheDom) {
+      return tipThatIsAlreadyInTheDom;
     }
-    return tipThatIsAlreadyInTheDom;
+    const container = !this.config.container ? document.body : document.querySelector(this.config.container);
+    const template = document.createElement('div');
+    template.innerHTML = _trim(this.config.template);
+    const innerTemplateTooltip = template.firstChild;
+    const newTip = container.appendChild(innerTemplateTooltip);
+    newTip.setAttribute('id', this.tooltipId);
+    return newTip;
   }
 
   getTipElement() {

@@ -11,8 +11,6 @@ Put a script tag similar to this <script src='https://unpkg.com/bs-components@0.
 ---
 
 TODO:
-* Tooltips
-* Popovers
 * Alerts (dismissal with animation)
 * Buttons (toggle collapse?)
 * Forms? (html5 validation works or use framework solution) may want to do the tooltip part
@@ -21,8 +19,10 @@ TODO:
 * carousel? (there are lots of solutions for this out in the world)
 
 Done (ish):
-* Modal
-* Dropdown
+* Tooltips - has tests
+* Popovers - actually not a separate thing is uses tooltips
+* Modal - needs tests
+* Dropdown -
 * Collapse
 * Buttons
 
