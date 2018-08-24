@@ -10,23 +10,29 @@ Put a script tag similar to this <script src='https://unpkg.com/bs-components@0.
 
 ---
 
-TODO:
-* Alerts (dismissal with animation)
-* Buttons (toggle collapse?)
-* Forms? (html5 validation works or use framework solution) may want to do the tooltip part
-* Scrollspy
-* Tabs (Navs & List group) - note most frameworks have a router solution for this problem
-* carousel? (there are lots of solutions for this out in the world)
+TODO: button work and tests
 
-Done (ish):
-* Tooltips - has tests
-* Popovers - actually not a separate thing is uses tooltips
-* Modal - needs tests
-* Dropdown -
-* Collapse
-* Buttons
+Status:
+* tooltip - done with tests
+* popover - extended tooltips to handle this use case - needs tests
+
+* alert - todo
+* button - partial with no tests yet (but nothing linked to collapse)
+* collapse - done with no tests (planning to reevaluate for a more bootstrap consistent experience)
+* dropdown - done with no tests yet
+* modal - done with no tests yes
+* scrollspy - todo (low priority)
+* tab - todo (Navs & List group) low priority because many frameworks already have tab solutions
+
+
+not planned:
+* carousel - not planned but maybe later.  (there are lots of solutions for this out in the world)
+* forms - not planned.  uses almost no bootstrap js
+
+
 
 nothing to do (css only):
+* forms (limited js to do tooltips validation but bootstrap doesn't include that in their code)
 * badge
 * breadcrumb
 * button groups

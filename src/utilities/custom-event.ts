@@ -2,18 +2,15 @@
 
 function preventDefault() {
   Object.defineProperty(this,
-    "defaultPrevented", {
-      get: function () {
-        return true;
-      }
-    }
-  );
+    'defaultPrevented', {
+      get: () => true,
+    });
 }
 
 export default function customEvent(el, eventName, payload = {}, relatedTarget = {}) {
-  const myPayload = Object.assign({}, { sentAtTime: (new Date).getTime() }, payload);
+  const myPayload = Object.assign({}, { sentAtTime: new Date().getTime() }, payload);
   let event;
-  if (typeof (window as any).CustomEvent === "function") {
+  if (typeof (window as any).CustomEvent === 'function') {
     event = new CustomEvent(eventName, { detail: myPayload });
   } else {
     const bubbles = true;

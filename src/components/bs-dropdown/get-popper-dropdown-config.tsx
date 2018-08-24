@@ -1,42 +1,42 @@
 import hasClass from '../../utilities/has-class';
 
-const AttachmentMap = {
-  TOP       : 'top-start',
-  TOPEND    : 'top-end',
-  BOTTOM    : 'bottom-start',
-  BOTTOMEND : 'bottom-end',
-  RIGHT     : 'right-start',
-  RIGHTEND  : 'right-end',
-  LEFT      : 'left-start',
-  LEFTEND   : 'left-end'
-}
-
-const ClassName = {
-  DISABLED  : 'disabled',
-  SHOW      : 'show',
-  DROPUP    : 'dropup',
-  DROPRIGHT : 'dropright',
-  DROPLEFT  : 'dropleft',
-  MENURIGHT : 'dropdown-menu-right',
-  MENULEFT  : 'dropdown-menu-left',
-  POSITION_STATIC : 'position-static'
-}
-
 function getPlacement(dropdownEl, dropdownMenuEl) {
-  let placement = AttachmentMap.BOTTOM
+  const AttachmentMap = {
+    top: 'top-start',
+    topend: 'top-end',
+    bottom: 'bottom-start',
+    bottomend: 'bottom-end',
+    right: 'right-start',
+    // RIGHTEND: 'right-end',
+    left: 'left-start',
+    // LEFTEND: 'left-end',
+  };
+
+  const ClassName = {
+    // DISABLED: 'disabled',
+    // SHOW: 'show',
+    dropup: 'dropup',
+    dropright: 'dropright',
+    dropleft: 'dropleft',
+    menuright: 'dropdown-menu-right',
+    // MENULEFT: 'dropdown-menu-left',
+    // POSITION_STATIC: 'position-static',
+  };
+
+  let placement = AttachmentMap.bottom;
 
   // Handle dropup
-  if (hasClass(dropdownEl, ClassName.DROPUP)) {
-    placement = AttachmentMap.TOP
-    if (hasClass(dropdownMenuEl, ClassName.DROPUP)) {
-      placement = AttachmentMap.TOPEND
+  if (hasClass(dropdownEl, ClassName.dropup)) {
+    placement = AttachmentMap.top;
+    if (hasClass(dropdownMenuEl, ClassName.dropup)) {
+      placement = AttachmentMap.topend;
     }
-  } else if (hasClass(dropdownEl, ClassName.DROPRIGHT)) {
-    placement = AttachmentMap.RIGHT
-  } else if (hasClass(dropdownEl, ClassName.DROPLEFT)) {
-    placement = AttachmentMap.LEFT
-  } else if (hasClass(dropdownEl, ClassName.MENURIGHT)) {
-    placement = AttachmentMap.BOTTOMEND
+  } else if (hasClass(dropdownEl, ClassName.dropright)) {
+    placement = AttachmentMap.right;
+  } else if (hasClass(dropdownEl, ClassName.dropleft)) {
+    placement = AttachmentMap.left;
+  } else if (hasClass(dropdownEl, ClassName.menuright)) {
+    placement = AttachmentMap.bottomend;
   }
   return placement;
 }
@@ -51,15 +51,15 @@ export default function getPopperDropdownConfig(dropdownEl, dropdownMenuEl, popp
       },
       preventOverflow: {
         boundariesElement: popperSettings.boundary,
-      }
-    }
-  }
+      },
+    },
+  };
 
   // Disable Popper.js if we have a static display
   if (popperSettings.display === 'static') {
     popperConfig.modifiers.applyStyle = {
-      enabled: false
-    }
+      enabled: false,
+    };
   }
   return popperConfig;
 }
