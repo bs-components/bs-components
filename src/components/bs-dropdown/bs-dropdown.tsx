@@ -1,4 +1,12 @@
-import { Component, Prop, State, Element, Method } from '@stencil/core';
+
+import {
+  Component, // eslint-disable-line no-unused-vars
+  Prop,
+  State,
+  Element,
+  Method, // eslint-disable-line no-unused-vars
+} from '@stencil/core';
+
 import Popper from 'popper.js';
 
 import getPopperDropdownConfig from './get-popper-dropdown-config';
@@ -13,20 +21,17 @@ import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
 
 // TODO:
-      // data-offset="10,20"
-      // data-reference="parent"
-      // popper.js stuff:
-          // offset
-          // flip
-          // boundary
-          // reference
-          // display
+// data-offset="10,20"
+// data-reference="parent"
+// popper.js stuff:
+// offset
+// flip
+// boundary
+// reference
+// display
 
-@Component({
-  tag: 'bs-dropdown',
-  shadow: false
-})
-export class BsDropdown {
+@Component({ tag: 'bs-dropdown', shadow: false })
+export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Element() dropdownEl: HTMLElement;
 
   @Prop({ mutable: true }) show: boolean = false;
@@ -43,15 +48,9 @@ export class BsDropdown {
   @Prop() hideEventName: string = 'hide.bs.dropdown';
   @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
 
-
   @State() dropdownId: string;
   @State() inNavbar: boolean;
   @State() popperHandle: any;
-
-  // @Event() show_bs_dropdown: EventEmitter;
-  // @Event() shown_bs_dropdown: EventEmitter;
-  // @Event() hide_bs_dropdown: EventEmitter;
-  // @Event() hidden_bs_dropdown: EventEmitter;
 
   componentWillLoad() {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
@@ -67,7 +66,7 @@ export class BsDropdown {
     this.dropdownEl.dataset.bsId = this.dropdownId;
     // this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
-    for (let j = 0, len = toggles.length; j < len; j++) {
+    for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
       toggles[j].addEventListener('click', this.handleToggleDropdownOnToggleClick);
     }
@@ -76,17 +75,17 @@ export class BsDropdown {
   componentDidUnload() {
     document.removeEventListener('click', this.handleDropdownClickOutside);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
-    for (let j = 0, len = toggles.length; j < len; j++) {
+    for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
     }
     if (this.popperHandle !== null) {
-      this.popperHandle.destroy()
-      this.popperHandle = null
+      this.popperHandle.destroy();
+      this.popperHandle = null;
     }
   }
 
   initPopper(dropdownMenuEl) {
-    this.inNavbar = this.detectNavbar(this.dropdownEl);
+    this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (!this.inNavbar) {
       const popperSettings = {
         offset: this.offset,
@@ -109,11 +108,11 @@ export class BsDropdown {
       } else if (this.reference instanceof Element) {
         referenceElement = this.reference;
       }
-      this.popperHandle = new Popper(referenceElement, dropdownMenuEl, popperConfig)
+      this.popperHandle = new Popper(referenceElement, dropdownMenuEl, popperConfig);
     }
   }
 
-  detectNavbar(el) {
+  static detectNavbar(el) {
     return closest(el, '.navbar') !== null;
   }
 
@@ -139,7 +138,7 @@ export class BsDropdown {
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
     addClass(dropdownMenuEl, 'show');
-    for (let j = 0, len = toggles.length; j < len; j++) {
+    for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].setAttribute('aria-expanded', 'true');
     }
     document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -164,7 +163,7 @@ export class BsDropdown {
     document.removeEventListener('click', this.handleDropdownClickOutside);
     removeClass(this.dropdownEl, 'show');
     removeClass(dropdownMenuEl, 'show');
-    for (let j = 0, len = toggles.length; j < len; j++) {
+    for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].setAttribute('aria-expanded', 'false');
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
@@ -189,9 +188,9 @@ export class BsDropdown {
 
   @Method()
   update() {
-    this.inNavbar = this.detectNavbar(this.dropdownEl);
+    this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (this.popperHandle !== null) {
-      this.popperHandle.scheduleUpdate()
+      this.popperHandle.scheduleUpdate();
     }
   }
 
@@ -215,6 +214,6 @@ export class BsDropdown {
   }
 
   render() {
-    return ( <slot /> );
+    return (<slot />);
   }
 }

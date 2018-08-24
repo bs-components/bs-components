@@ -25,6 +25,7 @@ declare global {
   namespace StencilComponents {
 
     interface BsButton {
+      'tabindex': string;
       'toggle': (selector: any) => void;
     }
 
@@ -34,6 +35,7 @@ declare global {
       'hideEventName': string;
       'showEventName': string;
       'shownEventName': string;
+      'tabindex': string;
     }
 
     interface BsDropdown {
@@ -134,7 +136,7 @@ declare global {
   namespace JSXElements {
 
     export interface BsButtonAttributes extends HTMLAttributes {
-
+      'tabindex'?: string;
     }
 
     export interface BsCollapseAttributes extends HTMLAttributes {
@@ -142,6 +144,7 @@ declare global {
       'hideEventName'?: string;
       'showEventName'?: string;
       'shownEventName'?: string;
+      'tabindex'?: string;
     }
 
     export interface BsDropdownAttributes extends HTMLAttributes {

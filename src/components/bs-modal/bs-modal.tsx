@@ -1,4 +1,10 @@
-import { Component, Element, Method, State, Prop } from '@stencil/core';
+import {
+  Component, // eslint-disable-line no-unused-vars
+  Prop,
+  State,
+  Element,
+  Method, // eslint-disable-line no-unused-vars
+} from '@stencil/core';
 
 import get from 'lodash/get';
 import has from 'lodash/has';
@@ -12,11 +18,8 @@ import reflow from '../../utilities/reflow';
 import customEvent from '../../utilities/custom-event';
 import getConfigBoolean from '../../utilities/get-config-boolean';
 
-@Component({
-  tag: 'bs-modal',
-  shadow: false
-})
-export class BsModal {
+@Component({ tag: 'bs-modal', shadow: false })
+export class BsModal { // eslint-disable-line import/prefer-default-export
   @Element() modalEl: HTMLElement;
 
   @Prop() showEventName: string = 'show.bs.modal';
@@ -48,19 +51,19 @@ export class BsModal {
     document.removeEventListener('keydown', this.hideModalBecauseEscapePressed);
   }
 
-  getScrollbarWidth() {
-    let scrollDiv = document.createElement('div');
+  static getScrollbarWidth() {
+    const scrollDiv = document.createElement('div');
     scrollDiv.className = 'modal-scrollbar-measure';
     document.body.appendChild(scrollDiv);
-    let scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
+    const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
     document.body.removeChild(scrollDiv);
     return scrollbarWidth;
   }
 
   checkScrollbar() {
-    let rect = document.body.getBoundingClientRect();
+    const rect = document.body.getBoundingClientRect();
     this.isBodyOverflowing = rect.left + rect.right < window.innerWidth;
-    this.scrollbarWidth = this.getScrollbarWidth();
+    this.scrollbarWidth = BsModal.getScrollbarWidth();
   }
 
   setScrollbar() {
@@ -68,38 +71,38 @@ export class BsModal {
       const fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
       const stickyContent = Array.prototype.slice.call(document.querySelectorAll('.sticky-top'));
       // Adjust fixed content padding
-      for (let j = 0, len = fixedContent.length; j < len; j++) {
-        let actualPadding = fixedContent[j].style.paddingRight;
-        let calculatedPadding = window.getComputedStyle(fixedContent[j])['padding-right'];
+      for (let j = 0, len = fixedContent.length; j < len; j += 1) {
+        const actualPadding = fixedContent[j].style.paddingRight;
+        const calculatedPadding = window.getComputedStyle(fixedContent[j])['padding-right'];
         fixedContent[j].dataset.paddingRight = actualPadding;
-        fixedContent[j].style.paddingRight = parseFloat(calculatedPadding) + this.scrollbarWidth + "px";
+        fixedContent[j].style.paddingRight = `${parseFloat(calculatedPadding) + this.scrollbarWidth}px`;
       }
       // Adjust sticky content margin
-      for (let j = 0, len = stickyContent.length; j < len; j++) {
-        let actualMargin = stickyContent[j].style.marginRight;
-        let calculatedMargin = window.getComputedStyle(stickyContent[j])['margin-right'];
+      for (let j = 0, len = stickyContent.length; j < len; j += 1) {
+        const actualMargin = stickyContent[j].style.marginRight;
+        const calculatedMargin = window.getComputedStyle(stickyContent[j])['margin-right'];
         stickyContent[j].dataset.marginRight = actualMargin;
-        stickyContent[j].style.marginRight = parseFloat(calculatedMargin) - this.scrollbarWidth + "px";
+        stickyContent[j].style.marginRight = `${parseFloat(calculatedMargin) - this.scrollbarWidth}px`;
       }
       // Adjust body padding
-      let actualPadding = document.body.style.paddingRight;
-      let calculatedPadding = window.getComputedStyle(document.body)['padding-right'];
+      const actualPadding = document.body.style.paddingRight;
+      const calculatedPadding = window.getComputedStyle(document.body)['padding-right'];
       document.body.dataset.paddingRight = actualPadding;
-      document.body.style.paddingRight = parseFloat(calculatedPadding) + this.scrollbarWidth + "px";
+      document.body.style.paddingRight = `${parseFloat(calculatedPadding) + this.scrollbarWidth}px`;
     }
   }
 
-  resetScrollbar() {
+  static resetScrollbar() {
     // Restore fixed content padding
     const fixedContent = Array.prototype.slice.call(document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
-    for (let j = 0, len = fixedContent.length; j < len; j++) {
+    for (let j = 0, len = fixedContent.length; j < len; j += 1) {
       const padding = fixedContent[j].dataset.paddingRight;
       delete fixedContent[j].dataset.paddingRight;
-      fixedContent[j].style.paddingRight = padding ? padding : '';
+      fixedContent[j].style.paddingRight = padding || '';
     }
     // Restore sticky content
     const stickyContent = Array.prototype.slice.call(document.querySelectorAll('.sticky-top'));
-    for (let j = 0, len = stickyContent.length; j < len; j++) {
+    for (let j = 0, len = stickyContent.length; j < len; j += 1) {
       const margin = stickyContent[j].dataset.marginRight;
       if (typeof margin !== 'undefined') {
         stickyContent[j].style.marginRight = margin;
@@ -109,17 +112,16 @@ export class BsModal {
     // Restore body padding
     const padding = document.body.dataset.paddingRight;
     delete document.body.dataset.paddingRight;
-    document.body.style.paddingRight = padding ? padding : '';
+    document.body.style.paddingRight = padding || '';
   }
 
-
   adjustDialog() {
-    let isModalOverflowing = this.modalEl.scrollHeight > document.documentElement.clientHeight;
+    const isModalOverflowing = this.modalEl.scrollHeight > document.documentElement.clientHeight;
     if (!this.isBodyOverflowing && isModalOverflowing) {
-      this.modalEl.style.paddingLeft = this.scrollbarWidth + "px";
+      this.modalEl.style.paddingLeft = `${this.scrollbarWidth}px`;
     }
     if (this.isBodyOverflowing && !isModalOverflowing) {
-      this.modalEl.style.paddingRight = this.scrollbarWidth + "px";
+      this.modalEl.style.paddingRight = `${this.scrollbarWidth}px`;
     }
   }
 
@@ -132,7 +134,7 @@ export class BsModal {
       return;
     }
     this.isShown = false;
-    let transition = hasClass(this.modalEl, 'fade');
+    const transition = hasClass(this.modalEl, 'fade');
     if (transition) {
       this.isTransitioning = true;
     }
@@ -158,9 +160,9 @@ export class BsModal {
     this.modalEl.setAttribute('aria-hidden', 'true');
     this.isTransitioning = false;
     this.showBackdrop(() => {
-      removeClass(document.body, 'modal-open')
+      removeClass(document.body, 'modal-open');
       this.resetAdjustments();
-      this.resetScrollbar();
+      BsModal.resetScrollbar();
       customEvent(this.modalEl, this.hiddenEventName);
       this.unbindAllEventListenersUsed();
     });
@@ -195,7 +197,7 @@ export class BsModal {
 
   elementIsOrInADataDismissForThisModal(element) {
     const modalDataDismissArr = Array.prototype.slice.call(this.modalEl.querySelectorAll('[data-dismiss="modal"]'));
-    for (let j = 0, len = modalDataDismissArr.length; j < len; j++) {
+    for (let j = 0, len = modalDataDismissArr.length; j < len; j += 1) {
       if (modalDataDismissArr[j].contains(element)) {
         return true;
       }
@@ -286,7 +288,7 @@ export class BsModal {
       config.show = true;
     }
     this.config = config;
-  };
+  }
 
   handleFocusIn = (event) => {
     if (document !== event.target && !this.modalEl.contains(event.target)) {
@@ -297,10 +299,10 @@ export class BsModal {
   enforceFocus() {
     document.removeEventListener('focusin', this.handleFocusIn);
     document.addEventListener('focusin', this.handleFocusIn);
-  };
+  }
 
   showElement(passedRelatedTarget = {}) {
-    let transition = hasClass(this.modalEl, 'fade');
+    const transition = hasClass(this.modalEl, 'fade');
     if (!this.modalEl.parentNode || this.modalEl.parentNode.nodeType !== Node.ELEMENT_NODE) {
       // Don't move modal's DOM position
       document.body.appendChild(this.modalEl);
@@ -339,7 +341,7 @@ export class BsModal {
   }
 
   showBackdrop(callback:Function = () => {}) {
-    let animate = hasClass(this.modalEl, 'fade') ? 'fade' : '';
+    const animate = hasClass(this.modalEl, 'fade') ? 'fade' : '';
     if (this.isShown && this.config.backdrop) {
       this.backdrop = document.createElement('div');
       this.backdrop.className = 'modal-backdrop';
@@ -424,7 +426,6 @@ export class BsModal {
   }
 
   render() {
-    return ( <slot /> );
+    return (<slot />);
   }
-
 }

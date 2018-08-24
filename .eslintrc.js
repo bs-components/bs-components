@@ -11,8 +11,8 @@ module.exports = {
   rules: {
 
     // just me all the time
-    'no-console': 0, // disallow use of console (off by default in the node environment)
-    'linebreak-style': 0, // CRLF or LF. . . either is fine.
+    'no-console': 'off', // disallow use of console (off by default in the node environment)
+    'linebreak-style': 'off', // CRLF or LF. . . either is fine.
     'max-len': ['warn', { code: 175 }], // wide monitor
 
     // typescript linting handles these
