@@ -46,6 +46,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) insertedEventName: string = 'inserted.bs.tooltip';
 
   @Prop() noEnableOnLoad: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
   @Prop({ mutable: true }) bsContent: string = '';
   @Prop({ mutable: true }) bsTitle: string = '';
   @Prop({ mutable: true }) defaults = {
@@ -79,12 +80,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @State() timeout: any;
   @State() disposeTimeout: any;
 
-  componentDidLoad() {
-    const currentTabIndex = this.tooltipEl.getAttribute('tabindex');
-    if (_size(currentTabIndex) === 0) {
-      // without tabindex the bs-tooltip can not receive focus
-      this.tooltipEl.setAttribute('tabindex', '0');
-    }
+  componentWillLoad() {
     if (!this.noEnableOnLoad && !this.isEnabled) {
       this.enableTooltip();
     }

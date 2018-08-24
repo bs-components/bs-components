@@ -74,6 +74,7 @@ declare global {
       'noEnableOnLoad': boolean;
       'showEventName': string;
       'shownEventName': string;
+      'tabindex': string;
       'tooltip': (tooltipOptions?: any) => boolean | HTMLElement;
     }
   }
@@ -174,6 +175,7 @@ declare global {
       'noEnableOnLoad'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;
+      'tabindex'?: string;
     }
   }
 

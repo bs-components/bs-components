@@ -26,7 +26,7 @@
     "start-es5": "stencil build --dev --watch --serve --es5",
     "test": "jest",
     "test.watch": "jest --watch",
-    "test-bs-tooltip": "stencil build --es5 && testcafe ie ./tests/test-bs-tooltip.ts"
+    "test-bs-tooltip": "stencil build && testcafe ie ./tests/test-bs-tooltip.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",
