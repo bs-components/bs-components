@@ -8,7 +8,6 @@ module.exports = {
       jsx: true
     }
   },
-
   rules: {
 
     // just me all the time
@@ -16,23 +15,12 @@ module.exports = {
     'linebreak-style': 0, // CRLF or LF. . . either is fine.
     'max-len': ['warn', { code: 175 }], // wide monitor
 
-    // this project
-    'newline-per-chained-call': 'off', // testcafe readability
-    'lines-between-class-members': ["error", "always", { exceptAfterSingleLine: true }],
-    'class-methods-use-this': ['error', { exceptMethods: ['render'] }],
-    'no-undef': 'off',
-
-    // typescript handles these
-    'import/no-unresolved': 'off', // not needed for typescript
+    // typescript linting handles these
     'import/no-extraneous-dependencies': 'off',
+    'import/no-unresolved': 'off',
+    'lines-between-class-members': ["error", "always", { exceptAfterSingleLine: true }],
+    'no-undef': 'off',
+    'class-methods-use-this': ['error', { exceptMethods: ['render'] }],
 
   },
-  // overrides: {
-  //   // workaround for: https://github.com/eslint/typescript-eslint-parser/issues/416#issuecomment-363115171
-  //   files: ['**/*.ts'],
-  //   parser: 'typescript-eslint-parser',
-  //   rules: {
-  //     'no-undef': 'off',
-  //   },
-  // },
 };
