@@ -1,6 +1,5 @@
 /* eslint-disable newline-per-chained-call */
 import { Selector, ClientFunction } from 'testcafe';
-import { debug } from 'util';
 
 const _ = require('lodash');
 
@@ -89,10 +88,10 @@ const callButtonById = ClientFunction((id, passedOption) => {
 // });
 
 
-test('refresh page to clear cache', async (t) => {
-  await t.eval(() => window.location.reload(true));
-  await t.expect(true).ok();
-});
+// test('refresh page to clear cache', async (t) => {
+//   await t.eval(() => window.location.reload(true));
+//   await t.expect(true).ok();
+// });
 
 
 test('button method is defined', async (t) => {
@@ -138,7 +137,7 @@ test('should toggle active', async (t) => {
     Single toggle
   </bs-button>`;
   const singleToggleButton = Selector('#single-toggle-button');
-  await t.expect(await appendHtml(_.trim(buttonHtml))).ok()
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
   await t.expect(singleToggleButton.exists).ok();
   await t.expect(singleToggleButton.visible).ok();
   await t.expect(singleToggleButton.hasClass('active')).notOk();
@@ -150,22 +149,15 @@ test('should toggle active', async (t) => {
 test('should toggle active when btn children are clicked', async (t) => {
   const buttonHtml = `
   <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-    <i id="inner-italc">Single toggle</i>
+    <i id="inner-italic">Single toggle</i>
   </bs-button>`;
   const singleToggleButton = Selector('#single-toggle-button');
-
-  const innerItalcSelector = Selector('#inner-italc');
-
-
-  await t.expect(await appendHtml(_.trim(buttonHtml))).ok()
+  const innerItalicSelector = Selector('#inner-italic');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
   await t.expect(singleToggleButton.exists).ok();
   await t.expect(singleToggleButton.visible).ok();
   await t.expect(singleToggleButton.hasClass('active')).notOk();
-
-  await t.click(innerItalcSelector).debug();
-
-
-  // await t.expect(await callButtonById('single-toggle-button', 'toggle')).ok();
+  await t.click(innerItalicSelector);
   await t.expect(singleToggleButton.hasClass('active')).ok();
 });
 

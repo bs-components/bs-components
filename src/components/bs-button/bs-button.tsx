@@ -105,7 +105,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('click')
   handleButtonClick(event) {
-    // console.log('click');
+    console.log('click');
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
@@ -114,73 +114,59 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     this.handleToggle(event.target);
   }
 
-  handleToggle(element) {
-    const isDisabled = hasClass(this.bsButtonEl, 'disabled') || hasClass(element, 'disabled');
-    if (isDisabled) {
+  static toggleDataToggleButtons(element, rootElement) {
+    const hasBtnClass = hasClass(element, 'btn');
+    if (!hasBtnClass) {
       return;
     }
-
-    // possibilities '[data-toggle="buttons"]' OR '[data-toggle="button"]'
-    // regular button
-      // the element passed in is this element check if it has a toggle
-      // the element passed in is a child of this element check if it has a toggle
-
-    const buttonToggleData = _get(event, 'target.dataset.toggle', '');
-    if (buttonToggleData === 'modal') {
-      const modalTargetSelector = _get(event, 'target.dataset.target', '');
-      if (_size(modalTargetSelector) > 0) {
-        const modalTarget = document.querySelector(modalTargetSelector);
-        if (modalTarget.modalToggleButtonClicked) {
-          modalTarget.modalToggleButtonClicked(event.target);
-        }
-      }
-    };
-
-
-
-
-    const rootElement = closest(element, '[data-toggle="buttons"]');
+    // console.log('element: ', element);
+    // console.log('rootElement: ', rootElement);
     let triggerChangeEvent = true;
     let addAriaPressed = true;
-    if (rootElement) {
-      const input = element.querySelector('input');
-      if (input) {
-        if (input.type === 'radio') {
-          if (input.checked && hasClass(element, 'active')) {
-            triggerChangeEvent = false;
-          } else {
-            const activeElement = rootElement.querySelector('.active');
-            if (activeElement) {
-              removeClass(activeElement, 'active');
-            }
+    const input = element.querySelector('input');
+    if (input) {
+      if (input.type === 'radio') {
+        if (input.checked && hasClass(element, 'active')) {
+          triggerChangeEvent = false;
+        } else {
+          const activeElement = rootElement.querySelector('.active');
+          if (activeElement) {
+            removeClass(activeElement, 'active');
           }
         }
-        if (triggerChangeEvent) {
-          if (input.hasAttribute('disabled') || rootElement.hasAttribute('disabled') || hasClass(input, 'disabled') || hasClass(rootElement, 'disabled')) {
-            return;
-          }
-          input.checked = !hasClass(element, 'active');
-          customEvent(input, 'change');
+      }
+      if (triggerChangeEvent) {
+        if (input.hasAttribute('disabled') || rootElement.hasAttribute('disabled') || hasClass(input, 'disabled') || hasClass(rootElement, 'disabled')) {
+          return;
         }
-        input.focus();
-        addAriaPressed = false;
+        input.checked = !hasClass(element, 'active');
+        customEvent(input, 'change');
       }
-    } else {
-      const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
-      if (buttonToggleData !== 'button') {
-        triggerChangeEvent = false;
-      }
+      input.focus();
+      addAriaPressed = false;
     }
     if (addAriaPressed) {
       element.setAttribute('aria-pressed', !hasClass(element, 'active'));
     }
     if (triggerChangeEvent) {
-      const hasBtnClass = hasClass(element, 'btn');
-      if (hasBtnClass) {
-        toggleClass(element, 'active');
-      } else {
-        toggleClass(this.bsButtonEl, 'active');
-      }
+      toggleClass(element, 'active');
+    }
+  }
+
+  static toggleDataToggleButton(buttonEl) {
+    buttonEl.setAttribute('aria-pressed', !hasClass(buttonEl, 'active'));
+    toggleClass(buttonEl, 'active');
+  }
+
+  handleToggle(element) {
+    const buttonsToggler = closest(element, '[data-toggle="buttons"]');
+    if (buttonsToggler) {
+      BsButton.toggleDataToggleButtons(element, buttonsToggler);
+      return;
+    }
+    const buttonToggler = closest(element, '[data-toggle="button"]');
+    if (buttonToggler && this.bsButtonEl.contains(buttonToggler)) {
+      BsButton.toggleDataToggleButton(buttonToggler);
     }
   }
 
