@@ -1,5 +1,6 @@
 /* eslint-disable newline-per-chained-call */
 import { Selector, ClientFunction } from 'testcafe';
+import { debug } from 'util';
 
 const _ = require('lodash');
 
@@ -27,7 +28,7 @@ const appendHtml = ClientFunction((innerHtml) => {
 const callButtonById = ClientFunction((id, passedOption) => {
   const buttonEl:any = document.getElementById(id);
   try {
-    if (buttonEl.tooltip(passedOption)) {
+    if (buttonEl.button(passedOption)) {
       return true;
     }
     return false;
@@ -123,7 +124,6 @@ test('should return the element', async (t) => {
   await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
   await t.expect(await Selector('#single-toggle-button')().exists).ok();
   await t.expect(await Selector('#single-toggle-button').visible).ok();
-
   const returnsItself = ClientFunction(() => {
     const button:any = document.getElementById('single-toggle-button');
     return button === button.button();
@@ -131,30 +131,42 @@ test('should return the element', async (t) => {
   await t.expect(await returnsItself()).ok();
 });
 
+
 test('should toggle active', async (t) => {
   const buttonHtml = `
   <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
     Single toggle
   </bs-button>`;
-  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
-  await t.expect(await Selector('#single-toggle-button')().exists).ok();
-  await t.expect(await Selector('#single-toggle-button').visible).ok();
+  const singleToggleButton = Selector('#single-toggle-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok()
+  await t.expect(singleToggleButton.exists).ok();
+  await t.expect(singleToggleButton.visible).ok();
+  await t.expect(singleToggleButton.hasClass('active')).notOk();
+  await t.expect(await callButtonById('single-toggle-button', 'toggle')).ok();
+  await t.expect(singleToggleButton.hasClass('active')).ok();
+});
 
-  await t.expect(await Selector('#single-toggle-button').hasClass('active')).notOk();
 
-  await t.expect(callButtonById('single-toggle-button', 'toggle')).ok();
-  await t.wait(1000);
-  await t.expect(await Selector('#single-toggle-button').hasClass('active')).ok();
+test('should toggle active when btn children are clicked', async (t) => {
+  const buttonHtml = `
+  <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+    <i id="inner-italc">Single toggle</i>
+  </bs-button>`;
+  const singleToggleButton = Selector('#single-toggle-button');
+
+  const innerItalcSelector = Selector('#inner-italc');
 
 
-  // const getDefaults = ClientFunction(() => {
-  //   const topTooltip:any = document.getElementById('top-tooltip-button');
-  //   return topTooltip.defaults;
-  // });
-  // await t
-  //   .expect(await Selector('#top-tooltip-button').visible).ok()
-  //   .expect(await getDefaults()).ok()
-  //   .expect(typeof await getDefaults()).eql('object');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok()
+  await t.expect(singleToggleButton.exists).ok();
+  await t.expect(singleToggleButton.visible).ok();
+  await t.expect(singleToggleButton.hasClass('active')).notOk();
+
+  await t.click(innerItalcSelector).debug();
+
+
+  // await t.expect(await callButtonById('single-toggle-button', 'toggle')).ok();
+  await t.expect(singleToggleButton.hasClass('active')).ok();
 });
 
 // test('should empty title attribute', async (t) => {

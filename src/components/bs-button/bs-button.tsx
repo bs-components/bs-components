@@ -105,10 +105,26 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('click')
   handleButtonClick(event) {
+    // console.log('click');
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
     }
+
+    this.handleToggle(event.target);
+  }
+
+  handleToggle(element) {
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled') || hasClass(element, 'disabled');
+    if (isDisabled) {
+      return;
+    }
+
+    // possibilities '[data-toggle="buttons"]' OR '[data-toggle="button"]'
+    // regular button
+      // the element passed in is this element check if it has a toggle
+      // the element passed in is a child of this element check if it has a toggle
+
     const buttonToggleData = _get(event, 'target.dataset.toggle', '');
     if (buttonToggleData === 'modal') {
       const modalTargetSelector = _get(event, 'target.dataset.target', '');
@@ -118,19 +134,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
           modalTarget.modalToggleButtonClicked(event.target);
         }
       }
-    }
-    const hasBtnClass = hasClass(event.target, 'btn');
-    if (!hasBtnClass) {
-      return;
-    }
-    this.handleToggle(event.target);
-  }
+    };
 
-  handleToggle(element) {
-    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
-    if (isDisabled) {
-      return;
-    }
+
+
+
     const rootElement = closest(element, '[data-toggle="buttons"]');
     let triggerChangeEvent = true;
     let addAriaPressed = true;
@@ -167,7 +175,12 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       element.setAttribute('aria-pressed', !hasClass(element, 'active'));
     }
     if (triggerChangeEvent) {
-      toggleClass(element, 'active');
+      const hasBtnClass = hasClass(element, 'btn');
+      if (hasBtnClass) {
+        toggleClass(element, 'active');
+      } else {
+        toggleClass(this.bsButtonEl, 'active');
+      }
     }
   }
 
