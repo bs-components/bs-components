@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- eslint-disable-line -->
 <html dir="ltr" lang="en">
 <head>
   <meta charset="utf-8">
@@ -205,7 +205,6 @@
     </bs-button>
     <button id="toggle-single-toggle-button" type="button" class="btn btn-default">toggle single toggle</button>
     <p>&nbsp;</p>
-
 
 
     <bs-button class="btn-group-toggle" data-toggle="buttons">
@@ -424,13 +423,8 @@
       v-bind:bs-content="tooltipContent" data-content="fallback default content"      >
         Vue Tooltip
       </bs-tooltip>
-
-
-
-
-
-      <p>tooltipTitle:<input v-model="tooltipTitle">{{ tooltipTitle }}</p>
-      <p>tooltipContent:<input v-model="tooltipContent">{{ tooltipContent }}</p>
+      <p>tooltipTitle: <input v-model="tooltipTitle"> {{ tooltipTitle }}</p>
+      <p>tooltipContent: <input v-model="tooltipContent"> {{ tooltipContent }}</p>
       <p>&nbsp;</p>
       <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
     </div>
@@ -438,6 +432,7 @@
 
 
   <script>
+    "use strict";
 
     function handleShownBsDropdown() {
       console.log('vue Shown');
@@ -552,13 +547,13 @@
 
     function toggleSingleToggleButton() {
       const el = document.getElementById("single-toggle-button");
-      el.toggle();
+      el.button('toggle');
       // el.click();
     }
 
     function toggleSecondRadioButton() {
       const el = document.getElementById("bs-button-radio-buttons");
-      el.toggle('.btn:nth-child(2)');
+      el.button('toggle', '.btn:nth-child(2)');
     }
 
     function handleModalShow(event) {
@@ -596,7 +591,7 @@
 
     function handleClickOnTopTooltipButton() {
       const el = document.getElementById("top-tooltip-button");
-      el.focus();
+      el.focus()
     }
 
     function handleShowRightTooltip() {
@@ -649,31 +644,31 @@
     // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
 
 
-  // const addStylesToHead = () => {
-  //   const template = document.createElement('template');
-  //   template.innerHTML = '<style>' +
-  //   '.bs-tooltip-right { white-space: nowrap; }' +
-  //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
-  //   '</style>';
-  //   const styles = template.content.firstChild;
-  //   if (document.head.appendChild(styles)) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
+    // const addStylesToHead = () => {
+    //   const template = document.createElement('template');
+    //   template.innerHTML = '<style>' +
+    //   '.bs-tooltip-right { white-space: nowrap; }' +
+    //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
+    //   '</style>';
+    //   const styles = template.content.firstChild;
+    //   if (document.head.appendChild(styles)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // };
 
-  // setTimeout(() => {
-  //   addStylesToHead();
-  //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
-  //   console.log('setupReturn: ', setupReturn);
-  //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
-  //   console.log('showReturn: ', showReturn);
-  // }, 2000)
+    // setTimeout(() => {
+    //   addStylesToHead();
+    //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
+    //   console.log('setupReturn: ', setupReturn);
+    //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
+    //   console.log('showReturn: ', showReturn);
+    // }, 2000)
 
-  // setTimeout(() => {
-  //   setupTooltip();
-  // }, 500)
+    // setTimeout(() => {
+    //   setupTooltip();
+    // }, 500)
 
 
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);

@@ -26,20 +26,27 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('focusin')
   handleFocusIn(event) {
+    if (this.tabindex === '-1') {
+      this.tabindex = '';
+    }
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
+      return;
+    }
     const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
     if (buttonToggleData === 'button') {
       // focus is handled by the tabindex attribute
-      const isDisabled = hasClass(this.bsButtonEl, 'disabled');
-      if (isDisabled) {
-        // put the focus back where it was
-        if (event.relatedTarget) {
-          event.relatedTarget.focus();
-        } else {
-          (document.activeElement as any).blur();
-        }
-        event.preventDefault();
-        return;
-      }
+      // const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+      // if (isDisabled) {
+      //   // put the focus back where it was
+      //   if (event.relatedTarget) {
+      //     event.relatedTarget.focus();
+      //   } else {
+      //     (document.activeElement as any).blur();
+      //   }
+      //   event.preventDefault();
+      //   return;
+      // }
       // TODO: add listeners to keydown space and keydown enter to click to toggle
       return;
     }
@@ -65,6 +72,37 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     removeClass(closestButton, 'focus');
   }
 
+
+  @Listen('keyup')
+  handleKeyUp(event) {
+    console.log('event: ', event);
+    if (event.which === 32) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      this.handleToggle(this.bsButtonEl);
+      return;
+    }
+    if (event.which === 13) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      this.handleToggle(this.bsButtonEl);
+      return;
+    }
+    if (event.which === 27) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      this.bsButtonEl.blur();
+      // this.handleToggle(this.bsButtonEl);
+    }
+  }
+
+
   @Listen('click')
   handleButtonClick(event) {
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
@@ -89,6 +127,10 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   handleToggle(element) {
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
+      return;
+    }
     const rootElement = closest(element, '[data-toggle="buttons"]');
     let triggerChangeEvent = true;
     let addAriaPressed = true;
@@ -116,16 +158,10 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         addAriaPressed = false;
       }
     } else {
-      // (this.bsButtonEl as any).tabStop = true;
-      // this.bsButtonEl.setAttribute('tabindex', '0');
-
       const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
       if (buttonToggleData !== 'button') {
         triggerChangeEvent = false;
       }
-      // setTimeout(() => {
-      //   this.addFocusToBsButtonEl();
-      // }, 0);
     }
     if (addAriaPressed) {
       element.setAttribute('aria-pressed', !hasClass(element, 'active'));
@@ -136,12 +172,19 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  toggle(selector) {
-    if (_size(selector) === 0) {
-      this.handleToggle(this.bsButtonEl);
-    } else {
-      this.handleToggle(this.bsButtonEl.querySelector(selector));
+  button(buttonOptions:any = {}, selector:string = '') {
+    if (_size(buttonOptions) === 0) {
+      return this.bsButtonEl;
     }
+    if (buttonOptions === 'toggle' && _size(selector) === 0) {
+      this.handleToggle(this.bsButtonEl);
+      return true;
+    }
+    if (buttonOptions === 'toggle' && _size(selector) > 0) {
+      this.handleToggle(this.bsButtonEl.querySelector(selector));
+      return true;
+    }
+    return null;
   }
 
   render() {

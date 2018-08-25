@@ -25,8 +25,8 @@ declare global {
   namespace StencilComponents {
 
     interface BsButton {
+      'button': (buttonOptions?: any, selector?: string) => true | HTMLElement;
       'tabindex': string;
-      'toggle': (selector: any) => void;
     }
 
     interface BsCollapse {
