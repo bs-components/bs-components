@@ -27,7 +27,8 @@
     "test": "jest",
     "test.watch": "jest --watch",
     "test-bs-tooltip": "stencil build && testcafe ie,chrome ./tests/bs-tooltip.test.ts",
-    "test-bs-button": "stencil build && testcafe ie,chrome ./tests/bs-button.test.ts"
+    "test-bs-button": "stencil build && testcafe ie,chrome ./tests/bs-button.test.ts",
+    "test-bs-modal": "stencil build && testcafe chrome ./tests/bs-modal.test.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",

@@ -173,6 +173,8 @@
 
   <button id="open-modal" type="button" class="btn btn-default">JavaScript Open Modal</button>
 
+  <bs-modal id="modal-test"></bs-modal>
+
   <!-- Modal -->
   <bs-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -605,13 +607,19 @@
     }
 
     function handleModalShown(event) {
-      // console.log('handleModalShown event:', event);
+      console.log('handleModalShown event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleModalHidden(event) {
+      console.log('handleModalHidden event:', event);
       // console.log('time: ', new Date(event.detail.sentAtTime));
     }
 
     function handleOpenModalWithJavaScript() {
-      const el = document.getElementById("exampleModal");
-      el.modal();
+      // const el = document.getElementById("exampleModal");
+      const el = document.getElementById("modal-test");
+      el.modal('show');
       // el.modal('toggle');
 
       // setTimeout(() => {
@@ -661,7 +669,11 @@
     document.getElementById("exampleModal").addEventListener('show.bs.modal', handleModalShow);
     document.getElementById("exampleModal").addEventListener('hide.bs.modal', handleModalHide);
 
-    document.getElementById("exampleModal").addEventListener('shown.bs.modal', handleModalShown);
+    document.getElementById("modal-test").addEventListener('shown.bs.modal', handleModalShown);
+
+    document.getElementById("modal-test").addEventListener('hidden.bs.modal', handleModalHidden);
+
+
 
     document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 

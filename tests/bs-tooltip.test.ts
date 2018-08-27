@@ -297,8 +297,8 @@ test('should throw an error when show is called on hidden elements', async (t) =
 
 test('should fire inserted event', async (t) => {
   await t
-    .expect(await Selector('#fire-inserted-me-laddo').visible).ok()
-    .expect(await runTooltipMethodAndWaitForEventById('fire-inserted-me-laddo', 'show', 'inserted.bs.tooltip')).ok();
+    .expect(await Selector('#fire-inserted-me-lads').visible).ok()
+    .expect(await runTooltipMethodAndWaitForEventById('fire-inserted-me-lads', 'show', 'inserted.bs.tooltip')).ok();
 });
 
 test('should fire shown event', async (t) => {

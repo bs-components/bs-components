@@ -9,15 +9,12 @@ import {
 
 
 import _size from 'lodash/size';
-// import _get from 'lodash/get';
-
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
 import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
-// import elementMatches from '../../utilities/element-matches';
 
 
 @Component({ tag: 'bs-button', shadow: false })
@@ -52,30 +49,6 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (this.tabindex === '-1') {
       this.tabindex = '';
     }
-    // console.log('event: ', event);
-
-    //   const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
-    //   if (buttonToggleData === 'button') {
-    //     // focus is handled by the tabindex attribute
-    //     // const isDisabled = hasClass(this.bsButtonEl, 'disabled');
-    //     // if (isDisabled) {
-    //     //   // put the focus back where it was
-    //     //   if (event.relatedTarget) {
-    //     //     event.relatedTarget.focus();
-    //     //   } else {
-    //     //     (document.activeElement as any).blur();
-    //     //   }
-    //     //   event.preventDefault();
-    //     //   return;
-    //     // }
-    //     // TODO: add listeners to keydown space and keydown enter to click to toggle
-    //     return;
-    //   }
-    //
-    // if (!closestButton || !this.bsButtonEl.contains(closestButton)) {
-    //   return;
-    // }
-    // console.log('this.addFocusClass: ', this.addFocusClass);
     if (this.addFocusClass) {
       const closestButton = closest(event.target, '.btn');
       addClass(closestButton, 'focus');
@@ -84,8 +57,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('focusout')
   handleFocusOut() {
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
+      return;
+    }
     if (this.addFocusClass) {
-      // const closestButton = closest(event.target, '.btn');
       removeClass(this.bsButtonEl, 'focus');
     }
   }
@@ -94,6 +70,10 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   @Listen('keydown')
   handleKeyUp(event) {
     // console.log('event: ', event);
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
+      return;
+    }
     if (event.which === 32) { // space
       if (event.stopPropagation) {
         event.stopPropagation();
@@ -125,7 +105,6 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('click')
   handleButtonClick(event) {
-    // console.log('click');
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;

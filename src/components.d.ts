@@ -65,7 +65,7 @@ declare global {
     interface BsModal {
       'hiddenEventName': string;
       'hideEventName': string;
-      'modal': (modalOptions?: {}) => void;
+      'modal': (modalOptions?: {}) => true | HTMLElement;
       'modalToggleButtonClicked': (relatedTarget?: {}) => void;
       'showEventName': string;
       'shownEventName': string;

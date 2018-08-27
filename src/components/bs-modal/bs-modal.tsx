@@ -6,9 +6,11 @@ import {
   Method, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-import get from 'lodash/get';
-import has from 'lodash/has';
-import toLower from 'lodash/toLower';
+
+import _size from 'lodash/size';
+import _get from 'lodash/get';
+import _has from 'lodash/has';
+import _toLower from 'lodash/toLower';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import hasClass from '../../utilities/has-class';
@@ -126,6 +128,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   hide() {
+    // console.log('hide');
     if (this.isTransitioning || !this.isShown) {
       return;
     }
@@ -206,6 +209,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   handleDataDismissModalClick = (event) => {
+    // console.log('handleDataDismissModalClick');
     // close the modal if the backdrop is clicked on
     if (!this.modalEl.contains(event.target)) {
       this.hide();
@@ -257,32 +261,32 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   getConfig(overrideConfig:any = {}) {
     this.config = {};
     const config: any = {};
-    if (has(overrideConfig, 'backdrop')) {
-      const backdrop = toLower(get(overrideConfig, 'backdrop', 'true'));
+    if (_has(overrideConfig, 'backdrop')) {
+      const backdrop = _toLower(_get(overrideConfig, 'backdrop', 'true'));
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
-    } else if (has(this.modalEl.dataset, 'backdrop')) {
-      const backdrop = toLower(this.modalEl.dataset.backdrop);
+    } else if (_has(this.modalEl.dataset, 'backdrop')) {
+      const backdrop = _toLower(this.modalEl.dataset.backdrop);
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
     } else {
       config.backdrop = true;
     }
-    if (has(overrideConfig, 'focus')) {
-      config.focus = getConfigBoolean(get(overrideConfig, 'focus', true));
-    } else if (has(this.modalEl.dataset, 'focus')) {
+    if (_has(overrideConfig, 'focus')) {
+      config.focus = getConfigBoolean(_get(overrideConfig, 'focus', true));
+    } else if (_has(this.modalEl.dataset, 'focus')) {
       config.focus = getConfigBoolean(this.modalEl.dataset.focus);
     } else {
       config.focus = true;
     }
-    if (has(overrideConfig, 'keyboard')) {
-      config.keyboard = getConfigBoolean(get(overrideConfig, 'keyboard', true));
-    } else if (has(this.modalEl.dataset, 'keyboard')) {
+    if (_has(overrideConfig, 'keyboard')) {
+      config.keyboard = getConfigBoolean(_get(overrideConfig, 'keyboard', true));
+    } else if (_has(this.modalEl.dataset, 'keyboard')) {
       config.keyboard = getConfigBoolean(this.modalEl.dataset.keyboard);
     } else {
       config.keyboard = true;
     }
-    if (has(overrideConfig, 'show')) {
-      config.show = getConfigBoolean(get(overrideConfig, 'show', true));
-    } else if (has(this.modalEl.dataset, 'show')) {
+    if (_has(overrideConfig, 'show')) {
+      config.show = getConfigBoolean(_get(overrideConfig, 'show', true));
+    } else if (_has(this.modalEl.dataset, 'show')) {
       config.show = getConfigBoolean(this.modalEl.dataset.show);
     } else {
       config.show = true;
@@ -302,6 +306,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   showElement(passedRelatedTarget = {}) {
+    // console.log('showElement');
     const transition = hasClass(this.modalEl, 'fade');
     if (!this.modalEl.parentNode || this.modalEl.parentNode.nodeType !== Node.ELEMENT_NODE) {
       // Don't move modal's DOM position
@@ -326,14 +331,18 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
         this.isTransitioning = false;
         customEvent(this.modalEl, this.shownEventName, {}, passedRelatedTarget);
       }, transitionDuration);
+    } else {
+      customEvent(this.modalEl, this.shownEventName, {}, passedRelatedTarget);
     }
   }
 
   backdropClickDismiss = (event) => {
+    // console.log('backdropClickDismiss');
+    // debugger;
     if (event.target !== event.currentTarget) {
       return;
     }
-    if (get(this.config, 'backdrop', '') === 'static') {
+    if (_get(this.config, 'backdrop', '') === 'static') {
       this.modalEl.focus();
     } else {
       this.hide();
@@ -374,7 +383,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
           this.removeBackdrop(callback);
         }, removeBackdropTransitionDuration);
       } else {
-        this.removeBackdrop();
+        this.removeBackdrop(callback);
       }
     } else {
       callback();
@@ -382,6 +391,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   removeBackdrop(callback:Function = () => {}) {
+    // console.log('removeBackdrop');
     if (this.backdrop) {
       this.backdrop.parentNode.removeChild(this.backdrop);
       this.backdrop = null;
@@ -402,27 +412,43 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   @Method()
   modal(modalOptions = {}) {
     // console.log('modalOptions: ', modalOptions);
+    if (_size(modalOptions) === 0) {
+      return this.modalEl;
+    }
     if (typeof modalOptions === 'object') {
       this.getConfig(modalOptions);
       if (this.config.show && !this.isShown) {
         this.show();
       }
-    } else if (modalOptions === 'toggle' || modalOptions === {}) {
+      return true;
+    }
+    if (modalOptions === 'toggle') {
       this.getConfig();
       if (this.isShown) {
         this.hide();
       } else {
         this.show();
       }
-    } else if (modalOptions === 'show') {
+      return true;
+    }
+    if (modalOptions === 'show') {
       this.getConfig();
       this.show();
-    } else if (modalOptions === 'hide') {
+      return true;
+    }
+    if (modalOptions === 'hide') {
       // this.getConfig();
       this.hide();
-    } else if (modalOptions === 'handleUpdate') {
-      this.adjustDialog();
+      return true;
     }
+    if (modalOptions === 'handleUpdate') {
+      this.adjustDialog();
+      return true;
+    }
+    if (typeof modalOptions === 'string') {
+      throw new Error(`No method named "${modalOptions}"`);
+    }
+    return null;
   }
 
   render() {
