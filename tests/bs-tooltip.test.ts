@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components tooltip tests').page('./test-bs-tooltip.html');
+fixture('bs-components tooltip tests').page('./bs-tooltip.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tooltip.js
 // NOTE: Ideally, every test should leave the page state the same way it was before the test started.

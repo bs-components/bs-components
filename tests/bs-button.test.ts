@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components button tests').page('./test-bs-button.html');
+fixture('bs-components button tests').page('./bs-button.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/button.js
 // NOTE: Ideally, every test should leave the page state the same way it was before the test started.
@@ -33,12 +33,6 @@ const callButtonById = ClientFunction((id, passedOption) => {
   } catch (err) {
     return err;
   }
-});
-
-const triggerRealClickById = ClientFunction((id) => {
-  const el = document.getElementById(id);
-  el.click();
-  return true;
 });
 
 
@@ -236,6 +230,11 @@ test('should not add aria-pressed on labels for radio/checkbox inputs in a data-
 });
 
 test('should handle disabled attribute on non-button elements', async (t) => {
+  const triggerRealClickById = ClientFunction((id) => {
+    const el = document.getElementById(id);
+    el.click();
+    return true;
+  });
   const groupHTML = `
     <div class="btn-group disabled" data-toggle="buttons" aria-disabled="true" disabled>
       <bs-button id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
@@ -249,8 +248,8 @@ test('should handle disabled attribute on non-button elements', async (t) => {
   await t.expect(btn1.visible).ok();
   // await t.debug();
   // for whatever reason testcafe ignores disabled elements when it clicks
-  // this creates a real click on the page that will obey disabled states
-  // the same way that the real dom does
+  // triggerRealClickById creates a real click on the page that will obey
+  // disabled states the same way that the real dom does
   await t.expect(triggerRealClickById('my-button')).ok();
   await t.expect(btn1.hasClass('active')).notOk('button did not become active');
   await t.expect(btn1Input.checked).notOk('checkbox did not get checked');
@@ -258,5 +257,3 @@ test('should handle disabled attribute on non-button elements', async (t) => {
   await t.expect(btn1.hasClass('active')).notOk('button did not become active');
   await t.expect(btn1Input.checked).notOk('checkbox did not get checked');
 });
-
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/button.js#L107
