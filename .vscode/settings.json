@@ -18,6 +18,7 @@
     "nowrap",
     "tabindex",
     "testcafe",
-    "tooltips"
+    "tooltips",
+    "untoggle"
   ]
 }

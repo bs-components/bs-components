@@ -200,6 +200,37 @@
   <p>&nbsp;</p>
   <p>Buttons</p>
 
+
+  <div class="btn-group disabled" data-toggle="buttons" aria-disabled="true" disabled>
+    <bs-button id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
+      <input id="my-button-input" type="checkbox" aria-disabled="true" autocomplete="off" disabled class="disabled"/>
+    </bs-button>
+  </div>
+
+
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button id="btn1" class="btn btn-secondary">One</bs-button>
+    <bs-button class="btn btn-secondary">Two</bs-button>
+  </div>
+
+
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button class="btn btn-primary active">
+      <input type="radio" name="options" id="option1" checked="true"> Option 1
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option2"> Option 2
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option3"> Option 3
+    </bs-button>
+  </div>
+
+
+  <bs-button class="btn btn-info">
+    Just a bs-button
+  </bs-button>
+
     <!-- <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
       Single toggle
     </bs-button> -->
@@ -212,26 +243,26 @@
     <p>&nbsp;</p>
 
 
-    <bs-button class="btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-secondary active">
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <bs-button class="btn btn-secondary active">
         <input type="checkbox" checked autocomplete="off"> Checked
-      </label>
-    </bs-button>
+      </bs-button>
+    </div>
 
     <p>&nbsp;</p>
 
 
-    <bs-button id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-secondary active">
-        <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
-      </label>
-      <label class="btn btn-secondary">
-        <input type="radio" name="options" id="option2" autocomplete="off"> Radio
-      </label>
-      <label class="btn btn-secondary">
-        <input type="radio" name="options" id="option3" autocomplete="off"> Radio
-      </label>
-    </bs-button>
+    <div id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <bs-button class="btn btn-secondary active">
+        <input type="radio" name="optionsv" id="option1" autocomplete="off" checked> Active
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option2" autocomplete="off"> Radio
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option3" autocomplete="off"> Radio
+      </bs-button>
+    </div>
 
     <button id="toggle-second-radio-button" type="button" class="btn btn-default">press Second Radio Button</button>
 
@@ -558,7 +589,10 @@
 
     function toggleSecondRadioButton() {
       const el = document.getElementById("bs-button-radio-buttons");
-      el.button('toggle', '.btn:nth-child(2)');
+      // // el.button('toggle', '.btn:nth-child(2)');
+      el.querySelector('.btn:nth-child(2)').button('toggle');
+
+      // $('#bs-button-radio-buttons').find('.btn:nth-child(2)').button('toggle');
     }
 
     function handleModalShow(event) {

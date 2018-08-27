@@ -1,6 +1,7 @@
 import {
   Component, // eslint-disable-line no-unused-vars
   Prop,
+  State,
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
@@ -8,7 +9,7 @@ import {
 
 
 import _size from 'lodash/size';
-import _get from 'lodash/get';
+// import _get from 'lodash/get';
 
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
@@ -16,6 +17,7 @@ import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
 import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
+// import elementMatches from '../../utilities/element-matches';
 
 
 @Component({ tag: 'bs-button', shadow: false })
@@ -24,59 +26,75 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
 
-  @Listen('focusin')
-  handleFocusIn(event) {
+  @State() addFocusClass: boolean;
+
+  componentWillLoad() {
+    this.addFocusClass = false;
     if (this.tabindex === '-1') {
       this.tabindex = '';
     }
+    if (this.tabindex === '0') {
+      const input = this.bsButtonEl.querySelector('input');
+      const buttonsToggler = closest(this.bsButtonEl, '[data-toggle="buttons"]');
+      if (buttonsToggler && input) {
+        this.addFocusClass = true;
+        this.tabindex = '';
+      }
+    }
+  }
+
+  @Listen('focusin')
+  handleFocusIn(event) {
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
     }
-    const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
-    if (buttonToggleData === 'button') {
-      // focus is handled by the tabindex attribute
-      // const isDisabled = hasClass(this.bsButtonEl, 'disabled');
-      // if (isDisabled) {
-      //   // put the focus back where it was
-      //   if (event.relatedTarget) {
-      //     event.relatedTarget.focus();
-      //   } else {
-      //     (document.activeElement as any).blur();
-      //   }
-      //   event.preventDefault();
-      //   return;
-      // }
-      // TODO: add listeners to keydown space and keydown enter to click to toggle
-      return;
+    if (this.tabindex === '-1') {
+      this.tabindex = '';
     }
-    const closestButton = closest(event.target, '.btn');
-    if (!closestButton || !this.bsButtonEl.contains(closestButton)) {
-      return;
+    // console.log('event: ', event);
+
+    //   const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
+    //   if (buttonToggleData === 'button') {
+    //     // focus is handled by the tabindex attribute
+    //     // const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    //     // if (isDisabled) {
+    //     //   // put the focus back where it was
+    //     //   if (event.relatedTarget) {
+    //     //     event.relatedTarget.focus();
+    //     //   } else {
+    //     //     (document.activeElement as any).blur();
+    //     //   }
+    //     //   event.preventDefault();
+    //     //   return;
+    //     // }
+    //     // TODO: add listeners to keydown space and keydown enter to click to toggle
+    //     return;
+    //   }
+    //
+    // if (!closestButton || !this.bsButtonEl.contains(closestButton)) {
+    //   return;
+    // }
+    // console.log('this.addFocusClass: ', this.addFocusClass);
+    if (this.addFocusClass) {
+      const closestButton = closest(event.target, '.btn');
+      addClass(closestButton, 'focus');
     }
-    addClass(closestButton, 'focus');
   }
 
   @Listen('focusout')
-  handleFocusOut(event) {
-    const buttonToggleData = _get(this.bsButtonEl, 'dataset.toggle', '');
-    if (buttonToggleData === 'button') {
-      // focus is handled by the tabindex attribute
-      // TODO: remove the listeners to keydown space and keydown enter
-      return;
+  handleFocusOut() {
+    if (this.addFocusClass) {
+      // const closestButton = closest(event.target, '.btn');
+      removeClass(this.bsButtonEl, 'focus');
     }
-    const closestButton = closest(event.target, '.btn');
-    if (!closestButton || !this.bsButtonEl.contains(closestButton)) {
-      return;
-    }
-    removeClass(closestButton, 'focus');
   }
 
 
-  @Listen('keyup')
+  @Listen('keydown')
   handleKeyUp(event) {
-    console.log('event: ', event);
-    if (event.which === 32) {
+    // console.log('event: ', event);
+    if (event.which === 32) { // space
       if (event.stopPropagation) {
         event.stopPropagation();
         event.preventDefault();
@@ -84,7 +102,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       this.handleToggle(this.bsButtonEl);
       return;
     }
-    if (event.which === 13) {
+    if (event.which === 13) { // enter
       if (event.stopPropagation) {
         event.stopPropagation();
         event.preventDefault();
@@ -92,96 +110,109 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       this.handleToggle(this.bsButtonEl);
       return;
     }
-    if (event.which === 27) {
+    if (event.which === 27) { // esc
       if (event.stopPropagation) {
         event.stopPropagation();
         event.preventDefault();
       }
       this.bsButtonEl.blur();
-      // this.handleToggle(this.bsButtonEl);
+      if (this.addFocusClass) {
+        removeClass(this.bsButtonEl, 'focus');
+      }
     }
   }
 
 
   @Listen('click')
   handleButtonClick(event) {
-    console.log('click');
+    // console.log('click');
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
     }
-
     this.handleToggle(event.target);
   }
 
-  static toggleDataToggleButtons(element, rootElement) {
-    const hasBtnClass = hasClass(element, 'btn');
-    if (!hasBtnClass) {
-      return;
-    }
-    // console.log('element: ', element);
-    // console.log('rootElement: ', rootElement);
-    let triggerChangeEvent = true;
-    let addAriaPressed = true;
-    const input = element.querySelector('input');
-    if (input) {
-      if (input.type === 'radio') {
-        if (input.checked && hasClass(element, 'active')) {
-          triggerChangeEvent = false;
-        } else {
-          const activeElement = rootElement.querySelector('.active');
-          if (activeElement) {
-            removeClass(activeElement, 'active');
-          }
-        }
-      }
-      if (triggerChangeEvent) {
-        if (input.hasAttribute('disabled') || rootElement.hasAttribute('disabled') || hasClass(input, 'disabled') || hasClass(rootElement, 'disabled')) {
-          return;
-        }
-        input.checked = !hasClass(element, 'active');
-        customEvent(input, 'change');
-      }
-      input.focus();
-      addAriaPressed = false;
-    }
-    if (addAriaPressed) {
-      element.setAttribute('aria-pressed', !hasClass(element, 'active'));
-    }
-    if (triggerChangeEvent) {
-      toggleClass(element, 'active');
-    }
-  }
-
-  static toggleDataToggleButton(buttonEl) {
-    buttonEl.setAttribute('aria-pressed', !hasClass(buttonEl, 'active'));
-    toggleClass(buttonEl, 'active');
-  }
 
   handleToggle(element) {
-    const buttonsToggler = closest(element, '[data-toggle="buttons"]');
-    if (buttonsToggler) {
-      BsButton.toggleDataToggleButtons(element, buttonsToggler);
+    const isDisabled = hasClass(this.bsButtonEl, 'disabled');
+    if (isDisabled) {
       return;
     }
-    const buttonToggler = closest(element, '[data-toggle="button"]');
-    if (buttonToggler && this.bsButtonEl.contains(buttonToggler)) {
-      BsButton.toggleDataToggleButton(buttonToggler);
+    if (!element || !this.bsButtonEl.contains(element)) {
+      throw new Error('Invalid element unable to toggle');
+    }
+    let triggerChangeEvent = true;
+    let addAriaPressed = true;
+    const buttonsToggler = closest(element, '[data-toggle="buttons"]');
+    if (buttonsToggler) {
+      // button group
+      // <div class="btn-group-toggle" data-toggle="buttons">
+      //   <bs-button class="btn btn-secondary active">
+      //     <input type="checkbox" checked autocomplete="off"> Checked
+      //   </bs-button>
+      // </div>
+      const input = this.bsButtonEl.querySelector('input');
+      if (input) {
+        if (input.type === 'radio') {
+          if (input.checked && hasClass(input, 'active')) {
+            triggerChangeEvent = false;
+          } else {
+            const activeElement = buttonsToggler.querySelector('.active');
+            if (activeElement) {
+              removeClass(activeElement, 'active');
+            }
+          }
+        }
+        if (triggerChangeEvent) {
+          input.checked = !hasClass(this.bsButtonEl, 'active');
+          customEvent(input, 'change');
+        }
+        if (this.addFocusClass) {
+          input.focus();
+        }
+        addAriaPressed = false;
+      }
+      if (addAriaPressed) {
+        this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
+      }
+      if (triggerChangeEvent) {
+        toggleClass(this.bsButtonEl, 'active');
+      }
+      return;
+    }
+    if (this.bsButtonEl.dataset.toggle === 'button') {
+      // standard button toggler
+      //  <bs-button class="btn btn-primary" data-toggle="button" aria-pressed="false">
+      //    Single toggle
+      //  </bs-button>
+      this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
+      toggleClass(this.bsButtonEl, 'active');
+    }
+    if (this.bsButtonEl.dataset.toggle === 'modal') {
+      // modal toggler
+      // <bs-button class="btn" data-toggle="modal" data-target="#exampleModal">modal</bs-button>
+      const modalTargetSelector = this.bsButtonEl.dataset.target;
+      if (modalTargetSelector) {
+        const modalTargetEl: any = document.querySelector(modalTargetSelector);
+        if (modalTargetEl.modalToggleButtonClicked) {
+          modalTargetEl.modalToggleButtonClicked(this.bsButtonEl);
+        }
+      }
     }
   }
 
   @Method()
-  button(buttonOptions:any = {}, selector:string = '') {
+  button(buttonOptions:any = {}) {
     if (_size(buttonOptions) === 0) {
       return this.bsButtonEl;
     }
-    if (buttonOptions === 'toggle' && _size(selector) === 0) {
+    if (buttonOptions === 'toggle') {
       this.handleToggle(this.bsButtonEl);
       return true;
     }
-    if (buttonOptions === 'toggle' && _size(selector) > 0) {
-      this.handleToggle(this.bsButtonEl.querySelector(selector));
-      return true;
+    if (typeof buttonOptions === 'string') {
+      throw new Error(`No method named "${buttonOptions}"`);
     }
     return null;
   }

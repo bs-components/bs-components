@@ -9,6 +9,8 @@ fixture('bs-components tooltip tests').page('./test-bs-tooltip.html');
 // NOTE: Ideally, every test should leave the page state the same way it was before the test started.
 // NOTE: times were increased to make up for testcafe platform compared tp jsdom based unit tests
 
+// https://github.com/DevExpress/testcafe/tree/master/examples
+
 const callTooltipById = ClientFunction((id, passedOption) => {
   const tooltipEl:any = document.getElementById(id);
   try {
