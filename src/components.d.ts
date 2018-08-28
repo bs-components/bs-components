@@ -63,10 +63,11 @@ declare global {
     }
 
     interface BsModal {
+      'getScrollbarWidth': () => number;
       'hiddenEventName': string;
       'hideEventName': string;
       'modal': (modalOptions?: {}) => true | HTMLElement;
-      'modalToggleButtonClicked': (relatedTarget?: {}) => void;
+      'modalToggleButtonClicked': (relatedTarget: any) => void;
       'showEventName': string;
       'shownEventName': string;
     }

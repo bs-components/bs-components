@@ -35,6 +35,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   @State() scrollbarWidth: number;
   @State() backdrop: any;
   @State() config: any;
+  @State() relatedTarget: HTMLElement;
 
   componentWillLoad() {
     this.isShown = hasClass(this.modalEl, 'show');
@@ -53,7 +54,8 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     document.removeEventListener('keydown', this.hideModalBecauseEscapePressed);
   }
 
-  static getScrollbarWidth() {
+  @Method()
+  getScrollbarWidth() { // eslint-disable-line class-methods-use-this
     const scrollDiv = document.createElement('div');
     scrollDiv.className = 'modal-scrollbar-measure';
     document.body.appendChild(scrollDiv);
@@ -65,7 +67,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   checkScrollbar() {
     const rect = document.body.getBoundingClientRect();
     this.isBodyOverflowing = rect.left + rect.right < window.innerWidth;
-    this.scrollbarWidth = BsModal.getScrollbarWidth();
+    this.scrollbarWidth = this.getScrollbarWidth();
   }
 
   setScrollbar() {
@@ -166,7 +168,17 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
       removeClass(document.body, 'modal-open');
       this.resetAdjustments();
       BsModal.resetScrollbar();
-      customEvent(this.modalEl, this.hiddenEventName);
+      if (this.relatedTarget) {
+        this.relatedTarget.focus();
+        this.relatedTarget = null;
+      }
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          setTimeout(() => {
+            customEvent(this.modalEl, this.hiddenEventName);
+          }, 0);
+        });
+      });
       this.unbindAllEventListenersUsed();
     });
   }
@@ -176,16 +188,19 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     this.modalEl.style.paddingRight = '';
   }
 
-  show(passedRelatedTarget = {}) {
+  show(relatedTarget = null) {
     if (this.isTransitioning || this.isShown) {
       return;
     }
     if (hasClass(this.modalEl, 'fade')) {
       this.isTransitioning = true;
     }
-    const showEvent = customEvent(this.modalEl, this.showEventName, {}, passedRelatedTarget);
+    const showEvent = customEvent(this.modalEl, this.showEventName, {}, relatedTarget);
     if (this.isShown || showEvent.defaultPrevented) {
       return;
+    }
+    if (relatedTarget) {
+      this.relatedTarget = relatedTarget;
     }
     this.isShown = true;
     this.checkScrollbar();
@@ -195,7 +210,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     this.setEscapeEvent();
     this.setResizeEvent();
     this.setClicksThatCanCloseModalEvent();
-    this.showBackdrop(() => this.showElement(passedRelatedTarget));
+    this.showBackdrop(() => this.showElement());
   }
 
   elementIsOrInADataDismissForThisModal(element) {
@@ -305,7 +320,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     document.addEventListener('focusin', this.handleFocusIn);
   }
 
-  showElement(passedRelatedTarget = {}) {
+  showElement() {
     // console.log('showElement');
     const transition = hasClass(this.modalEl, 'fade');
     if (!this.modalEl.parentNode || this.modalEl.parentNode.nodeType !== Node.ELEMENT_NODE) {
@@ -329,10 +344,22 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
           this.modalEl.focus();
         }
         this.isTransitioning = false;
-        customEvent(this.modalEl, this.shownEventName, {}, passedRelatedTarget);
+        window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+          window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+            setTimeout(() => {
+              customEvent(this.modalEl, this.shownEventName, {}, this.relatedTarget);
+            }, 0);
+          });
+        });
       }, transitionDuration);
     } else {
-      customEvent(this.modalEl, this.shownEventName, {}, passedRelatedTarget);
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          setTimeout(() => {
+            customEvent(this.modalEl, this.shownEventName, {}, this.relatedTarget);
+          }, 0);
+        });
+      });
     }
   }
 
@@ -400,12 +427,13 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  modalToggleButtonClicked(relatedTarget = {}) {
+  modalToggleButtonClicked(relatedTarget) {
     this.getConfig();
     if (this.isShown) {
       this.hide();
     } else {
       this.show(relatedTarget);
+      // console.log('relatedTarget: ', relatedTarget);
     }
   }
 
