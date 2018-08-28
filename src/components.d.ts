@@ -24,11 +24,6 @@ declare global {
 
   namespace StencilComponents {
 
-    interface BsButtonOld {
-      'button': (buttonOptions?: any, selector?: string) => true | HTMLElement;
-      'tabindex': string;
-    }
-
     interface BsButton {
       'button': (buttonOptions?: any) => true | HTMLElement;
       'tabindex': string;
@@ -88,14 +83,6 @@ declare global {
   }
 
 
-    interface HTMLBsButtonOldElement extends StencilComponents.BsButtonOld, HTMLStencilElement {}
-
-    var HTMLBsButtonOldElement: {
-      prototype: HTMLBsButtonOldElement;
-      new (): HTMLBsButtonOldElement;
-    };
-    
-
     interface HTMLBsButtonElement extends StencilComponents.BsButton, HTMLStencilElement {}
 
     var HTMLBsButtonElement: {
@@ -139,7 +126,6 @@ declare global {
   namespace JSX {
     interface Element {}
     export interface IntrinsicElements {
-    'bs-button-old': JSXElements.BsButtonOldAttributes;
     'bs-button': JSXElements.BsButtonAttributes;
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
@@ -149,10 +135,6 @@ declare global {
   }
 
   namespace JSXElements {
-
-    export interface BsButtonOldAttributes extends HTMLAttributes {
-      'tabindex'?: string;
-    }
 
     export interface BsButtonAttributes extends HTMLAttributes {
       'tabindex'?: string;
@@ -202,7 +184,6 @@ declare global {
   }
 
   interface HTMLElementTagNameMap {
-    'bs-button-old': HTMLBsButtonOldElement
     'bs-button': HTMLBsButtonElement
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
@@ -211,7 +192,6 @@ declare global {
   }
 
   interface ElementTagNameMap {
-    'bs-button-old': HTMLBsButtonOldElement;
     'bs-button': HTMLBsButtonElement;
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;

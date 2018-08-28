@@ -442,6 +442,33 @@
 
   <script type="x/template" id="dropdown-vue-test">
     <div>
+
+      <bs-button class="btn btn-primary" data-toggle="modal" data-target="#vue-exampleModal">
+          Launch vue demo modal
+      </bs-button>
+      <!-- Modal -->
+      <bs-modal class="modal fade" id="vue-exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p>modalTitle: <input v-model="modalTitle"> {{ modalTitle }}</p>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </bs-modal>
+
       <bs-dropdown ref="bsDropdownInVueExample" class="dropdown btn-group"
         show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
         hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
@@ -506,6 +533,7 @@
         showDropdown: 'false',
         tooltipTitle: 'vue tooltip title',
         tooltipContent: 'vue tooltip content',
+        modalTitle: 'Modal Title',
       },
       methods: {
         handleShownBsDropdown: handleShownBsDropdown,
