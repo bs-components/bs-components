@@ -70,7 +70,9 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     content: '',
   };
 
-  @State() config: any;
+  @Prop({ mutable: true }) config: any = {};
+
+  // @State() config: any;
   @State() isEnabled: boolean;
   @State() activeTrigger: any;
   @State() tooltipId: string;
@@ -808,6 +810,14 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
         this.insertedEventName = 'inserted.bs.popover';
       }
     }
+  }
+
+  @Method()
+  popover(popoverOptions:any = {}) {
+    if (this.tooltipEl.dataset.toggle !== 'popover') {
+      throw new Error('a popover requires [data-toggle="popover"]');
+    }
+    return this.tooltip(popoverOptions);
   }
 
   @Method()

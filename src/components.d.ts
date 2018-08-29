@@ -70,11 +70,13 @@ declare global {
     interface BsTooltip {
       'bsContent': string;
       'bsTitle': string;
+      'config': any;
       'defaults': any;
       'hiddenEventName': string;
       'hideEventName': string;
       'insertedEventName': string;
       'noEnableOnLoad': boolean;
+      'popover': (popoverOptions?: any) => boolean | HTMLElement;
       'showEventName': string;
       'shownEventName': string;
       'tabindex': string;
@@ -172,6 +174,7 @@ declare global {
     export interface BsTooltipAttributes extends HTMLAttributes {
       'bsContent'?: string;
       'bsTitle'?: string;
+      'config'?: any;
       'defaults'?: any;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
