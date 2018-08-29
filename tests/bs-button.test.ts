@@ -10,6 +10,7 @@ fixture('bs-components button tests').page('./bs-button.test.html');
 // NOTE: times were increased to make up for testcafe platform compared tp jsdom based unit tests
 
 // https://github.com/DevExpress/testcafe/tree/master/examples
+// https://marketplace.visualstudio.com/items?itemName=hdorgeval.testcafe-snippets
 
 const appendHtml = ClientFunction((innerHtml) => {
   const template = document.createElement('div');

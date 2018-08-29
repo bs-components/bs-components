@@ -9,7 +9,7 @@ Status:
 - [ ] popover done by extending tooltips. needs tests before marking complete.
   - note: bootstraps jQuery extends tooltips for popovers behind the scenes.
 - [x] button - run tests using: `yarn test-bs-button`
-- [ ] modal done with NO tests. needs tests before marking complete.
+- [x] modal - run tests using: `yarn test-bs-modal`
 - [ ] collapse done with NO tests. needs tests before marking complete.
   - note: planning to entirely reevaluate how collapse was done for a more bootstrap consistent experience
 - [ ] dropdown done with NO tests. needs tests before marking complete.

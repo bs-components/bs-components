@@ -10,6 +10,11 @@ fixture('bs-components tooltip tests').page('./bs-tooltip.test.html');
 // NOTE: times were increased to make up for testcafe platform compared tp jsdom based unit tests
 
 // https://github.com/DevExpress/testcafe/tree/master/examples
+// https://marketplace.visualstudio.com/items?itemName=hdorgeval.testcafe-snippets
+
+// the below tests are flaky
+//    Flaky or not Flaky? Say goodbye to flaky-ness
+//    https://github.com/hdorgeval/testcafe-snippets/blob/master/say-goodbye-to-flakyness.md
 
 const callTooltipById = ClientFunction((id, passedOption) => {
   const tooltipEl:any = document.getElementById(id);

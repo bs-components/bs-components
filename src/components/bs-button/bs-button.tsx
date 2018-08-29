@@ -173,9 +173,14 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       // <bs-button class="btn" data-toggle="modal" data-target="#exampleModal">modal</bs-button>
       const modalTargetSelector = this.bsButtonEl.dataset.target;
       if (modalTargetSelector) {
-        const modalTargetEl: any = document.querySelector(modalTargetSelector);
-        if (modalTargetEl.modalToggleButtonClicked) {
-          modalTargetEl.modalToggleButtonClicked(this.bsButtonEl);
+        try {
+          const modalTargetEl: any = document.querySelector(modalTargetSelector);
+          if (modalTargetEl.modalToggleButtonClicked) {
+            modalTargetEl.modalToggleButtonClicked(this.bsButtonEl);
+          }
+        } catch (err) {
+          console.log('bs-button modal toggle target must be a valid css selector string');
+          console.error(err.message);
         }
       }
     }
