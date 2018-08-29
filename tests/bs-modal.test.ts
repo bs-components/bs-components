@@ -114,6 +114,45 @@ const focusById = ClientFunction((id) => {
   return true;
 });
 
+const guaranteePageHasScrollBar = ClientFunction(() => {
+  const el = document.getElementById('page-container');
+  el.style.paddingBottom = '200vh';
+  return true;
+});
+
+const getCssPaddingRightBody = ClientFunction(() => {
+  const el = document.body;
+  const style = window.getComputedStyle(el);
+  return style.paddingRight;
+});
+
+const getScrollbarWidthById = ClientFunction((id) => {
+  const el:any = document.getElementById(id);
+  return el.getScrollbarWidth();
+});
+
+const setStyleBySelector = ClientFunction((selector, attribute, value) => {
+  const el:any = document.querySelector(selector);
+  el.style[attribute] = value;
+  return true;
+});
+
+const removeAttributeBySelector = ClientFunction((selector, attribute) => {
+  const el:any = document.querySelector(selector);
+  el.removeAttribute(attribute);
+  return true;
+});
+
+const getDatasetBySelector = ClientFunction((selector, attribute) => {
+  const el:any = document.querySelector(selector);
+  return el.dataset[attribute];
+});
+
+const getCssPaddingRightById = ClientFunction((id) => {
+  const el = document.getElementById(id);
+  const style = window.getComputedStyle(el);
+  return style.paddingRight;
+});
 
 // test('modal method is defined', async (t) => {
 //   const hasModalMethodById = ClientFunction((selector) => {
@@ -468,26 +507,10 @@ const focusById = ClientFunction((id) => {
 
 
 test('should adjust the inline padding of the modal when opening', async (t) => {
-  const getScrollbarWidthById = ClientFunction((id) => {
-    const el:any = document.getElementById(id);
-    // eslint-disable-next-line prefer-template
-    return el.getScrollbarWidth() + 'px';
-  });
-  const getCssPaddingRightById = ClientFunction((id) => {
-    const el = document.getElementById(id);
-    const style = window.getComputedStyle(el);
-    return style.paddingRight;
-  });
-  const guaranteePageHasScrollBar = ClientFunction(() => {
-    // NOTE: for this test to pass there must be a scroll bar on the page
-    const el = document.getElementById('page-container');
-    el.style.paddingBottom = '200vh';
-    return true;
-  });
   const modalHtml = '<bs-modal id="modal-test"></bs-modal>';
   const myModal = Selector('#modal-test');
   const myModalBackdrop = Selector('.modal-backdrop');
-  await t.expect(guaranteePageHasScrollBar()).ok();
+  await t.expect(guaranteePageHasScrollBar()).ok('there must be a scroll bar on the page');
   await t.expect(await appendHtml(_.trim(modalHtml))).ok();
   await t.expect(await myModal.exists).ok();
   await t.expect(getStyleDisplayById('modal-test')).eql('inline');
@@ -495,10 +518,119 @@ test('should adjust the inline padding of the modal when opening', async (t) => 
   await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
   await t.expect(await myModalBackdrop.exists).ok();
   await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
-  const expectedPadding = await getScrollbarWidthById('modal-test');
+  const expectedPadding = `${await getScrollbarWidthById('modal-test')}px`;
   const currentPadding = await getCssPaddingRightById('modal-test');
   await t.expect(currentPadding).eql(expectedPadding, 'modal padding should be adjusted while opening');
 });
 
 
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/modal.js#L375
+test('should adjust the inline body padding when opening and restore when closing', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  const myModalBackdrop = Selector('.modal-backdrop');
+  await t.expect(guaranteePageHasScrollBar()).ok('there must be a scroll bar on the page');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  const originalPadding = await getCssPaddingRightBody();
+  // console.log('originalPadding: ', originalPadding);
+  await t.expect(getStyleDisplayById('modal-test')).eql('inline');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(await myModalBackdrop.exists).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
+  const expectedPadding = `${parseFloat(originalPadding) + await getScrollbarWidthById('modal-test')}px`;
+  const afterShownPadding = await getCssPaddingRightBody();
+  // console.log('expectedPadding: ', expectedPadding);
+  // console.log('afterShownPadding: ', afterShownPadding);
+  await t.expect(afterShownPadding).eql(expectedPadding, 'modal padding should be adjusted while opening');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+  const afterHiddenPadding = await getCssPaddingRightBody();
+  await t.expect(afterHiddenPadding).eql(originalPadding, 'modal padding should be adjusted while opening');
+  // console.log('afterHiddenPadding: ', afterHiddenPadding);
+});
+
+
+test('should store the original body padding in data-padding-right before showing', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  const originalPadding = '0px';
+  const myModalBackdrop = Selector('.modal-backdrop');
+  await t.expect(guaranteePageHasScrollBar()).ok('there must be a scroll bar on the page');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(setStyleBySelector('body', 'padding-right', originalPadding)).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('inline');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(await myModalBackdrop.exists).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
+  await t.expect(await getDatasetBySelector('body', 'paddingRight')).eql(originalPadding, 'original body padding should be stored in data-padding-right');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+  await t.expect(await getDatasetBySelector('body', 'paddingRight')).eql(undefined, 'data-padding-right should be cleared after closing');
+  await t.expect(removeAttributeBySelector('body', 'style')).ok();
+});
+
+
+test('should not adjust the inline body padding when it does not overflow', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  const myModalBackdrop = Selector('.modal-backdrop');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  const originalPadding = await getCssPaddingRightBody();
+  // console.log('originalPadding: ', originalPadding);
+  await t.expect(getStyleDisplayById('modal-test')).eql('inline');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(await myModalBackdrop.exists).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
+  const currentPadding = await getCssPaddingRightBody();
+  // console.log('currentPadding: ', currentPadding);
+  await t.expect(currentPadding).eql(originalPadding, 'body padding should not be adjusted');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+  await t.expect(guaranteePageHasScrollBar()).ok('adding a scrollbar');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(await myModalBackdrop.exists).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
+  const withScrollbarPadding = await getCssPaddingRightBody();
+  // console.log('withScrollbarPadding: ', withScrollbarPadding);
+  await t.expect(withScrollbarPadding).notEql(originalPadding, 'body padding should be adjusted');
+});
+
+
+test('should adjust the inline padding of fixed elements when opening and restore when closing', async (t) => {
+  const modalHtml = '<div id="my-fixed-top" class="fixed-top"><bs-modal id="modal-test"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  const myFixedTop = Selector('#my-fixed-top');
+  const myModalBackdrop = Selector('.modal-backdrop');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myFixedTop.exists).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(guaranteePageHasScrollBar()).ok('there must be a scroll bar on the page');
+  const originalPadding = await getCssPaddingRightById('my-fixed-top');
+  // console.log('originalPadding: ', originalPadding);
+  await t.expect(getStyleDisplayById('modal-test')).eql('inline');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(await myModalBackdrop.exists).ok();
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal visible');
+  const expectedPadding = `${parseFloat(originalPadding) + await getScrollbarWidthById('modal-test')}px`;
+  const afterShownPadding = await getCssPaddingRightById('my-fixed-top');
+  // console.log('expectedPadding: ', expectedPadding);
+  // console.log('afterShownPadding: ', afterShownPadding);
+  await t.expect(afterShownPadding).eql(expectedPadding, 'fixed element padding should be adjusted while opening');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
+  await t.expect(await myModalBackdrop.exists).notOk();
+  await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+  const afterHiddenPadding = await getCssPaddingRightById('my-fixed-top');
+  // console.log('afterHiddenPadding: ', afterHiddenPadding);
+  await t.expect(afterHiddenPadding).eql(originalPadding, 'fixed element padding should be reset after closing');
+});
+
+// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/modal.js#L463
