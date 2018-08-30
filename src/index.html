@@ -95,6 +95,11 @@
 
   <div class="container mt-5">
 
+      <!-- <div class="content-with-handler">
+        <a id="button-event-here" class="btn btn-warning">Button with event handler</a>
+      </div>
+      <bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip> -->
+
       <p>Popovers</p>
 
       <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" bs-title="" bs-content="" data-placement="top" data-title="abc123" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
@@ -709,6 +714,35 @@
     document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
     document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
     document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+
+    // function setupPopover() {
+    //   const myPopoverConfig = {
+    //     html: true,
+    //     trigger: 'manual',
+    //     container: 'body',
+    //     animation: false,
+    //     content: () => document.querySelector('.content-with-handler'),
+    //   };
+    //   const el = document.getElementById('popover-test');
+    //   el.popover(myPopoverConfig);
+
+    //   el.popover('show');
+
+    //   // const template = document.createElement('div');
+    //   // template.innerHTML = '<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>';
+    //   // const contentEl = template.firstChild;
+    //   // popoverEl.popover({ html: true, content: contentEl });
+    //   // console.log('popoverEl.config: ', popoverEl.config);
+    //   // popoverEl.popover('show');
+    //   // console.log('show fired!');
+    // }
+    // setTimeout(() => {
+    //   setupPopover();
+
+    // }, 1000);
+
+
+
 
 
     // function handleInsertedTopTooltip(event) {

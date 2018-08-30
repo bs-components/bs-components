@@ -24,6 +24,7 @@ import _trim from 'lodash/trim';
 import _isInteger from 'lodash/isInteger';
 import _isObject from 'lodash/isObject';
 import _isString from 'lodash/isString';
+import _isElement from 'lodash/isElement';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
@@ -49,6 +50,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
   @Prop({ mutable: true }) bsContent: string = '';
   @Prop({ mutable: true }) bsTitle: string = '';
+  @Prop({ mutable: true }) config: any = {};
   @Prop({ mutable: true }) defaults = {
     animation: true,
     template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -70,8 +72,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     content: '',
   };
 
-  @Prop({ mutable: true }) config: any = {};
-
   // @State() config: any;
   @State() isEnabled: boolean;
   @State() activeTrigger: any;
@@ -90,6 +90,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
   componentDidUnload() {
     this.disableTooltip();
+    this.config = {};
   }
 
   static getAttachment(placement) {
@@ -103,14 +104,16 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     return AttachmentMap[_toLower(placement)];
   }
 
-  enableTooltip(overrideConfig:any = {}) {
+  enableTooltip() {
     this.isEnabled = true;
     this.activeTrigger = {};
     this.hoverState = '';
     this.tooltipId = getUniqueId('tooltip');
     this.tooltipEl.dataset.bsId = this.tooltipId;
     this.tip = null;
-    this.setConfig(overrideConfig);
+    if (_size(this.config) === 0) {
+      this.setConfig();
+    }
     this.setListeners();
   }
 
@@ -122,7 +125,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.tooltipEl.removeEventListener('mouseleave', this.handleMouseLeave);
     this.tooltipEl.removeEventListener('focusin', this.handleFocusIn);
     this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
-    // const originalTitle = this.tooltipEl.dataset.originalTitle;
     const { originalTitle } = this.tooltipEl.dataset;
     if (_size(originalTitle) > 0) {
       this.tooltipEl.title = originalTitle;
@@ -248,11 +250,36 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     }, this.config.delay.hide);
   }
 
+  okToShow() {
+    if (!this.isEnabled) {
+      return false;
+    }
+    const title = this.getTitle();
+    if (title && title.length > 0) {
+      return true;
+    }
+    if (title && _isElement(title)) {
+      return true;
+    }
+    if (this.config.toggle === 'popover') {
+      return true;
+      // const content = this.getContent();
+      // if (content && content.length > 0) {
+      //   return true;
+      // }
+      // if (content && _isElement(content)) {
+      //   return true;
+      // }
+    }
+    return false;
+  }
+
   show() {
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
-    if ((_size(this.getTitle()) > 0 || _size(this.getContent()) > 0) && this.isEnabled) {
+    if (this.okToShow()) {
+      // console.log('Showing');
       const showEvent = customEvent(this.tooltipEl, this.showEventName);
       this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
       const isInTheDom = this.tooltipEl.ownerDocument.documentElement.contains(this.tooltipEl);
@@ -465,9 +492,18 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
   setElementContent(el, content) {
     if (this.config.html) {
+      if (_isElement(content)) {
+        el.appendChild(content);
+        return;
+      }
       // eslint-disable-next-line no-param-reassign
       el.innerHTML = content;
     } else {
+      if (_isElement(content)) {
+        // eslint-disable-next-line no-param-reassign
+        el.textContent = content.innerText;
+        return;
+      }
       // eslint-disable-next-line no-param-reassign
       el.textContent = content;
     }
@@ -476,7 +512,12 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   getContent() {
     if (this.config.content) {
       if (typeof this.config.content === 'function') {
-        return this.config.content.call(this.tooltipEl);
+        const newContent = this.config.content.call(this.tooltipEl);
+        if (_isElement(newContent)) {
+          // detaches the content element
+          this.config.content = newContent;
+        }
+        return newContent;
       }
       return this.config.content;
     }
@@ -486,7 +527,12 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   getTitle() {
     if (this.config.title) {
       if (typeof this.config.title === 'function') {
-        return this.config.title.call(this.tooltipEl);
+        const newTitle = this.config.title.call(this.tooltipEl);
+        if (_isElement(newTitle)) {
+          // detaches the title element
+          this.config.content = newTitle;
+        }
+        return newTitle;
       }
       return this.config.title;
     }
@@ -662,14 +708,14 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
     if (_size(this.bsContent) > 0) {
       config.content = this.bsContent;
+    } else if (_has(this.tooltipEl.dataset, 'content')) {
+      config.content = this.tooltipEl.dataset.content;
     } else if (_has(overrideConfig, 'content')) {
       if (typeof overrideConfig.content === 'object' && overrideConfig.content.nodeValue) {
         config.content = overrideConfig.content.nodeValue;
       } else {
         config.content = overrideConfig.content;
       }
-    } else if (_has(this.tooltipEl.dataset, 'content')) {
-      config.content = this.tooltipEl.dataset.content;
     } else {
       config.content = this.defaults.content;
     }
@@ -793,6 +839,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       config.template = this.defaults.template;
     }
     this.config = config;
+    // console.log('this.config: ', this.config);
     if (this.config.toggle === 'popover') {
       if (!this.tooltipEl.hasAttribute('show-event-name')) {
         this.showEventName = 'show.bs.popover';
@@ -812,16 +859,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  @Method()
-  popover(popoverOptions:any = {}) {
-    if (this.tooltipEl.dataset.toggle !== 'popover') {
-      throw new Error('a popover requires [data-toggle="popover"]');
-    }
-    return this.tooltip(popoverOptions);
-  }
-
-  @Method()
-  tooltip(tooltipOptions:any = {}) {
+  setupMethod(tooltipOptions) {
     if (_size(tooltipOptions) === 0) {
       if (!this.isEnabled) {
         this.enableTooltip();
@@ -835,6 +873,11 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     }
     if (tooltipOptions === 'disable') {
       this.disableTooltip();
+      return true;
+    }
+    if (tooltipOptions === 'dispose') {
+      this.disableTooltip();
+      this.config = {};
       return true;
     }
     if (tooltipOptions === 'toggleEnabled') {
@@ -878,13 +921,30 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       if (this.isEnabled) {
         this.disableTooltip();
       }
-      this.enableTooltip(tooltipOptions);
+      this.setConfig(tooltipOptions);
+      this.enableTooltip();
       return true;
     }
     if (typeof tooltipOptions === 'string') {
       throw new Error(`No method named "${tooltipOptions}"`);
     }
     return null;
+  }
+
+  @Method()
+  popover(popoverOptions:any = {}) {
+    if (this.tooltipEl.dataset.toggle !== 'popover') {
+      throw new Error('a popover requires [data-toggle="popover"]');
+    }
+    return this.setupMethod(popoverOptions);
+  }
+
+  @Method()
+  tooltip(tooltipOptions:any = {}) {
+    if (this.tooltipEl.dataset.toggle === 'popover') {
+      throw new Error('For a popover you must call the popover method not the tooltip method');
+    }
+    return this.setupMethod(tooltipOptions);
   }
 
   render() {
