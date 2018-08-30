@@ -120,11 +120,11 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   disableTooltip() {
     this.isEnabled = false;
     clearTimeout(this.timeout);
-    this.tooltipEl.removeEventListener('click', this.handleClickTrigger);
-    this.tooltipEl.removeEventListener('mouseenter', this.handleMouseEnter);
-    this.tooltipEl.removeEventListener('mouseleave', this.handleMouseLeave);
-    this.tooltipEl.removeEventListener('focusin', this.handleFocusIn);
-    this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
+    this.bsRemoveEventListener('click', this.handleClickTrigger);
+    this.bsRemoveEventListener('mouseenter', this.handleMouseEnter);
+    this.bsRemoveEventListener('mouseleave', this.handleMouseLeave);
+    this.bsRemoveEventListener('focusin', this.handleFocusIn);
+    this.bsRemoveEventListener('focusout', this.handleFocusOut);
     const { originalTitle } = this.tooltipEl.dataset;
     if (_size(originalTitle) > 0) {
       this.tooltipEl.title = originalTitle;
@@ -616,6 +616,36 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.leave(event);
   }
 
+
+  bsRemoveEventListener(eventName, listenerFunction, callback = () => {}) {
+    if (this.config.selector) {
+      const elements = Array.prototype.slice.call(document.querySelectorAll(this.config.selector));
+      if (elements && _size(elements) > 0) {
+        for (let j = 0; j < elements.length; j += 1) {
+          elements[j].removeEventListener(eventName, listenerFunction);
+        }
+      }
+    }
+    this.tooltipEl.removeEventListener(eventName, listenerFunction);
+    callback();
+  }
+
+  bsAddEventListener(eventName, listenerFunction) {
+    this.bsRemoveEventListener(eventName, listenerFunction, () => {
+      if (this.config.selector) {
+        const elements = Array.prototype.slice.call(this.tooltipEl.querySelectorAll(this.config.selector));
+        if (elements && _size(elements) > 0) {
+          for (let j = 0; j < elements.length; j += 1) {
+            elements[j].addEventListener(eventName, listenerFunction);
+          }
+          return;
+        }
+        console.error('unable to find elements matching selector falling back to using bs-tooltip');
+      }
+      this.tooltipEl.addEventListener(eventName, listenerFunction);
+    });
+  }
+
   setListeners() {
     const closestModal = closest(this.tooltipEl, '.modal');
     if (closestModal) {
@@ -630,24 +660,19 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
     const triggers = _split(_toLower(this.config.trigger), ' ');
     if (_includes(triggers, 'click')) {
-      this.tooltipEl.removeEventListener('click', this.handleClickTrigger);
-      this.tooltipEl.addEventListener('click', this.handleClickTrigger);
+      this.bsAddEventListener('click', this.handleClickTrigger);
     }
     if (_includes(triggers, 'manual')) {
       // hover and focus events are ignored if manual is included.
       return;
     }
     if (_includes(triggers, 'hover')) {
-      this.tooltipEl.removeEventListener('mouseenter', this.handleMouseEnter);
-      this.tooltipEl.addEventListener('mouseenter', this.handleMouseEnter);
-      this.tooltipEl.removeEventListener('mouseleave', this.handleMouseLeave);
-      this.tooltipEl.addEventListener('mouseleave', this.handleMouseLeave);
+      this.bsAddEventListener('mouseenter', this.handleMouseEnter);
+      this.bsAddEventListener('mouseleave', this.handleMouseLeave);
     }
     if (_includes(triggers, 'focus')) {
-      this.tooltipEl.removeEventListener('focusin', this.handleFocusIn);
-      this.tooltipEl.addEventListener('focusin', this.handleFocusIn);
-      this.tooltipEl.removeEventListener('focusout', this.handleFocusOut);
-      this.tooltipEl.addEventListener('focusout', this.handleFocusOut);
+      this.bsAddEventListener('focusin', this.handleFocusIn);
+      this.bsAddEventListener('focusout', this.handleFocusOut);
     }
   }
 
@@ -718,6 +743,9 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       }
     } else {
       config.content = this.defaults.content;
+    }
+    if (_isNumber(config.content)) {
+      config.content = _toString(config.content);
     }
 
     let newConfigDelay;

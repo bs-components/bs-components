@@ -6,8 +6,6 @@ const _ = require('lodash');
 fixture('bs-components popover tests').page('./bs-popover.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js
-// NOTE: Ideally, every test should leave the page state the same way it was before the test started.
-// NOTE: times were increased to make up for testcafe platform compared tp jsdom based unit tests
 
 // https://github.com/DevExpress/testcafe/tree/master/examples
 // https://marketplace.visualstudio.com/items?itemName=hdorgeval.testcafe-snippets#user-content-tc-selector-with-options
@@ -22,16 +20,6 @@ const appendHtml = ClientFunction((innerHtml) => {
   }
   return false;
 });
-
-// const appendHtmlToHead = ClientFunction((innerHtml) => {
-//   const template = document.createElement('div');
-//   template.innerHTML = innerHtml;
-//   const el = template.firstChild;
-//   if (document.head.appendChild(el)) {
-//     return true;
-//   }
-//   return false;
-// });
 
 
 const callPopoverById = ClientFunction((id, passedOption) => {
@@ -63,119 +51,39 @@ const runPopoverMethodAndWaitForEventById = ClientFunction((id, passedOption, ev
   el.popover(passedOption);
 }));
 
-// const callModalMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => new Promise((resolve) => {
-//   const myTimeout = setTimeout(() => {
-//     // 6 seconds should be more than long enough for any reasonable real world transition
-//     // eslint-disable-next-line no-use-before-define
-//     document.getElementById(id).removeEventListener(eventName, handleEventHappened);
-//     resolve(false);
-//   }, 6000);
-//   const handleEventHappened = () => {
-//     clearTimeout(myTimeout);
-//     resolve(true);
-//   };
-//   document.getElementById(id).addEventListener(eventName, handleEventHappened, { once: true });
-//   const modalEl:any = document.getElementById(id);
-//   modalEl.modal(passedOption);
-// }));
-
-// const getStyleDisplayById = ClientFunction((id) => {
-//   // https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
-//   const el = document.getElementById(id);
-//   const style = window.getComputedStyle(el);
-//   return style.display;
-//   // return (style.display === 'none');
-// });
+const callModalMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => new Promise((resolve) => {
+  const myTimeout = setTimeout(() => {
+    // 6 seconds should be more than long enough for any reasonable real world transition
+    // eslint-disable-next-line no-use-before-define
+    document.getElementById(id).removeEventListener(eventName, handleEventHappened);
+    resolve(false);
+  }, 6000);
+  const handleEventHappened = () => {
+    clearTimeout(myTimeout);
+    resolve(true);
+  };
+  document.getElementById(id).addEventListener(eventName, handleEventHappened, { once: true });
+  const modalEl:any = document.getElementById(id);
+  modalEl.modal(passedOption);
+}));
 
 
-// const triggerRealClickByClass = ClientFunction((className) => {
-//   const elements = Array.prototype.slice.call(document.getElementsByClassName(className));
-//   for (let j = 0; j < elements.length; j += 1) {
-//     elements[j].click();
-//   }
-//   return true;
-// });
-
-// const triggerRealClickById = ClientFunction((id) => {
-//   const el = document.getElementById(id);
-//   el.click();
-//   return true;
-// });
+const getStyleDisplayById = ClientFunction((id) => {
+  // https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
+  const el = document.getElementById(id);
+  const style = window.getComputedStyle(el);
+  return style.display;
+});
 
 
-// const hasFocusById = ClientFunction((id) => {
-//   const el = document.getElementById(id);
-//   return el === document.activeElement;
-// });
+const triggerRealClickBySelector = ClientFunction((selector) => {
+  const elements = Array.prototype.slice.call(document.querySelectorAll(selector));
+  for (let j = 0; j < elements.length; j += 1) {
+    elements[j].click();
+  }
+  return true;
+});
 
-// const focusById = ClientFunction((id) => {
-//   document.getElementById(id).focus();
-//   return true;
-// });
-
-// const guaranteePageHasScrollBar = ClientFunction(() => {
-//   const el = document.getElementById('page-container');
-//   el.style.paddingBottom = '200vh';
-//   return true;
-// });
-
-
-// const getScrollbarWidthById = ClientFunction((id) => {
-//   const el:any = document.getElementById(id);
-//   return el.getScrollbarWidth();
-// });
-
-// const setStyleBySelector = ClientFunction((selector, attribute, value) => {
-//   const el:any = document.querySelector(selector);
-//   el.style[attribute] = value;
-//   return true;
-// });
-
-// const removeAttributeBySelector = ClientFunction((selector, attribute) => {
-//   const el:any = document.querySelector(selector);
-//   el.removeAttribute(attribute);
-//   return true;
-// });
-
-// const getDatasetBySelector = ClientFunction((selector, attribute) => {
-//   const el:any = document.querySelector(selector);
-//   return el.dataset[attribute];
-// });
-
-// const getCssPaddingRightById = ClientFunction((id) => {
-//   const el = document.getElementById(id);
-//   const style = window.getComputedStyle(el);
-//   return style.paddingRight;
-// });
-
-// const getCssComputedStyleBySelector = ClientFunction((selector, styleName) => {
-//   const el = document.querySelector(selector);
-//   const style = window.getComputedStyle(el);
-//   return style[styleName];
-// });
-
-// const getInlineCssStyleBySelector = ClientFunction((selector, styleName) => {
-//   const el = document.querySelector(selector);
-//   // const style = window.getComputedStyle(el);
-//   return el.style[styleName];
-// });
-
-// const triggerKeyboardEventBySelector = ClientFunction((selector, eventType, keyCode) => {
-//   const el = document.querySelector(selector);
-//   const eventObj = (document as any).createEventObject ? (document as any).createEventObject() : document.createEvent('Events');
-//   if (eventObj.initEvent) {
-//     eventObj.initEvent(eventType, true, true);
-//   }
-//   eventObj.keyCode = keyCode;
-//   eventObj.which = keyCode;
-//   el.dispatchEvent(eventObj);
-//   return true;
-// });
-
-// const getParentElementInnerHTMLBySelector = ClientFunction((selector) => {
-//   const el = document.querySelector(selector);
-//   return el.parentElement.innerHTML;
-// });
 
 const getInnerHTMLBySelector = ClientFunction((selector) => {
   const el = document.querySelector(selector);
@@ -436,8 +344,26 @@ test('should destroy popover', async (t) => {
   await t.expect(await insertedPopover.nth(0).exists).notOk('does not open after hover');
 });
 
-// // TODO: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js#L275
-// // 'should render popover element using delegated selector'
+test('should render popover element using delegated selector', async (t) => {
+  // not sure why you would ever do this...
+  // just add a separate web component bs-tooltip wrapper for every item you want a popover on even if dynamic
+  const popoverHtml = '<bs-tooltip id="popover-test" data-animation="false" data-toggle="popover" title="Ace" data-content="Ace Backer"><a href="#">ace</a></bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  const myPopoverConfig = {
+    selector: 'a',
+    trigger: 'click',
+  };
+  await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
+  await t.expect(await triggerRealClickBySelector('#popover-test')).ok();
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover was not inserted');
+  await t.expect(await triggerRealClickBySelector('a')).ok();
+  await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
+  await t.expect(await triggerRealClickBySelector('a')).ok();
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
+});
 
 
 test('should detach popover content rather than removing it so that event handlers are left intact', async (t) => {
@@ -495,9 +421,141 @@ test('should detach popover content rather than removing it so that event handle
   await t.expect(await shouldDetachPopoverContentRatherThanRemovingItSoThatEventHandlersAreLeftIntact()).ok();
 });
 
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js#L336
+
+test('should do nothing when an attempt is made to hide an uninitialized popover', async (t) => {
+  const popoverHtml = '<bs-tooltip id="popover-test" no-enable-on-load data-toggle="popover" data-title="some title" data-content="some content">ace</bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  console.log('\t...Waiting on timeout for hide event...');
+  await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).notOk('should not fire any popover events');
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist');
+});
 
 
-// await t.expect(getDatasetBySelector('#popover-test', 'originalTitle')).eql('mdo');
-// await t.expect(getDatasetBySelector('#popover-test', 'content')).eql('https://twitter.com/mdo');
-// await t.expect(_.size(getDatasetBySelector('#popover-test', 'bsId'))).gt(0);
+test('should fire inserted event', async (t) => {
+  const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  const myPopoverConfig = {
+    title: 'Test',
+    content: 'Test',
+  };
+  await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
+  await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'inserted.bs.popover')).ok('inserted event fired');
+  await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
+});
+
+
+test('should throw an error when show is called on hidden elements', async (t) => {
+  const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" data-title="some title" data-content="Ace Backer" style="display: none">ace</bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  await t.expect((await callPopoverById('popover-test', 'show')).message).eql('Please use show on visible elements');
+});
+
+
+test('should hide popovers when their containing modal is closed', async (t) => {
+  const templateHtml = `
+    <bs-modal id="modal-test" class="modal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <bs-tooltip id="popover-test" class="btn btn-secondary" data-toggle="popover" data-placement="top" data-content="Popover">
+              Popover on top
+            </bs-tooltip>
+          </div>
+        </div>
+      </div>
+    </bs-modal>`;
+  const myModal = Selector('#modal-test');
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(templateHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
+  await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal inserted into dom');
+  await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
+  await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
+  await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
+  await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+  await t.wait(150); // the popover transition duration time (not needed if animation=false)
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist', { timeout: 5000 });
+});
+
+
+test('should convert number to string without error for content and title', async (t) => {
+  const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  const insertedPopoverHeader = Selector('.popover .popover-header');
+  const insertedPopoverBody = Selector('.popover .popover-body');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  const myPopoverConfig = {
+    title: 5,
+    content: 7,
+  };
+  await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
+  await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
+  await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
+  await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('5', 'title correctly inserted as string');
+  await t.expect(await insertedPopoverBody.nth(0).innerText).eql('7', 'content correctly inserted as string');
+});
+
+
+test('popover should be shown right away after the call of disable/enable', async (t) => {
+  const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
+  const myPopover = Selector('#popover-test');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  const myPopoverConfig = {
+    title: 'Test popover',
+    content: 'with disable/enable',
+  };
+  await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
+  await t.expect(await callPopoverById('popover-test', 'disable')).ok();
+  await t.click(myPopover);
+  await t.wait(200);
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist');
+  await t.expect(await callPopoverById('popover-test', 'enable')).ok();
+  await t.click(myPopover);
+  await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
+  await t.expect(await insertedPopover.nth(0).hasClass('show')).ok('popover has show class');
+});
+
+
+test('popover should call content function only once', async (t) => {
+  const popoverShouldCallContentFunctionOnlyOnce = ClientFunction(() => new Promise((resolve) => {
+    let contentFunctionCallCount = 0;
+    const myPopoverConfig = {
+      content: () => {
+        contentFunctionCallCount += 1;
+        const clonedEl: any = document.getElementById('popover').cloneNode(true);
+        clonedEl.style.display = '';
+        return clonedEl;
+      },
+    };
+    const el:any = document.getElementById('popover-test');
+    el.popover(myPopoverConfig);
+    document.getElementById('popover-test').addEventListener('shown.bs.popover', () => {
+      resolve(contentFunctionCallCount);
+    }, { once: true });
+    el.popover('show');
+  }));
+  const popoverHtml = `
+    <div>
+      <div id="popover" style="display:none">content</div>
+      <bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>
+    </div>`;
+  const myPopover = Selector('#popover-test');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  await t.expect(await popoverShouldCallContentFunctionOnlyOnce()).eql(1, 'call content function only once');
+});

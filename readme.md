@@ -6,13 +6,12 @@ Status:
 
 - [ ] Documentation w/examples - todo - When tests are complete this should be easier
 - [x] tooltip - run tests using: `yarn test-bs-tooltip`
-- [ ] popover done by extending tooltips. needs tests before marking complete.
-  - note: bootstraps jQuery extends tooltips for popovers behind the scenes.
+- [x] popover - run tests using: `yarn test-bs-popover`
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
+- [ ] dropdown done with NO tests. needs tests before marking complete.
 - [ ] collapse done with NO tests. needs tests before marking complete.
   - note: planning to entirely reevaluate how collapse was done for a more bootstrap consistent experience
-- [ ] dropdown done with NO tests. needs tests before marking complete.
 - [ ] alert todo low priority - not a show stopper for anyone
 - [ ] tab - aka navs and list group- todo low priority because
   - many frameworks already have tab solutions in the form of spa routers

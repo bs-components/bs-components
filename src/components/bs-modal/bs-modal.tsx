@@ -172,13 +172,16 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
         this.relatedTarget.focus();
         this.relatedTarget = null;
       }
-      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
-        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
-          setTimeout(() => {
+      const modalTransitionDuration = getTransitionDurationFromElement(this.modalEl);
+      // console.log('modalTransitionDuration: ', modalTransitionDuration);
+      setTimeout(() => {
+        window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+          window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
             customEvent(this.modalEl, this.hiddenEventName);
-          }, 0);
+          });
         });
-      });
+      }, modalTransitionDuration);
+
       this.unbindAllEventListenersUsed();
     });
   }
@@ -399,7 +402,11 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
       }
       const backdropTransitionDuration = getTransitionDurationFromElement(this.backdrop);
       setTimeout(() => {
+        // window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        //   window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
         callback();
+        //   });
+        // });
       }, backdropTransitionDuration);
     } else if (!this.isShown && this.backdrop) {
       removeClass(this.backdrop, 'show');
