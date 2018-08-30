@@ -482,8 +482,6 @@ test('should detach popover content rather than removing it so that event handle
     }, { once: true });
     el.popover('show');
   }));
-
-
   const popoverHtml = `
     <div>
       <div class="content-with-handler">
@@ -492,31 +490,12 @@ test('should detach popover content rather than removing it so that event handle
       <bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>
     </div>`;
   const myPopover = Selector('#popover-test');
-  // const insertedPopover = Selector('.popover');
   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
   await t.expect(await myPopover.exists).ok();
-  // await t.debug();
   await t.expect(await shouldDetachPopoverContentRatherThanRemovingItSoThatEventHandlersAreLeftIntact()).ok();
-  // // first open / close start
-  // await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-  // await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-  // await t.expect(await insertedPopover.count).eql(1, 'there is only one popover inserted');
-  // await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>');
-  // await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-  // await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-  // await t.expect(await insertedPopover.count).eql(0, 'no inserted popovers on page');
-  // // second open / close start
-  // await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-  // await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-  // await t.expect(await insertedPopover.count).eql(1, 'there is only one popover inserted');
-  // await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>');
-  // await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-  // await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-  // await t.expect(await insertedPopover.count).eql(0, 'no inserted popovers on page');
 });
 
-
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js#L82
+// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js#L336
 
 
 // await t.expect(getDatasetBySelector('#popover-test', 'originalTitle')).eql('mdo');
