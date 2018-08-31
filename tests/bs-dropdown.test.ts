@@ -208,7 +208,9 @@ test('should add class position-static to dropdown if boundary not scrollParent'
   const dropdownHtml = `
     <div class="tabs">
       <bs-dropdown class="dropdown btn-group">
-        <bs-button class="btn btn-secondary dropdown-toggle" data-boundary="viewport" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" data-boundary="viewport" id="dropdown-menu-button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        >
           Dropdown
         </bs-button>
         <div class="dropdown-menu" aria-labelledby="dropdown">
