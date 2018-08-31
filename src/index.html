@@ -96,8 +96,8 @@
   <div class="container mt-5">
 
       <div class="tabs">
-        <bs-dropdown class="dropdown btn-group">
-          <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-dropdown class="dropdown" id="testing-dropdown-toggle">
+          <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
             Dropdown
           </bs-button>
           <div class="dropdown-menu" aria-labelledby="dropdown">
@@ -394,9 +394,9 @@
 
 
       <bs-dropdown id="my-dropdown" class="dropdown mr-2">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Dropdown button
-          </button>
+          </bs-button>
           <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="#">Action</a>
             <a class="dropdown-item" href="#">Another action</a>
@@ -483,13 +483,13 @@
         </div>
       </bs-modal>
 
-      <bs-dropdown ref="bsDropdownInVueExample" class="dropdown btn-group"
+      <bs-dropdown ref="bsDropdownInVueExample" class="dropdown"
         show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
         hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
       >
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Vue Dropdown button
-          </button>
+          </bs-button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="#">Action</a>
             <a class="dropdown-item" href="#">Another action</a>
@@ -523,7 +523,9 @@
 
     function handleUserClickedToggleDropdownButton() {
       // method 1
-      this.$refs.bsDropdownInVueExample.setDropdownVisibility(!this.$refs.bsDropdownInVueExample.show);
+      // this.$refs.bsDropdownInVueExample.setDropdownVisibility(!this.$refs.bsDropdownInVueExample.show);
+
+      this.$refs.bsDropdownButtonInVueExample.dropdown('toggle');
 
       // // method 2
       // this.$refs.bsDropdownInVueExample.toggle();
@@ -560,28 +562,28 @@
     // -- everything below here is not in the vue scope --
 
     function toggleDropdown() {
-      const el = document.getElementById("my-dropdown");
-      el.toggle();
+      const el = document.getElementById("dropdownMenuButton");
+      el.dropdown('toggle');
     }
 
     function handleMyComponentShow(event) {
-      // console.log('handleMyComponentShow event: ', event);
-      console.log('handleMyComponentShow');
+      console.log('handleMyComponentShow event: ', event);
+      // console.log('handleMyComponentShow');
     }
 
     function handleMyComponentShown(event) {
-      // console.log('handleMyComponentShown event: ', event);
-      console.log('handleMyComponentShown');
+      console.log('handleMyComponentShown event: ', event);
+      // console.log('handleMyComponentShown');
     }
 
     function handleMyComponentHide(event) {
-      // console.log('handleMyComponentHide event: ', event);
-      console.log('handleMyComponentHide');
+      console.log('handleMyComponentHide event: ', event);
+      // console.log('handleMyComponentHide');
     }
 
     function handleMyComponentHidden(event) {
-      // console.log('handleMyComponentHidden event: ', event);
-      console.log('handleMyComponentHidden');
+      console.log('handleMyComponentHidden event: ', event);
+      // console.log('handleMyComponentHidden');
     }
 
 

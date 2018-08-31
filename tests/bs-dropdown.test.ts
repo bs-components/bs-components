@@ -39,14 +39,14 @@ const runDropdownMethodAndWaitForEventBySelector = ClientFunction((selector, pas
   const myTimeout = setTimeout(() => {
     // 6 seconds should be more than long enough for any reasonable real world transition
     // eslint-disable-next-line no-use-before-define
-    document.querySelector(selector).removeEventListener(eventName, handleEventHappened);
+    document.querySelector(selector).parentNode.removeEventListener(eventName, handleEventHappened);
     resolve(false);
   }, 6000);
   const handleEventHappened = () => {
     clearTimeout(myTimeout);
     resolve(true);
   };
-  document.querySelector(selector).addEventListener(eventName, handleEventHappened, { once: true });
+  document.querySelector(selector).parentNode.addEventListener(eventName, handleEventHappened, { once: true });
   const el:any = document.querySelector(selector);
   el.dropdown(passedOption);
 }));
@@ -102,9 +102,9 @@ test('dropdown method is defined', async (t) => {
   });
   const dropdownHtml = `
     <bs-dropdown class="dropdown btn-group">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown
-      </button>
+      </bs-button>
       <div class="dropdown-menu" aria-labelledby="dropdown">
         <a class="dropdown-item" href="#">Action</a>
         <a class="dropdown-item" href="#">Another action</a>
@@ -120,9 +120,9 @@ test('dropdown method is defined', async (t) => {
 test('should throw explicit error on undefined method', async (t) => {
   const dropdownHtml = `
     <bs-dropdown class="dropdown btn-group">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown
-      </button>
+      </bs-button>
       <div class="dropdown-menu" aria-labelledby="dropdown">
         <a class="dropdown-item" href="#">Action</a>
         <a class="dropdown-item" href="#">Another action</a>
@@ -138,9 +138,9 @@ test('should throw explicit error on undefined method', async (t) => {
 test('should return the element', async (t) => {
   const dropdownHtml = `
     <bs-dropdown class="dropdown btn-group">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown
-      </button>
+      </bs-button>
       <div class="dropdown-menu" aria-labelledby="dropdown">
         <a class="dropdown-item" href="#">Action</a>
         <a class="dropdown-item" href="#">Another action</a>
@@ -161,9 +161,9 @@ test('should return the element', async (t) => {
 test('should not open dropdown if target is disabled via attribute', async (t) => {
   const dropdownHtml = `
     <bs-dropdown class="dropdown btn-group">
-      <button disabled class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bs-button disabled class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown
-      </button>
+      </bs-button>
       <div class="dropdown-menu" aria-labelledby="dropdown">
         <a class="dropdown-item" href="#">Action</a>
         <a class="dropdown-item" href="#">Another action</a>
@@ -184,9 +184,9 @@ test('should not add class position-static to dropdown if boundary not set', asy
   const dropdownHtml = `
     <div class="tabs">
       <bs-dropdown class="dropdown btn-group">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Dropdown
-        </button>
+        </bs-button>
         <div class="dropdown-menu" aria-labelledby="dropdown">
           <a class="dropdown-item" href="#">Action</a>
           <a class="dropdown-item" href="#">Another action</a>
@@ -198,7 +198,7 @@ test('should not add class position-static to dropdown if boundary not set', asy
   const myDropdownMenu = Selector('.dropdown-menu');
   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
   await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect(await runDropdownMethodAndWaitForEventBySelector('bs-dropdown', 'toggle', 'shown.bs.dropdown')).ok();
+  await t.expect(await runDropdownMethodAndWaitForEventBySelector('#dropdown-menu-button', 'toggle', 'shown.bs.dropdown')).ok();
   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
   await t.expect(await myDropdown.hasClass('position-static')).notOk('"position-static" class not added');
 });
@@ -207,10 +207,10 @@ test('should not add class position-static to dropdown if boundary not set', asy
 test('should add class position-static to dropdown if boundary not scrollParent', async (t) => {
   const dropdownHtml = `
     <div class="tabs">
-      <bs-dropdown class="dropdown btn-group" data-boundary="viewport">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bs-dropdown class="dropdown btn-group">
+        <bs-button class="btn btn-secondary dropdown-toggle" data-boundary="viewport" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Dropdown
-        </button>
+        </bs-button>
         <div class="dropdown-menu" aria-labelledby="dropdown">
           <a class="dropdown-item" href="#">Action</a>
           <a class="dropdown-item" href="#">Another action</a>
@@ -222,11 +222,9 @@ test('should add class position-static to dropdown if boundary not scrollParent'
   const myDropdownMenu = Selector('.dropdown-menu');
   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
   await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect(await runDropdownMethodAndWaitForEventBySelector('bs-dropdown', 'toggle', 'shown.bs.dropdown')).ok();
+  await t.expect(await runDropdownMethodAndWaitForEventBySelector('#dropdown-menu-button', 'toggle', 'shown.bs.dropdown')).ok();
   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
-  await t.debug();
   await t.expect(await myDropdown.hasClass('position-static')).ok('"position-static" class added');
-
 });
 
 

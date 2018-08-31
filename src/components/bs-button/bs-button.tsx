@@ -187,6 +187,20 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
+  dropdown(dropdownOptions:any = {}) {
+    // this is a convenience proxy
+    if (this.bsButtonEl.dataset.toggle !== 'dropdown') {
+      throw new Error('dropdown method can only be run on a bs-button with [data-toggle="dropdown"]');
+    }
+    const bsDropdownEl:any = closest(this.bsButtonEl, 'bs-dropdown');
+    if (!bsDropdownEl) {
+      throw new Error('unable to find parent bs-dropdown component');
+    }
+    return bsDropdownEl.dropdown(dropdownOptions, this.bsButtonEl);
+  }
+
+
+  @Method()
   button(buttonOptions:any = {}) {
     if (_size(buttonOptions) === 0) {
       return this.bsButtonEl;

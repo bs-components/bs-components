@@ -24,7 +24,6 @@ import _trim from 'lodash/trim';
 import _isInteger from 'lodash/isInteger';
 import _isObject from 'lodash/isObject';
 import _isString from 'lodash/isString';
-import _isElement from 'lodash/isElement';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
@@ -51,7 +50,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) bsContent: string = '';
   @Prop({ mutable: true }) bsTitle: string = '';
   @Prop({ mutable: true }) config: any = {};
-  @Prop({ mutable: true }) defaults = {
+  @Prop() defaults = {
     animation: true,
     template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
     popoverTemplate: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
@@ -258,18 +257,11 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     if (title && title.length > 0) {
       return true;
     }
-    if (title && _isElement(title)) {
+    if (title && title instanceof Element) {
       return true;
     }
     if (this.config.toggle === 'popover') {
       return true;
-      // const content = this.getContent();
-      // if (content && content.length > 0) {
-      //   return true;
-      // }
-      // if (content && _isElement(content)) {
-      //   return true;
-      // }
     }
     return false;
   }
@@ -492,14 +484,14 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
   setElementContent(el, content) {
     if (this.config.html) {
-      if (_isElement(content)) {
+      if (content instanceof Element) {
         el.appendChild(content);
         return;
       }
       // eslint-disable-next-line no-param-reassign
       el.innerHTML = content;
     } else {
-      if (_isElement(content)) {
+      if (content instanceof Element) {
         // eslint-disable-next-line no-param-reassign
         el.textContent = content.innerText;
         return;
@@ -513,7 +505,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     if (this.config.content) {
       if (typeof this.config.content === 'function') {
         const newContent = this.config.content.call(this.tooltipEl);
-        if (_isElement(newContent)) {
+        if (newContent instanceof Element) {
           // detaches the content element
           this.config.content = newContent;
         }
@@ -528,7 +520,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     if (this.config.title) {
       if (typeof this.config.title === 'function') {
         const newTitle = this.config.title.call(this.tooltipEl);
-        if (_isElement(newTitle)) {
+        if (newTitle instanceof Element) {
           // detaches the title element
           this.config.content = newTitle;
         }

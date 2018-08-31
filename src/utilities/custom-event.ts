@@ -1,7 +1,5 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
 
-import _size from 'lodash/size';
-
 function preventDefault() {
   Object.defineProperty(this,
     'defaultPrevented', {
@@ -26,7 +24,7 @@ export default function customEvent(el, eventName, payload = {}, relatedTarget =
       writable: true,
     },
   });
-  if (_size(relatedTarget) > 0) {
+  if (relatedTarget instanceof Element) {
     Object.defineProperties(event, {
       relatedTarget: {
         value: relatedTarget,

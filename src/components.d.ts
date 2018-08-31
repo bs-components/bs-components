@@ -26,6 +26,7 @@ declare global {
 
     interface BsButton {
       'button': (buttonOptions?: any) => true | HTMLElement;
+      'dropdown': (dropdownOptions?: any) => any;
       'tabindex': string;
     }
 
@@ -39,15 +40,12 @@ declare global {
     }
 
     interface BsDropdown {
-      'boundary': any;
-      'display': string;
-      'dropdown': (dropdownOptions?: {}) => true | HTMLElement;
-      'flip': boolean;
+      'config': any;
+      'defaults': any;
+      'dropdown': (dropdownOptions?: {}, relatedTarget?: any) => true | HTMLElement;
       'hiddenEventName': string;
       'hideEventName': string;
       'keepOpen': boolean;
-      'offset': any;
-      'reference': any;
       'show': boolean;
       'showEventName': string;
       'shownEventName': string;
@@ -147,14 +145,11 @@ declare global {
     }
 
     export interface BsDropdownAttributes extends HTMLAttributes {
-      'boundary'?: any;
-      'display'?: string;
-      'flip'?: boolean;
+      'config'?: any;
+      'defaults'?: any;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'keepOpen'?: boolean;
-      'offset'?: any;
-      'reference'?: any;
       'show'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;

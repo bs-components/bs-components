@@ -10,6 +10,9 @@ import {
 import Popper from 'popper.js';
 
 import _size from 'lodash/size';
+import _has from 'lodash/has';
+// import _toNumber from 'lodash/toNumber';
+// import _isNaN from 'lodash/isNaN';
 
 // import getPopperDropdownConfig from './get-popper-dropdown-config';
 import getUniqueId from '../../utilities/get-unique-id';
@@ -20,6 +23,7 @@ import clickWasInside from '../../utilities/click-was-inside';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
+import getConfigBoolean from '../../utilities/get-config-boolean';
 
 @Component({ tag: 'bs-dropdown', shadow: false })
 export class BsDropdown { // eslint-disable-line import/prefer-default-export
@@ -28,16 +32,24 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) show: boolean = false;
   @Prop() keepOpen: boolean = false;
 
-  @Prop() offset: any = 0;
-  @Prop() flip: boolean = true;
-  @Prop() boundary: any = 'scrollParent';
-  @Prop() reference: any = 'toggle';
-  @Prop() display: string = 'dynamic';
+  // @Prop() offset: any = 0;
+  // @Prop() flip: boolean = true;
+  // @Prop() boundary: any = 'scrollParent';
+  // @Prop() reference: any = 'toggle';
+  // @Prop() display: string = 'dynamic';
 
   @Prop() showEventName: string = 'show.bs.dropdown';
   @Prop() shownEventName: string = 'shown.bs.dropdown';
   @Prop() hideEventName: string = 'hide.bs.dropdown';
   @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
+  @Prop({ mutable: true }) config: any = {};
+  @Prop() defaults = {
+    offset: 0,
+    flip: true,
+    boundary: 'scrollParent',
+    reference: 'toggle',
+    display: 'dynamic',
+  };
 
   @State() dropdownId: string;
   @State() inNavbar: boolean;
@@ -58,8 +70,8 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     // this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j += 1) {
-      toggles[j].removeEventListener('click', this.handleToggleBsDropdownEventListener);
-      toggles[j].addEventListener('click', this.handleToggleBsDropdownEventListener);
+      toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
+      toggles[j].addEventListener('click', this.handleToggleBsDropdown);
     }
   }
 
@@ -69,9 +81,10 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   dispose() {
     document.removeEventListener('click', this.handleDropdownClickOutside);
+    // const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j += 1) {
-      toggles[j].removeEventListener('click', this.handleToggleBsDropdownEventListener);
+      toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
     }
     if (this.popperHandle !== null) {
       this.popperHandle.destroy();
@@ -79,30 +92,43 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  initPopper(dropdownMenuEl) {
+  initPopper(relatedTarget, dropdownMenuEl) {
     this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (!this.inNavbar) {
-      const popperSettings = {
-        offset: this.offset,
-        flip: this.flip,
-        boundary: this.boundary,
-        display: this.display,
-      };
-      const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, popperSettings);
+      // const popperSettings = {
+      //   offset: this.offset,
+      //   flip: this.flip,
+      //   boundary: this.boundary,
+      //   display: this.display,
+      // };
+      const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, this.config);
+
+      // console.log('this.boundary: ', this.boundary);
 
       // If boundary is not `scrollParent`, then set position to `static`
       // to allow the menu to "escape" the scroll parent's boundaries
       // https://github.com/twbs/bootstrap/issues/24251
-      if (this.boundary !== 'scrollParent') {
+      if (this.config.boundary !== 'scrollParent') {
         addClass(this.dropdownEl, 'position-static');
       }
 
-      let referenceElement: any = this.dropdownEl;
-      if (this.reference === 'parent') {
+      let referenceElement = relatedTarget; // this.dropdownEl.querySelector('.dropdown-menu');
+      if (this.config.reference === 'parent') {
         referenceElement = this.dropdownEl.parentNode;
-      } else if (this.reference instanceof Element) {
-        referenceElement = this.reference;
+      } else if (this.config.reference instanceof Element) {
+        referenceElement = this.config.reference;
+      // } else if (!referenceElement) {
+      //   // we're going to have to guess then
+      //   const newReferenceElement = this.dropdownEl.querySelector('[data-toggle="dropdown"]');
+      //   if (newReferenceElement) {
+      //     referenceElement = newReferenceElement;
+      //   } else {
+      //     referenceElement = this.dropdownEl;
+      //   }
       }
+      // console.log('referenceElement: ', referenceElement);
+      // console.log('dropdownMenuEl: ', dropdownMenuEl);
+      // console.log('popperConfig: ', popperConfig);
       this.popperHandle = new Popper(referenceElement, dropdownMenuEl, popperConfig);
     }
   }
@@ -121,13 +147,61 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     if (!clickWasInsideDropdown || !this.keepOpen) {
       document.removeEventListener('click', this.handleDropdownClickOutside);
       this.show = true;
-      this.handleHideDropdown();
+      this.handleHideDropdown(event.target);
     }
   }
 
-  handleShowDropdown() {
+  setConfig(relatedTarget) {
+    this.config = {};
+    const config: any = {};
+    if (_has(relatedTarget.dataset, 'offset')) {
+      config.offset = relatedTarget.dataset.offset;
+    } else {
+      config.offset = this.defaults.offset;
+    }
+    if (_has(relatedTarget.dataset, 'relatedTarget')) {
+      config.flip = getConfigBoolean(relatedTarget.dataset.flip);
+    } else {
+      config.flip = this.defaults.flip;
+    }
+    if (_has(relatedTarget.dataset, 'boundary')) {
+      config.boundary = relatedTarget.dataset.boundary;
+    } else {
+      config.boundary = this.defaults.boundary;
+    }
+    if (_has(relatedTarget.dataset, 'reference')) {
+      config.reference = relatedTarget.dataset.reference;
+    } else {
+      config.reference = this.defaults.reference;
+    }
+    if (_has(relatedTarget.dataset, 'display')) {
+      config.display = relatedTarget.dataset.display;
+    } else {
+      config.display = this.defaults.display;
+    }
+    this.config = config;
+  }
+
+  getAssumedRelatedTarget() {
+    const assumedRelatedTarget = this.dropdownEl.querySelector('[data-toggle="dropdown"]');
+    if (assumedRelatedTarget) {
+      return assumedRelatedTarget;
+    }
+    return this.dropdownEl;
+  }
+
+  handleShowDropdown(passedRelatedTarget:HTMLElement = null) {
+    // console.log('handleShowDropdown relatedTarget: ', relatedTarget);
+    const relatedTarget = passedRelatedTarget || this.getAssumedRelatedTarget();
+    if (relatedTarget.hasAttribute('disabled')) {
+      return;
+    }
+    const showEvent = customEvent(this.dropdownEl, this.showEventName, {}, relatedTarget);
+    this.setConfig(relatedTarget);
+    if (this.show || showEvent.defaultPrevented) {
+      return;
+    }
     this.show = true;
-    customEvent(this.dropdownEl, this.showEventName);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
@@ -141,15 +215,21 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       document.addEventListener('click', this.handleDropdownClickOutside);
     }, 0);
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
-    this.initPopper(dropdownMenuEl);
+
+
+    this.initPopper(relatedTarget, dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.shownEventName);
+      customEvent(this.dropdownEl, this.shownEventName, {}, relatedTarget);
     }, dropdownMenuTransitionDuration);
   }
 
-  handleHideDropdown() {
+  handleHideDropdown(relatedTarget = null) {
+    // console.log('handleHideDropdown relatedTarget: ', relatedTarget);
+    const hideEvent = customEvent(this.dropdownEl, this.hideEventName, {}, relatedTarget);
+    if (!this.show || hideEvent.defaultPrevented) {
+      return;
+    }
     this.show = false;
-    customEvent(this.dropdownEl, this.hideEventName);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -160,20 +240,15 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.hiddenEventName);
+      customEvent(this.dropdownEl, this.hiddenEventName, {}, relatedTarget);
     }, dropdownMenuTransitionDuration);
   }
 
-  handleToggleBsDropdownEventListener = (event) => {
-    console.log('handleToggleBsDropdownEventListener event: ', event);
-    this.handleToggleBsDropdown();
-  }
-
-  handleToggleBsDropdown() {
+  handleToggleBsDropdown = (event) => {
     if (this.show === true) {
-      this.handleHideDropdown();
+      this.handleHideDropdown(event.target);
     } else {
-      this.handleShowDropdown();
+      this.handleShowDropdown(event.target);
     }
   }
 
@@ -205,7 +280,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     // Handle dropup
     if (hasClass(dropdownEl, ClassName.dropup)) {
       placement = AttachmentMap.top;
-      if (hasClass(dropdownMenuEl, ClassName.dropup)) {
+      if (hasClass(dropdownMenuEl, ClassName.menuright)) {
         placement = AttachmentMap.topend;
       }
     } else if (hasClass(dropdownEl, ClassName.dropright)) {
@@ -243,12 +318,16 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  dropdown(dropdownOptions = {}) {
+  dropdown(dropdownOptions = {}, relatedTarget = null) {
     if (_size(dropdownOptions) === 0) {
       return this.dropdownEl;
     }
     if (dropdownOptions === 'toggle') {
-      this.handleToggleBsDropdown();
+      if (this.show === true) {
+        this.handleHideDropdown(relatedTarget);
+      } else {
+        this.handleShowDropdown(relatedTarget);
+      }
       return true;
     }
     if (dropdownOptions === 'update') {
