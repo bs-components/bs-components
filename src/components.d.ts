@@ -41,20 +41,16 @@ declare global {
     interface BsDropdown {
       'boundary': any;
       'display': string;
+      'dropdown': (dropdownOptions?: {}) => true | HTMLElement;
       'flip': boolean;
       'hiddenEventName': string;
-      'hideDropdown': () => void;
       'hideEventName': string;
       'keepOpen': boolean;
       'offset': any;
       'reference': any;
-      'setDropdownVisibility': (toShow: any) => void;
       'show': boolean;
-      'showDropdown': () => void;
       'showEventName': string;
       'shownEventName': string;
-      'toggle': () => void;
-      'update': () => void;
     }
 
     interface BsModal {

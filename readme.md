@@ -21,7 +21,7 @@ Status:
 
 For everything else including forms there is no web component needed to implement because they are a css only solution. Just use html as usual.
 
-Note: bootstrap forms do tend to use some javascript validation to show or hide tooltip helpers. These do not have jquery methods so will not have web component counterparts in this project.
+Note: bootstrap forms do tend to use some javascript validation to show or hide tooltip helpers. These do not have methods that are provided by bootstrap.js so this project will not have web component counterparts.
 
 ---
 

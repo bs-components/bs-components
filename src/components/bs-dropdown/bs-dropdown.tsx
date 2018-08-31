@@ -9,8 +9,9 @@ import {
 
 import Popper from 'popper.js';
 
-import getPopperDropdownConfig from './get-popper-dropdown-config';
+import _size from 'lodash/size';
 
+// import getPopperDropdownConfig from './get-popper-dropdown-config';
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
@@ -19,16 +20,6 @@ import clickWasInside from '../../utilities/click-was-inside';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
-
-// TODO:
-// data-offset="10,20"
-// data-reference="parent"
-// popper.js stuff:
-// offset
-// flip
-// boundary
-// reference
-// display
 
 @Component({ tag: 'bs-dropdown', shadow: false })
 export class BsDropdown { // eslint-disable-line import/prefer-default-export
@@ -67,16 +58,20 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     // this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j += 1) {
-      toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
-      toggles[j].addEventListener('click', this.handleToggleDropdownOnToggleClick);
+      toggles[j].removeEventListener('click', this.handleToggleBsDropdownEventListener);
+      toggles[j].addEventListener('click', this.handleToggleBsDropdownEventListener);
     }
   }
 
   componentDidUnload() {
+    this.dispose();
+  }
+
+  dispose() {
     document.removeEventListener('click', this.handleDropdownClickOutside);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j += 1) {
-      toggles[j].removeEventListener('click', this.handleToggleDropdownOnToggleClick);
+      toggles[j].removeEventListener('click', this.handleToggleBsDropdownEventListener);
     }
     if (this.popperHandle !== null) {
       this.popperHandle.destroy();
@@ -93,7 +88,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
         boundary: this.boundary,
         display: this.display,
       };
-      const popperConfig: any = getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, popperSettings);
+      const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, popperSettings);
 
       // If boundary is not `scrollParent`, then set position to `static`
       // to allow the menu to "escape" the scroll parent's boundaries
@@ -132,7 +127,6 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   handleShowDropdown() {
     this.show = true;
-    // this.show_bs_dropdown.emit(event);
     customEvent(this.dropdownEl, this.showEventName);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
@@ -150,14 +144,12 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     this.initPopper(dropdownMenuEl);
     setTimeout(() => {
       customEvent(this.dropdownEl, this.shownEventName);
-      // this.shown_bs_dropdown.emit(event);
     }, dropdownMenuTransitionDuration);
   }
 
   handleHideDropdown() {
     this.show = false;
     customEvent(this.dropdownEl, this.hideEventName);
-    // this.hide_bs_dropdown.emit(event);
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -168,12 +160,16 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      // this.hidden_bs_dropdown.emit(event);
       customEvent(this.dropdownEl, this.hiddenEventName);
     }, dropdownMenuTransitionDuration);
   }
 
-  handleToggleDropdownOnToggleClick = () => {
+  handleToggleBsDropdownEventListener = (event) => {
+    console.log('handleToggleBsDropdownEventListener event: ', event);
+    this.handleToggleBsDropdown();
+  }
+
+  handleToggleBsDropdown() {
     if (this.show === true) {
       this.handleHideDropdown();
     } else {
@@ -181,36 +177,95 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  @Method()
-  toggle() {
-    this.handleToggleDropdownOnToggleClick();
-  }
+  static getPlacement(dropdownEl, dropdownMenuEl) {
+    const AttachmentMap = {
+      top: 'top-start',
+      topend: 'top-end',
+      bottom: 'bottom-start',
+      bottomend: 'bottom-end',
+      right: 'right-start',
+      // RIGHTEND: 'right-end',
+      left: 'left-start',
+      // LEFTEND: 'left-end',
+    };
 
-  @Method()
-  update() {
-    this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
-    if (this.popperHandle !== null) {
-      this.popperHandle.scheduleUpdate();
+    const ClassName = {
+      // DISABLED: 'disabled',
+      // SHOW: 'show',
+      dropup: 'dropup',
+      dropright: 'dropright',
+      dropleft: 'dropleft',
+      menuright: 'dropdown-menu-right',
+      // MENULEFT: 'dropdown-menu-left',
+      // POSITION_STATIC: 'position-static',
+    };
+
+    let placement = AttachmentMap.bottom;
+
+    // Handle dropup
+    if (hasClass(dropdownEl, ClassName.dropup)) {
+      placement = AttachmentMap.top;
+      if (hasClass(dropdownMenuEl, ClassName.dropup)) {
+        placement = AttachmentMap.topend;
+      }
+    } else if (hasClass(dropdownEl, ClassName.dropright)) {
+      placement = AttachmentMap.right;
+    } else if (hasClass(dropdownEl, ClassName.dropleft)) {
+      placement = AttachmentMap.left;
+    } else if (hasClass(dropdownEl, ClassName.menuright)) {
+      placement = AttachmentMap.bottomend;
     }
+    return placement;
   }
 
-  @Method()
-  showDropdown() {
-    this.handleShowDropdown();
-  }
+  static getPopperDropdownConfig(dropdownEl, dropdownMenuEl, popperSettings) {
+    const popperConfig: any = {
+      placement: BsDropdown.getPlacement(dropdownEl, dropdownMenuEl),
+      modifiers: {
+        offset: popperSettings.offset,
+        flip: {
+          enabled: popperSettings.flip,
+        },
+        preventOverflow: {
+          boundariesElement: popperSettings.boundary,
+        },
+      },
+    };
 
-  @Method()
-  hideDropdown() {
-    this.handleHideDropdown();
-  }
-
-  @Method()
-  setDropdownVisibility(toShow) {
-    if (toShow) {
-      this.handleShowDropdown();
-    } else {
-      this.handleHideDropdown();
+    // Disable Popper.js if we have a static display
+    if (popperSettings.display === 'static') {
+      popperConfig.modifiers.applyStyle = {
+        enabled: false,
+      };
     }
+    return popperConfig;
+  }
+
+
+  @Method()
+  dropdown(dropdownOptions = {}) {
+    if (_size(dropdownOptions) === 0) {
+      return this.dropdownEl;
+    }
+    if (dropdownOptions === 'toggle') {
+      this.handleToggleBsDropdown();
+      return true;
+    }
+    if (dropdownOptions === 'update') {
+      this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
+      if (this.popperHandle !== null) {
+        this.popperHandle.scheduleUpdate();
+      }
+      return true;
+    }
+    if (dropdownOptions === 'dispose') {
+      this.dispose();
+      return true;
+    }
+    if (typeof dropdownOptions === 'string') {
+      throw new Error(`No method named "${dropdownOptions}"`);
+    }
+    return null;
   }
 
   render() {
