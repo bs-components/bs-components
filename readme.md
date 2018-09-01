@@ -9,11 +9,11 @@ Status:
 - [x] popover - run tests using: `yarn test-bs-popover`
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
-- [ ] dropdown done with NO tests. needs tests before marking complete.
+- [x] dropdown - run tests using: `yarn test-bs-dropdown`
 - [ ] collapse done with NO tests. needs tests before marking complete.
-  - note: planning to entirely reevaluate how collapse was done for a more bootstrap consistent experience
+  - note: planning to reevaluate how collapse was done for a more bootstrap consistent experience
 - [ ] alert todo low priority - not a show stopper for anyone
-- [ ] tab - aka navs and list group- todo low priority because
+- [ ] tab - aka navs and list group- todo low priority
   - many frameworks already have tab solutions in the form of spa routers
 - [ ] scrollspy todo - low priority
 - [ ] carousel not planned currently but maybe later.

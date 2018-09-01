@@ -71,6 +71,9 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   }
 
   dispose() {
+    if (this.show === true) {
+      this.handleHideDropdown();
+    }
     document.removeEventListener('click', this.handleDropdownClickOutside);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     this.relatedTarget = null;
@@ -329,14 +332,20 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       if (event.which === ESCAPE_KEYCODE) {
         return true;
       }
+      const dropdownMenu = this.dropdownEl.querySelector('.dropdown-menu');
+      if (dropdownMenu.contains(event.target)) {
+        return false;
+      }
       if (event.which === ARROW_DOWN_KEYCODE) {
+        if (event.target.dataset.toggle === 'dropdown') {
+          return true;
+        }
         return false;
       }
       if (event.which === ARROW_UP_KEYCODE) {
-        return false;
-      }
-      const dropdownMenu = this.dropdownEl.querySelector('.dropdown-menu');
-      if (dropdownMenu.contains(event.target)) {
+        if (event.target.dataset.toggle === 'dropdown') {
+          return true;
+        }
         return false;
       }
     } else {
@@ -400,7 +409,12 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       relatedTarget.focus();
       return;
     }
-    if (event.which !== 38 || event.which !== 40) {
+    if (event.which === ARROW_UP_KEYCODE && !this.show) {
+      this.handleShowDropdown(relatedTarget);
+      relatedTarget.focus();
+      return;
+    }
+    if (event.which !== 38 && event.which !== 40) {
       console.warn('unhandled event.which: ', event.which);
     }
     const dropdownMenuItems = Array.prototype.slice.call(this.dropdownEl.querySelectorAll('.dropdown-menu .dropdown-item:not(.disabled):not(:disabled)'));
@@ -408,6 +422,10 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       return;
     }
     let myIndex = dropdownMenuItems.indexOf(document.activeElement);
+
+    // console.log('dropdownMenuItems: ', dropdownMenuItems);
+    // console.log('myIndex: ', myIndex);
+
     if (event.which === ARROW_UP_KEYCODE && myIndex > 0) { // Up
       myIndex -= 1;
     }
@@ -417,6 +435,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     if (myIndex < 0) {
       myIndex = 0;
     }
+    // console.log('myIndex: ', myIndex);
     dropdownMenuItems[myIndex].focus();
   }
 

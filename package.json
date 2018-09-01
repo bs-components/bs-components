@@ -26,7 +26,7 @@
     "test-bs-button": "stencil build && testcafe ie,chrome ./tests/bs-button.test.ts",
     "test-bs-modal": "stencil build && testcafe ie,chrome ./tests/bs-modal.test.ts",
     "test-bs-popover": "stencil build && testcafe ie,chrome ./tests/bs-popover.test.ts",
-    "test-bs-dropdown": "stencil build && testcafe chrome ./tests/bs-dropdown.test.ts"
+    "test-bs-dropdown": "stencil build && testcafe ie,chrome ./tests/bs-dropdown.test.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",
