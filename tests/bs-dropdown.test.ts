@@ -35,7 +35,7 @@ const callDropdownBySelector = ClientFunction((selector, passedOption) => {
 });
 
 
-const runDropdownMethodAndWaitForEventBySelector = ClientFunction((selector, passedOption, eventName) => new Promise((resolve) => {
+const runDropdownMethodAndWaitForParentEventBySelector = ClientFunction((selector, passedOption, eventName) => new Promise((resolve) => {
   const myTimeout = setTimeout(() => {
     // 6 seconds should be more than long enough for any reasonable real world transition
     // eslint-disable-next-line no-use-before-define
@@ -50,6 +50,63 @@ const runDropdownMethodAndWaitForEventBySelector = ClientFunction((selector, pas
   const el:any = document.querySelector(selector);
   el.dropdown(passedOption);
 }));
+
+const clickBySelectorAndWaitForEventBySelector = ClientFunction((clickSelector, eventSelector, eventName) => new Promise((resolve) => {
+  const myTimeout = setTimeout(() => {
+    // 6 seconds should be more than long enough for any reasonable real world transition
+    // eslint-disable-next-line no-use-before-define
+    document.querySelector(eventSelector).removeEventListener(eventName, handleEventHappened);
+    resolve(false);
+  }, 6000);
+  const handleEventHappened = () => {
+    clearTimeout(myTimeout);
+    resolve(true);
+  };
+  document.querySelector(eventSelector).addEventListener(eventName, handleEventHappened, { once: true });
+  const el:any = document.querySelector(clickSelector);
+  el.click();
+}));
+
+// const triggerKeyboardEventBySelector = ClientFunction((selector, eventType, keyCode) => {
+//   const el = document.querySelector(selector);
+//   const eventObj = (document as any).createEventObject ? (document as any).createEventObject() : document.createEvent('Events');
+//   if (eventObj.initEvent) {
+//     eventObj.initEvent(eventType, true, true);
+//   }
+//   eventObj.keyCode = keyCode;
+//   eventObj.which = keyCode;
+//   el.dispatchEvent(eventObj);
+//   return true;
+// });
+
+
+// const triggerKeyboardEventAndWaitForEvent = ClientFunction((keyboardSelector, eventSelector, eventTypeToCreate, keyCode, eventNameToWaitFor) => new Promise((resolve) => {
+//   const myTimeout = setTimeout(() => {
+//     // 6 seconds should be more than long enough for any reasonable real world transition
+//     // eslint-disable-next-line no-use-before-define
+//     document.querySelector(eventSelector).removeEventListener(eventNameToWaitFor, handleEventHappened);
+//     resolve(false);
+//   }, 6000);
+//   const handleEventHappened = () => {
+//     clearTimeout(myTimeout);
+//     resolve(true);
+//   };
+//   document.querySelector(eventSelector).addEventListener(eventNameToWaitFor, handleEventHappened, { once: true });
+//   const el = document.querySelector(keyboardSelector);
+//   const eventObj = (document as any).createEventObject ? (document as any).createEventObject() : document.createEvent('Events');
+//   if (eventObj.initEvent) {
+//     eventObj.initEvent(eventTypeToCreate, true, true);
+//   }
+//   eventObj.keyCode = keyCode;
+//   eventObj.which = keyCode;
+//   el.dispatchEvent(eventObj);
+// }));
+
+const hasFocusByQuerySelectorAll = ClientFunction((selector, nth) => {
+  const elArr = Array.prototype.slice.call(document.querySelectorAll(selector));
+  return elArr[nth] === document.activeElement;
+});
+
 
 // const callModalMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => new Promise((resolve) => {
 //   const myTimeout = setTimeout(() => {
@@ -95,569 +152,627 @@ const runDropdownMethodAndWaitForEventBySelector = ClientFunction((selector, pas
 //   return el.config;
 // });
 
-test('dropdown method is defined', async (t) => {
-  const hasDropdownMethodBySelector = ClientFunction((selector) => {
-    const el:any = document.querySelector(selector);
-    return typeof el.dropdown;
-  });
-  const dropdownHtml = `
-    <bs-dropdown class="dropdown btn-group">
-      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown
-      </bs-button>
-      <div class="dropdown-menu" aria-labelledby="dropdown">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </bs-dropdown>`;
-  const myDropdown = Selector('.dropdown');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect(await hasDropdownMethodBySelector('bs-dropdown')).eql('function');
-});
-
-test('should throw explicit error on undefined method', async (t) => {
-  const dropdownHtml = `
-    <bs-dropdown class="dropdown btn-group">
-      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown
-      </bs-button>
-      <div class="dropdown-menu" aria-labelledby="dropdown">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </bs-dropdown>`;
-  const myDropdown = Selector('.dropdown');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect((await callDropdownBySelector('bs-dropdown', 'noMethod')).message).eql('No method named "noMethod"');
-});
-
-test('should return the element', async (t) => {
-  const dropdownHtml = `
-    <bs-dropdown class="dropdown btn-group">
-      <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown
-      </bs-button>
-      <div class="dropdown-menu" aria-labelledby="dropdown">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </bs-dropdown>`;
-  const myDropdown = Selector('.dropdown');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  const returnsItself = ClientFunction((selector) => {
-    const el:any = document.querySelector(selector);
-    return el === el.dropdown();
-  });
-  await t.expect(await returnsItself('bs-dropdown')).ok();
-});
-
-
-test('should not open dropdown if target is disabled via attribute', async (t) => {
-  const dropdownHtml = `
-    <bs-dropdown class="dropdown btn-group">
-      <bs-button disabled class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown
-      </bs-button>
-      <div class="dropdown-menu" aria-labelledby="dropdown">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </bs-dropdown>`;
-  const myDropdown = Selector('.dropdown');
-  const myDropdownMenuButton = Selector('#dropdown-menu-button');
-  const myDropdownMenu = Selector('.dropdown-menu');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.click(myDropdownMenuButton);
-  await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk('dropdown did not open');
-  // await t.debug();
-});
-
-test('should not add class position-static to dropdown if boundary not set', async (t) => {
-  const dropdownHtml = `
-    <div class="tabs">
-      <bs-dropdown class="dropdown btn-group">
-        <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </bs-button>
-        <div class="dropdown-menu" aria-labelledby="dropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </bs-dropdown>
-    </div>`;
-  const myDropdown = Selector('.dropdown');
-  const myDropdownMenu = Selector('.dropdown-menu');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect(await runDropdownMethodAndWaitForEventBySelector('#dropdown-menu-button', 'toggle', 'shown.bs.dropdown')).ok();
-  await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
-  await t.expect(await myDropdown.hasClass('position-static')).notOk('"position-static" class not added');
-});
-
-
-test('should add class position-static to dropdown if boundary not scrollParent', async (t) => {
-  const dropdownHtml = `
-    <div class="tabs">
-      <bs-dropdown class="dropdown btn-group">
-        <bs-button class="btn btn-secondary dropdown-toggle" data-boundary="viewport" id="dropdown-menu-button"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-        >
-          Dropdown
-        </bs-button>
-        <div class="dropdown-menu" aria-labelledby="dropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </bs-dropdown>
-    </div>`;
-  const myDropdown = Selector('.dropdown');
-  const myDropdownMenu = Selector('.dropdown-menu');
-  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
-  await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.expect(await runDropdownMethodAndWaitForEventBySelector('#dropdown-menu-button', 'toggle', 'shown.bs.dropdown')).ok();
-  await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
-  await t.expect(await myDropdown.hasClass('position-static')).ok('"position-static" class added');
-});
-
-
-// test('should store popover config in props', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" title="ace" data-content="AceBacker">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(_.size(await getPopoverConfig('popover-test'))).gt(0, 'popover config exists');
-// });
-
-
-// test('should store popover trigger in config', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" title="ace" data-content="AceBacker">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const popoverConfig = await getPopoverConfig('popover-test');
-//   // console.log('popoverConfig: ', popoverConfig);
-//   await t.expect(popoverConfig.trigger).eql('click');
-// });
-
-// test('should get title and content from options', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   const insertedPopoverBody = Selector('.popover .popover-body');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: () => 'AceBacker',
-//     content: () => 'loves writing tests （╯°□°）╯︵ ┻━┻',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('AceBacker', 'title correctly inserted');
-//   await t.expect(await insertedPopoverBody.nth(0).innerText).eql('loves writing tests （╯°□°）╯︵ ┻━┻', 'content correctly inserted');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-// });
-
-
-// test('should allow DOMElement title and content (html: true)', async (t) => {
-//   const shouldAllowDOMElementTitleAndContentHtmlTrue = ClientFunction((id, titleText, contentHtml) => {
-//     const popoverEl:any = document.getElementById(id);
-//     const titleTextNode = document.createTextNode(titleText);
-//     const template = document.createElement('div');
-//     template.innerHTML = contentHtml;
-//     const contentEl = template.firstChild;
-//     try {
-//       return popoverEl.popover({ html: true, title: titleTextNode, content: contentEl });
-//     } catch (err) {
-//       return err;
-//     }
+// test('dropdown method is defined', async (t) => {
+//   const hasDropdownMethodBySelector = ClientFunction((selector) => {
+//     const el:any = document.querySelector(selector);
+//     return typeof el.dropdown;
 //   });
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await shouldAllowDOMElementTitleAndContentHtmlTrue('popover-test', '<3 writing tests', '<i>¯\\_(ツ)_/¯</i>')).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('<3 writing tests', 'title inserted');
-//   await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('<i>¯\\_(ツ)_/¯</i>', 'content inserted');
-// });
-
-
-// test('should allow DOMElement title and content (html: false)', async (t) => {
-//   const shouldAllowDOMElementTitleAndContentHtmlFalse = ClientFunction((id, titleText, contentHtml) => {
-//     const popoverEl:any = document.getElementById(id);
-//     const titleTextNode = document.createTextNode(titleText);
-//     const template = document.createElement('div');
-//     template.innerHTML = contentHtml;
-//     const contentEl = template.firstChild;
-//     try {
-//       return popoverEl.popover({ html: false, title: titleTextNode, content: contentEl });
-//     } catch (err) {
-//       return err;
-//     }
-//   });
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await shouldAllowDOMElementTitleAndContentHtmlFalse('popover-test', '<3 writing tests', '<i>¯\\_(ツ)_/¯</i>')).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('<3 writing tests', 'title inserted');
-//   await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('¯\\_(ツ)_/¯', 'content inserted');
-// });
-
-// test('should not duplicate HTML object', async (t) => {
-//   const shouldNotDuplicateHtmlObject = ClientFunction((id, contentHtml) => {
-//     const popoverEl:any = document.getElementById(id);
-//     const template = document.createElement('div');
-//     template.innerHTML = contentHtml;
-//     const contentEl = template.firstChild;
-//     try {
-//       return popoverEl.popover({ html: true, content: contentEl });
-//     } catch (err) {
-//       return err;
-//     }
-//   });
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await shouldNotDuplicateHtmlObject('popover-test', '<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>')).ok();
-//   // first open / close start
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopover.count).eql(1, 'there is only one popover inserted');
-//   await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-//   await t.expect(await insertedPopover.count).eql(0, 'no inserted popovers on page');
-//   // second open / close start
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopover.count).eql(1, 'there is only one popover inserted');
-//   await t.expect(await getInnerHTMLBySelector('.popover .popover-body')).eql('<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-//   await t.expect(await insertedPopover.count).eql(0, 'no inserted popovers on page');
-// });
-
-
-// test('should get title and content from attributes', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" title="Ace Backer" data-content="loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   const insertedPopoverBody = Selector('.popover .popover-body');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('Ace Backer', 'title correctly inserted');
-//   await t.expect(await insertedPopoverBody.nth(0).innerText).eql('loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻', 'content correctly inserted');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-// });
-
-
-// test('should get title and content from attributes ignoring options passed via js', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" title="Ace Backer" data-content="loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   const insertedPopoverBody = Selector('.popover .popover-body');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: () => 'ignored title option',
-//     content: () => 'ignored content option',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('Ace Backer', 'title correctly inserted');
-//   await t.expect(await insertedPopoverBody.nth(0).innerText).eql('loves data attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻', 'content correctly inserted');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-// });
-
-
-// test('should respect custom template', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   // const insertedPopoverHeader = Selector('.popover .popover-header');
-//   // const insertedPopoverBody = Selector('.popover .popover-body');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: 'Test',
-//     content: 'Test',
-//     template: '<div class="popover foobar"><div class="arrow"></div><div class="inner"><h3 class="title"/><div class="content"><p/></div></div></div>',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopover.nth(0).hasClass('foobar')).ok('custom class is present');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-// });
-
-
-// test('should destroy popover', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await callPopoverById('popover-test', { trigger: 'hover' })).ok();
-//   const popoverConfig = await getPopoverConfig('popover-test');
-//   // console.log('popoverConfig: ', popoverConfig);
-//   await t.expect(popoverConfig.trigger).contains('hover', 'popover has hover event');
-//   await t.expect(popoverConfig.trigger).notContains('click', 'no extra click event');
-//   await t.hover('#popover-test');
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await callPopoverById('popover-test', 'dispose')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-//   const postDisposePopoverConfig = await getPopoverConfig('popover-test');
-//   // console.log('postDisposePopoverConfig: ', postDisposePopoverConfig);
-//   await t.expect(_.size(postDisposePopoverConfig)).eql(0, 'popover does not have config');
-//   await t.click('#popover-test');
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('does not open after click');
-//   await t.hover('#popover-test');
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('does not open after hover');
-// });
-
-// test('should render popover element using delegated selector', async (t) => {
-//   // not sure why you would ever do this...
-//   // just add a separate web component bs-tooltip wrapper for every item you want a popover on even if dynamic
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-animation="false" data-toggle="popover" title="Ace" data-content="Ace Backer"><a href="#">ace</a></bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     selector: 'a',
-//     trigger: 'click',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await triggerRealClickBySelector('#popover-test')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was not inserted');
-//   await t.expect(await triggerRealClickBySelector('a')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await triggerRealClickBySelector('a')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-// });
-
-
-// test('should detach popover content rather than removing it so that event handlers are left intact', async (t) => {
-//   const shouldDetachPopoverContentRatherThanRemovingItSoThatEventHandlersAreLeftIntact = ClientFunction(() => new Promise((resolve) => {
-//     let myTimeout;
-//     let handleButtonClickedWasCalled = false;
-//     const handleButtonClicked = () => {
-//       handleButtonClickedWasCalled = true;
-//       clearTimeout(myTimeout);
-//       resolve(true);
-//     };
-//     document.getElementById('button-event-here').addEventListener('click', handleButtonClicked, { once: true });
-//     const myPopoverConfig = {
-//       html: true,
-//       trigger: 'manual',
-//       container: 'body',
-//       animation: false,
-//       content: () => document.querySelector('.content-with-handler'),
-//     };
-//     const el:any = document.getElementById('popover-test');
-//     el.popover(myPopoverConfig);
-//     document.getElementById('popover-test').addEventListener('shown.bs.popover', () => {
-//       // popover opened the first time
-//       document.getElementById('popover-test').addEventListener('hidden.bs.popover', () => {
-//         // popover closed
-//         document.getElementById('popover-test').addEventListener('shown.bs.popover', () => {
-//           // popover opened second time
-//           const buttonEl = document.getElementById('button-event-here');
-//           if (!buttonEl) {
-//             throw new Error('"#button-event-here" can not be found in dom');
-//           }
-//           buttonEl.click();
-//           myTimeout = setTimeout(() => {
-//             if (!handleButtonClickedWasCalled) {
-//               resolve(false);
-//             }
-//           }, 6000); // 6 second timeout
-//         }, { once: true });
-//         el.popover('show');
-//       }, { once: true });
-//       el.popover('hide');
-//     }, { once: true });
-//     el.popover('show');
-//   }));
-//   const popoverHtml = `
-//     <div>
-//       <div class="content-with-handler">
-//         <a id="button-event-here" class="btn btn-warning">Button with event handler</a>
+//   const dropdownHtml = `
+//     <bs-dropdown class="dropdown">
+//       <bs-button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//         Dropdown
+//       </bs-button>
+//       <div class="dropdown-menu" aria-labelledby="dropdown">
+//         <a class="dropdown-item" href="#">Action</a>
+//         <a class="dropdown-item" href="#">Another action</a>
+//         <a class="dropdown-item" href="#">Something else here</a>
 //       </div>
-//       <bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>
-//     </div>`;
-//   const myPopover = Selector('#popover-test');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await shouldDetachPopoverContentRatherThanRemovingItSoThatEventHandlersAreLeftIntact()).ok();
+//     </bs-dropdown>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await hasDropdownMethodBySelector('bs-button')).eql('function'); // proxy method
+//   await t.expect(await hasDropdownMethodBySelector('bs-dropdown')).eql('function');
+// });
+
+// test('should throw explicit error on undefined method', async (t) => {
+//   const dropdownHtml = `
+//     <bs-dropdown class="dropdown">
+//       <bs-button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//         Dropdown
+//       </bs-button>
+//       <div class="dropdown-menu" aria-labelledby="dropdown">
+//         <a class="dropdown-item" href="#">Action</a>
+//         <a class="dropdown-item" href="#">Another action</a>
+//         <a class="dropdown-item" href="#">Something else here</a>
+//       </div>
+//     </bs-dropdown>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect((await callDropdownBySelector('bs-dropdown', 'noMethod')).message).eql('No method named "noMethod"');
+//   await t.expect((await callDropdownBySelector('bs-button', 'noMethod')).message).eql('No method named "noMethod"');
+// });
+
+// test('should return the element', async (t) => {
+//   const dropdownHtml = `
+//     <bs-dropdown class="dropdown">
+//       <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//         Dropdown
+//       </button>
+//       <div class="dropdown-menu" aria-labelledby="dropdown">
+//         <a class="dropdown-item" href="#">Action</a>
+//         <a class="dropdown-item" href="#">Another action</a>
+//         <a class="dropdown-item" href="#">Something else here</a>
+//       </div>
+//     </bs-dropdown>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   const returnsItself = ClientFunction((selector) => {
+//     const el:any = document.querySelector(selector);
+//     return el === el.dropdown();
+//   });
+//   await t.expect(await returnsItself('bs-dropdown')).ok();
 // });
 
 
-// test('should do nothing when an attempt is made to hide an uninitialized popover', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" no-enable-on-load data-toggle="popover" data-title="some title" data-content="some content">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   console.log('\t...Waiting on timeout for hide event...');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'hide', 'hidden.bs.popover')).notOk('should not fire any popover events');
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist');
+// test('should not open dropdown if target is disabled via attribute', async (t) => {
+//   const dropdownHtml = `
+//     <bs-dropdown class="dropdown">
+//       <button disabled class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//         Dropdown
+//       </button>
+//       <div class="dropdown-menu" aria-labelledby="dropdown">
+//         <a class="dropdown-item" href="#">Action</a>
+//         <a class="dropdown-item" href="#">Another action</a>
+//         <a class="dropdown-item" href="#">Something else here</a>
+//       </div>
+//     </bs-dropdown>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   console.log('\t...waiting for timeout trying to open a disabled dropdown...');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).notOk('dropdown did not open');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk('dropdown did not open');
 // });
 
-
-// test('should fire inserted event', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: 'Test',
-//     content: 'Test',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'inserted.bs.popover')).ok('inserted event fired');
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-// });
-
-
-// test('should throw an error when show is called on hidden elements', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover" data-title="some title" data-content="Ace Backer" style="display: none">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect((await callPopoverById('popover-test', 'show')).message).eql('Please use show on visible elements');
-// });
-
-
-// test('should hide popovers when their containing modal is closed', async (t) => {
-//   const templateHtml = `
-//     <bs-modal id="modal-test" class="modal">
-//       <div class="modal-dialog" role="document">
-//         <div class="modal-content">
-//           <div class="modal-body">
-//             <bs-tooltip id="popover-test" class="btn btn-secondary" data-toggle="popover" data-placement="top" data-content="Popover">
-//               Popover on top
-//             </bs-tooltip>
-//           </div>
+// test('should not add class position-static to dropdown if boundary not set', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <bs-button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//           Dropdown
+//         </bs-button>
+//         <div class="dropdown-menu" aria-labelledby="dropdown">
+//           <a class="dropdown-item" href="#">Action</a>
+//           <a class="dropdown-item" href="#">Another action</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
 //         </div>
-//       </div>
-//     </bs-modal>`;
-//   const myModal = Selector('#modal-test');
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(templateHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await myModal.exists).ok();
-//   await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'show', 'shown.bs.modal')).ok('shown event fired');
-//   await t.expect(getStyleDisplayById('modal-test')).eql('block', 'modal inserted into dom');
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
-//   await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
-//   await t.wait(150); // the popover transition duration time (not needed if animation=false)
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist', { timeout: 5000 });
-// });
-
-
-// test('should convert number to string without error for content and title', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   const insertedPopoverHeader = Selector('.popover .popover-header');
-//   const insertedPopoverBody = Selector('.popover .popover-body');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: 5,
-//     content: 7,
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await runPopoverMethodAndWaitForEventById('popover-test', 'show', 'shown.bs.popover')).ok();
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopoverHeader.nth(0).innerText).eql('5', 'title correctly inserted as string');
-//   await t.expect(await insertedPopoverBody.nth(0).innerText).eql('7', 'content correctly inserted as string');
-// });
-
-
-// test('popover should be shown right away after the call of disable/enable', async (t) => {
-//   const popoverHtml = '<bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>';
-//   const myPopover = Selector('#popover-test');
-//   const insertedPopover = Selector('.popover');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   const myPopoverConfig = {
-//     title: 'Test popover',
-//     content: 'with disable/enable',
-//   };
-//   await t.expect(await callPopoverById('popover-test', myPopoverConfig)).ok();
-//   await t.expect(await callPopoverById('popover-test', 'disable')).ok();
-//   await t.click(myPopover);
-//   await t.wait(200);
-//   await t.expect(await insertedPopover.nth(0).exists).notOk('popover does not exist');
-//   await t.expect(await callPopoverById('popover-test', 'enable')).ok();
-//   await t.click(myPopover);
-//   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-//   await t.expect(await insertedPopover.nth(0).hasClass('show')).ok('popover has show class');
-// });
-
-
-// test('popover should call content function only once', async (t) => {
-//   const popoverShouldCallContentFunctionOnlyOnce = ClientFunction(() => new Promise((resolve) => {
-//     let contentFunctionCallCount = 0;
-//     const myPopoverConfig = {
-//       content: () => {
-//         contentFunctionCallCount += 1;
-//         const clonedEl: any = document.getElementById('popover').cloneNode(true);
-//         clonedEl.style.display = '';
-//         return clonedEl;
-//       },
-//     };
-//     const el:any = document.getElementById('popover-test');
-//     el.popover(myPopoverConfig);
-//     document.getElementById('popover-test').addEventListener('shown.bs.popover', () => {
-//       resolve(contentFunctionCallCount);
-//     }, { once: true });
-//     el.popover('show');
-//   }));
-//   const popoverHtml = `
-//     <div>
-//       <div id="popover" style="display:none">content</div>
-//       <bs-tooltip id="popover-test" data-toggle="popover">ace</bs-tooltip>
+//       </bs-dropdown>
 //     </div>`;
-//   const myPopover = Selector('#popover-test');
-//   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
-//   await t.expect(await myPopover.exists).ok();
-//   await t.expect(await popoverShouldCallContentFunctionOnlyOnce()).eql(1, 'call content function only once');
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await runDropdownMethodAndWaitForParentEventBySelector('bs-button', 'toggle', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
+//   await t.expect(await myDropdown.hasClass('position-static')).notOk('"position-static" class not added');
 // });
+
+
+// test('should add class position-static to dropdown if boundary not scrollParent', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <bs-button class="btn btn-secondary dropdown-toggle"
+//         data-boundary="viewport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//           Dropdown
+//         </bs-button>
+//         <div class="dropdown-menu" aria-labelledby="dropdown">
+//           <a class="dropdown-item" href="#">Action</a>
+//           <a class="dropdown-item" href="#">Another action</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await runDropdownMethodAndWaitForParentEventBySelector('bs-button', 'toggle', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
+//   await t.expect(await myDropdown.hasClass('position-static')).ok('"position-static" class added');
+// });
+
+
+// test('should set aria-expanded="true" on target when dropdown menu is shown', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu" aria-labelledby="dropdown">
+//           <a class="dropdown-item" href="#">Action</a>
+//           <a class="dropdown-item" href="#">Another action</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   const myDropdownMenuButton = Selector('[data-toggle="dropdown"]');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
+//   await t.expect(await myDropdownMenuButton.nth(0).getAttribute('aria-expanded')).eql('true', 'aria-expanded is set to string "true" on click');
+//   // await t.debug();
+// });
+
+
+// test('should set aria-expanded="false" on target when dropdown menu is hidden', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu" aria-labelledby="dropdown">
+//           <a class="dropdown-item" href="#">Action</a>
+//           <a class="dropdown-item" href="#">Another action</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   const myDropdownMenuButton = Selector('[data-toggle="dropdown"]');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('dropdown opened');
+//   await t.expect(await myDropdownMenuButton.nth(0).getAttribute('aria-expanded')).eql('true', 'aria-expanded is set to string "true" on click');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.dropdown', 'hidden.bs.dropdown')).ok();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk('dropdown closed');
+//   await t.expect(await myDropdownMenuButton.nth(0).getAttribute('aria-expanded')).eql('false', 'aria-expanded is set to string "false" on click');
+// });
+
+
+// test('should not open dropdown if target is disabled via class', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <button class="btn dropdown-toggle disabled" data-toggle="dropdown">
+//           Dropdown
+//         </button>
+//         <div class="dropdown-menu" aria-labelledby="dropdown">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   console.log('\t...waiting for timeout trying to open a disabled dropdown...');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).notOk('dropdown did not open');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk('dropdown did not open');
+// });
+
+
+// test('should add class show to menu if clicked', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).notOk();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('"show" class added on click');
+// });
+
+
+// test('should test if element has a # before assuming it is a selector', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="/foo/" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).notOk();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('"show" class added on click');
+// });
+
+
+// test('should remove "show" class if body is clicked', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   const myDropdownMenu = Selector('.dropdown-menu');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).notOk();
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.dropdown', 'hidden.bs.dropdown')).ok();
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).notOk('"show" class removed');
+//   await t.expect(await myDropdownMenu.nth(0).hasClass('show')).notOk('"show" class removed');
+// });
+
+
+// test('should remove "show" class if tabbing outside of menu', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.click('[data-toggle="dropdown"]');
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await hasFocusByQuerySelectorAll('[data-toggle="dropdown"]', 0)).ok('dropdown toggle has focus');
+//   await t.pressKey('tab');
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('still has show class');
+//   await t.expect(await hasFocusByQuerySelectorAll('.dropdown-item', 0)).ok('First menu item has focus');
+//   await t.pressKey('tab');
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('still has show class');
+//   await t.expect(await hasFocusByQuerySelectorAll('.dropdown-item', 1)).ok('Second menu item has focus');
+//   await t.pressKey('tab');
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).ok('still has show class');
+//   await t.expect(await hasFocusByQuerySelectorAll('.dropdown-item', 2)).ok('Third menu item has focus');
+//   await t.pressKey('tab'); // out of the dropdown now
+//   await t.expect(await myDropdown.nth(0).hasClass('show')).notOk('"show" class removed');
+// });
+
+
+// test('should remove "show" class if body is clicked, with multiple dropdowns', async (t) => {
+//   const dropdownHtml = `
+//     <div>
+//       <div class="nav">
+//         <bs-dropdown class="dropdown" id="testmenu">
+//           <a class="dropdown-toggle" data-toggle="dropdown" href="#testmenu">Test menu <span class="caret"/></a>
+//           <div class="dropdown-menu">
+//               <a class="dropdown-item" href="#sub1">Submenu 1</a>
+//           </div>
+//         </bs-dropdown>
+//       </div>
+//       <bs-dropdown class="btn-group">
+//         <button class="btn">Actions</button>
+//         <button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Action 1</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const firstDropdown = Selector('.dropdown');
+//   const firstDropdownToggle = firstDropdown.child('[data-toggle="dropdown"]');
+//   const lastDropdown = Selector('.btn-group');
+//   const lastDropdownToggle = lastDropdown.child('[data-toggle="dropdown"]');
+//   const shownDropdownMenus = Selector('.dropdown-menu.show');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await firstDropdown.nth(0).exists).ok();
+//   await t.expect(await firstDropdownToggle.nth(0).exists).ok();
+//   await t.expect(await lastDropdown.nth(0).exists).ok();
+//   await t.expect(await lastDropdownToggle.nth(0).exists).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('.dropdown [data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await firstDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await shownDropdownMenus.count).eql(1, 'only one dropdown is shown');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.dropdown', 'hidden.bs.dropdown')).ok();
+//   await t.expect(await shownDropdownMenus.count).eql(0, '"show" class removed');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('.btn-group [data-toggle="dropdown"]', '.btn-group', 'shown.bs.dropdown')).ok();
+//   await t.expect(await lastDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await shownDropdownMenus.count).eql(1, 'only one dropdown is shown');
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.btn-group', 'hidden.bs.dropdown')).ok();
+//   await t.expect(await shownDropdownMenus.count).eql(0, '"show" class removed');
+// });
+
+
+// test('should remove "show" class if body if tabbing outside of menu, with multiple dropdowns', async (t) => {
+//   const dropdownHtml = `
+//     <div>
+//       <div class="nav">
+//         <bs-dropdown class="dropdown" id="testmenu">
+//           <a class="dropdown-toggle" data-toggle="dropdown" href="#testmenu">Test menu <span class="caret"/></a>
+//           <div class="dropdown-menu">
+//               <a class="dropdown-item" href="#sub1">Submenu 1</a>
+//           </div>
+//         </bs-dropdown>
+//       </div>
+//       <bs-dropdown class="btn-group">
+//         <button class="btn">Actions</button>
+//         <button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Action 1</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const firstDropdown = Selector('.dropdown');
+//   const firstDropdownToggle = firstDropdown.child('[data-toggle="dropdown"]');
+//   const lastDropdown = Selector('.btn-group');
+//   const lastDropdownToggle = lastDropdown.child('[data-toggle="dropdown"]');
+//   const shownDropdownMenus = Selector('.dropdown-menu.show');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await firstDropdown.nth(0).exists).ok();
+//   await t.expect(await firstDropdownToggle.nth(0).exists).ok();
+//   await t.expect(await lastDropdown.nth(0).exists).ok();
+//   await t.expect(await lastDropdownToggle.nth(0).exists).ok();
+
+//   // open first dropdown
+//   await t.click(firstDropdownToggle.nth(0));
+//   await t.expect(await firstDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await shownDropdownMenus.count).eql(1, 'only one dropdown is shown');
+//   await t.expect(await hasFocusByQuerySelectorAll('.dropdown [data-toggle="dropdown"]', 0)).ok('first dropdown toggle has focus');
+//   await t.pressKey('tab');
+//   await t.expect(await firstDropdown.nth(0).hasClass('show')).ok('still has show class');
+//   await t.expect(await hasFocusByQuerySelectorAll('.dropdown .dropdown-item', 0)).ok('First menu item has focus of first dropdown');
+//   await t.pressKey('tab'); // out of the first dropdown now
+//   await t.expect(await shownDropdownMenus.count).eql(0, '"show" class removed');
+
+//   // open second dropdown
+//   await t.click(lastDropdownToggle.nth(0));
+//   await t.expect(await lastDropdown.nth(0).hasClass('show')).ok('"show" class added on click');
+//   await t.expect(await shownDropdownMenus.count).eql(1, 'only one dropdown is shown');
+//   await t.expect(await hasFocusByQuerySelectorAll('.btn-group [data-toggle="dropdown"]', 0)).ok('last dropdown toggle has focus');
+//   await t.pressKey('tab');
+//   await t.expect(await lastDropdown.nth(0).hasClass('show')).ok('still has show class');
+//   await t.expect(await hasFocusByQuerySelectorAll('.btn-group .dropdown-item', 0)).ok('First menu item has focus of last dropdown');
+//   await t.pressKey('tab'); // out of the last dropdown now
+//   await t.expect(await shownDropdownMenus.count).eql(0, '"show" class removed');
+// });
+
+
+// test('should fire show and hide event', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'show.bs.dropdown')).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.dropdown', 'hide.bs.dropdown')).ok();
+// });
+
+// test('should fire shown and hidden event', async (t) => {
+//   const dropdownHtml = `
+//     <div class="tabs">
+//       <bs-dropdown class="dropdown">
+//         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+//           Dropdown
+//         </a>
+//         <div class="dropdown-menu">
+//           <a class="dropdown-item" href="#">Secondary link</a>
+//           <a class="dropdown-item" href="#">Something else here</a>
+//           <div class="dropdown-divider"></div>
+//           <a class="dropdown-item" href="#">Another link</a>
+//         </div>
+//       </bs-dropdown>
+//     </div>`;
+//   const myDropdown = Selector('.dropdown');
+//   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+//   await t.expect(await myDropdown.nth(0).exists).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+//   await t.expect(await clickBySelectorAndWaitForEventBySelector('body', '.dropdown', 'hidden.bs.dropdown')).ok();
+// });
+
+
+test('should fire shown and hidden event with a relatedTarget', async (t) => {
+  const shouldFireShownAndHiddenEventWithARelatedTarget = ClientFunction((clickSelector, dropdownToggleSelector, eventSelector, eventName) => new Promise((resolve) => {
+    const myTimeout = setTimeout(() => {
+      // 6 seconds should be more than long enough for any reasonable real world transition
+      // eslint-disable-next-line no-use-before-define
+      document.querySelector(eventSelector).removeEventListener(eventName, handleEventHappened);
+      resolve(false);
+    }, 6000);
+    const handleEventHappened = (event) => {
+      clearTimeout(myTimeout);
+      const dropdownToggleEl:any = document.querySelector(dropdownToggleSelector);
+      resolve(dropdownToggleEl === event.relatedTarget);
+    };
+    document.querySelector(eventSelector).addEventListener(eventName, handleEventHappened, { once: true });
+    const clickEl:any = document.querySelector(clickSelector);
+    clickEl.click();
+  }));
+  const dropdownHtml = `
+    <div class="tabs">
+      <bs-dropdown class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Dropdown
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Secondary link</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Another link</a>
+        </div>
+      </bs-dropdown>
+    </div>`;
+  const myDropdown = Selector('.dropdown');
+  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+  await t.expect(await myDropdown.nth(0).exists).ok();
+  await t.expect(await shouldFireShownAndHiddenEventWithARelatedTarget('[data-toggle="dropdown"]', '[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+  await t.expect(await shouldFireShownAndHiddenEventWithARelatedTarget('body', '[data-toggle="dropdown"]', '.dropdown', 'hidden.bs.dropdown')).ok();
+});
+
+
+test('should fire hide and hidden event with a clickEvent', async (t) => {
+  const shouldFireHideAndHiddenEventWithAClickEvent = ClientFunction((clickSelector, eventSelector) => new Promise((resolve) => {
+    let hasFiredHideEvent = false;
+    const myTimeout = setTimeout(() => {
+      // 6 seconds should be more than long enough for any reasonable real world transition
+      // eslint-disable-next-line no-use-before-define
+      document.querySelector(eventSelector).removeEventListener('hide.bs.dropdown', handleHideEvent);
+      // eslint-disable-next-line no-use-before-define
+      document.querySelector(eventSelector).removeEventListener('hidden.bs.dropdown', handleHiddenEvent);
+      resolve(false);
+    }, 6000);
+    const handleHideEvent = () => {
+      hasFiredHideEvent = true;
+    };
+    const handleHiddenEvent = () => {
+      clearTimeout(myTimeout);
+      if (hasFiredHideEvent) {
+        // easier to read this way
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    };
+    document.querySelector(eventSelector).addEventListener('hide.bs.dropdown', handleHideEvent, { once: true });
+    document.querySelector(eventSelector).addEventListener('hidden.bs.dropdown', handleHiddenEvent, { once: true });
+    const el:any = document.querySelector(clickSelector);
+    el.click();
+  }));
+  const dropdownHtml = `
+    <div class="tabs">
+      <bs-dropdown class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Dropdown
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Secondary link</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Another link</a>
+        </div>
+      </bs-dropdown>
+    </div>`;
+  const myDropdown = Selector('.dropdown');
+  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+  await t.expect(await myDropdown.nth(0).exists).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+  await t.expect(await shouldFireHideAndHiddenEventWithAClickEvent('body', '.dropdown')).ok();
+});
+
+
+test('should fire hide and hidden event without a clickEvent if event type is not click', async (t) => {
+  const shouldFireHideAndHiddenEventWithoutAClickEventIfEventTypeIsNotClick = ClientFunction(() => {
+    function waitForEventBySelector(eventSelector, eventName) {
+      return new Promise((resolve) => {
+        const myTimeout = setTimeout(() => {
+          // 6 seconds should be more than long enough for any reasonable real world transition
+          // eslint-disable-next-line no-use-before-define
+          document.querySelector(eventSelector).removeEventListener(eventName, handleEventHappened);
+          resolve(false);
+        }, 6000);
+        const handleEventHappened = () => {
+          clearTimeout(myTimeout);
+          resolve(true);
+        };
+        document.querySelector(eventSelector).addEventListener(eventName, handleEventHappened, { once: true });
+      });
+    }
+    function delayedEscBySelector(escSelector, delayMs) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const el:any = document.querySelector(escSelector);
+          const eventType = 'keydown';
+          const keyCode = 27;
+          const eventObj = (document as any).createEventObject ? (document as any).createEventObject() : document.createEvent('Events');
+          if (eventObj.initEvent) {
+            eventObj.initEvent(eventType, true, true);
+          }
+          eventObj.keyCode = keyCode;
+          eventObj.which = keyCode;
+          el.dispatchEvent(eventObj);
+          resolve(true);
+        }, delayMs);
+      });
+    }
+    return Promise.all([
+      waitForEventBySelector('.dropdown', 'hide.bs.dropdown'),
+      waitForEventBySelector('.dropdown', 'hidden.bs.dropdown'),
+      delayedEscBySelector('[data-toggle="dropdown"]', 1),
+    ]);
+  });
+  const dropdownHtml = `
+    <div class="tabs">
+      <bs-dropdown class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Dropdown
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Secondary link</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Another link</a>
+        </div>
+      </bs-dropdown>
+    </div>`;
+  const myDropdown = Selector('.dropdown');
+  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+  await t.expect(await myDropdown.nth(0).exists).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="dropdown"]', '.dropdown', 'shown.bs.dropdown')).ok();
+  const firedHideAndHiddenEvents = await shouldFireHideAndHiddenEventWithoutAClickEventIfEventTypeIsNotClick();
+  await t.expect(await _.every(firedHideAndHiddenEvents)).ok('fired hide and hidden events');
+});

@@ -3,18 +3,16 @@ import {
   Component, // eslint-disable-line no-unused-vars
   Prop,
   State,
+  Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import Popper from 'popper.js';
-
 import _size from 'lodash/size';
 import _has from 'lodash/has';
-// import _toNumber from 'lodash/toNumber';
-// import _isNaN from 'lodash/isNaN';
+import _toLower from 'lodash/toLower';
 
-// import getPopperDropdownConfig from './get-popper-dropdown-config';
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
@@ -29,19 +27,12 @@ import getConfigBoolean from '../../utilities/get-config-boolean';
 export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Element() dropdownEl: HTMLElement;
 
-  @Prop({ mutable: true }) show: boolean = false;
-  @Prop() keepOpen: boolean = false;
-
-  // @Prop() offset: any = 0;
-  // @Prop() flip: boolean = true;
-  // @Prop() boundary: any = 'scrollParent';
-  // @Prop() reference: any = 'toggle';
-  // @Prop() display: string = 'dynamic';
-
   @Prop() showEventName: string = 'show.bs.dropdown';
   @Prop() shownEventName: string = 'shown.bs.dropdown';
   @Prop() hideEventName: string = 'hide.bs.dropdown';
   @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
+
+  @Prop({ mutable: true }) show: boolean = false;
   @Prop({ mutable: true }) config: any = {};
   @Prop() defaults = {
     offset: 0,
@@ -54,6 +45,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @State() dropdownId: string;
   @State() inNavbar: boolean;
   @State() popperHandle: any;
+  @State() relatedTarget: Element;
 
   componentWillLoad() {
     if (hasClass(this.dropdownEl, 'show') && this.show === false) {
@@ -67,7 +59,6 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     this.dropdownId = getUniqueId('dropdown');
     this.dropdownEl.dataset.bsId = this.dropdownId;
-    // this.dropdownEl.setAttribute('data-bs-id', this.dropdownId);
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
@@ -81,8 +72,8 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   dispose() {
     document.removeEventListener('click', this.handleDropdownClickOutside);
-    // const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
+    this.relatedTarget = null;
     for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
     }
@@ -92,18 +83,10 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  initPopper(relatedTarget, dropdownMenuEl) {
+  initPopper(dropdownMenuEl) {
     this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (!this.inNavbar) {
-      // const popperSettings = {
-      //   offset: this.offset,
-      //   flip: this.flip,
-      //   boundary: this.boundary,
-      //   display: this.display,
-      // };
       const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, this.config);
-
-      // console.log('this.boundary: ', this.boundary);
 
       // If boundary is not `scrollParent`, then set position to `static`
       // to allow the menu to "escape" the scroll parent's boundaries
@@ -112,19 +95,11 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
         addClass(this.dropdownEl, 'position-static');
       }
 
-      let referenceElement = relatedTarget; // this.dropdownEl.querySelector('.dropdown-menu');
+      let referenceElement:any = this.relatedTarget;
       if (this.config.reference === 'parent') {
         referenceElement = this.dropdownEl.parentNode;
       } else if (this.config.reference instanceof Element) {
         referenceElement = this.config.reference;
-      // } else if (!referenceElement) {
-      //   // we're going to have to guess then
-      //   const newReferenceElement = this.dropdownEl.querySelector('[data-toggle="dropdown"]');
-      //   if (newReferenceElement) {
-      //     referenceElement = newReferenceElement;
-      //   } else {
-      //     referenceElement = this.dropdownEl;
-      //   }
       }
       // console.log('referenceElement: ', referenceElement);
       // console.log('dropdownMenuEl: ', dropdownMenuEl);
@@ -138,17 +113,28 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   }
 
   handleDropdownClickOutside = (event) => {
+    // console.log('event: ', event);
     // https://gist.github.com/Restuta/e400a555ba24daa396cc
     // handleDropdownClickOutside is an arrow function so that removeEventListener will work
     if (!this.show) {
       return;
     }
     const clickWasInsideDropdown = clickWasInside(event.target, `[data-bs-id="${this.dropdownId}"]`);
-    if (!clickWasInsideDropdown || !this.keepOpen) {
-      document.removeEventListener('click', this.handleDropdownClickOutside);
-      this.show = true;
-      this.handleHideDropdown(event.target);
+
+    if (clickWasInsideDropdown) {
+      const closestForm = closest(event.target, 'form');
+      if (this.dropdownEl.contains(closestForm)) {
+        // the user clicked on a form that is inside the dropdown
+        // so keep the dropdown open
+        return;
+      }
+      if (_toLower(event.target.tagName) === 'input' || _toLower(event.target.tagName) === 'textarea') {
+        return;
+      }
     }
+    document.removeEventListener('click', this.handleDropdownClickOutside);
+    this.show = true;
+    this.handleHideDropdown();
   }
 
   setConfig(relatedTarget) {
@@ -192,23 +178,24 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   handleShowDropdown(passedRelatedTarget:HTMLElement = null) {
     // console.log('handleShowDropdown relatedTarget: ', relatedTarget);
-    const relatedTarget = passedRelatedTarget || this.getAssumedRelatedTarget();
-    if (relatedTarget.hasAttribute('disabled')) {
+    this.relatedTarget = passedRelatedTarget || this.getAssumedRelatedTarget();
+    if (this.relatedTarget.hasAttribute('disabled') || hasClass(this.relatedTarget, 'disabled')) {
       return;
     }
-    const showEvent = customEvent(this.dropdownEl, this.showEventName, {}, relatedTarget);
-    this.setConfig(relatedTarget);
+    const showEvent = customEvent(this.dropdownEl, this.showEventName, {}, this.relatedTarget);
+    this.setConfig(this.relatedTarget);
     if (this.show || showEvent.defaultPrevented) {
       return;
     }
     this.show = true;
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
-    const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
+    // const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
     addClass(dropdownMenuEl, 'show');
-    for (let j = 0, len = toggles.length; j < len; j += 1) {
-      toggles[j].setAttribute('aria-expanded', 'true');
-    }
+    this.relatedTarget.setAttribute('aria-expanded', 'true');
+    // for (let j = 0, len = toggles.length; j < len; j += 1) {
+    //   toggles[j].setAttribute('aria-expanded', 'true');
+    // }
     document.removeEventListener('click', this.handleDropdownClickOutside);
     setTimeout(() => {
       document.removeEventListener('click', this.handleDropdownClickOutside);
@@ -217,15 +204,15 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
 
 
-    this.initPopper(relatedTarget, dropdownMenuEl);
+    this.initPopper(dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.shownEventName, {}, relatedTarget);
+      customEvent(this.dropdownEl, this.shownEventName, {}, this.relatedTarget);
     }, dropdownMenuTransitionDuration);
   }
 
-  handleHideDropdown(relatedTarget = null) {
+  handleHideDropdown() {
     // console.log('handleHideDropdown relatedTarget: ', relatedTarget);
-    const hideEvent = customEvent(this.dropdownEl, this.hideEventName, {}, relatedTarget);
+    const hideEvent = customEvent(this.dropdownEl, this.hideEventName, {}, this.relatedTarget);
     if (!this.show || hideEvent.defaultPrevented) {
       return;
     }
@@ -240,13 +227,15 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.hiddenEventName, {}, relatedTarget);
+      customEvent(this.dropdownEl, this.hiddenEventName, {}, this.relatedTarget);
+      this.relatedTarget = null;
     }, dropdownMenuTransitionDuration);
   }
 
   handleToggleBsDropdown = (event) => {
+    event.preventDefault();
     if (this.show === true) {
-      this.handleHideDropdown(event.target);
+      this.handleHideDropdown();
     } else {
       this.handleShowDropdown(event.target);
     }
@@ -263,7 +252,6 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       left: 'left-start',
       // LEFTEND: 'left-end',
     };
-
     const ClassName = {
       // DISABLED: 'disabled',
       // SHOW: 'show',
@@ -274,10 +262,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       // MENULEFT: 'dropdown-menu-left',
       // POSITION_STATIC: 'position-static',
     };
-
     let placement = AttachmentMap.bottom;
-
-    // Handle dropup
     if (hasClass(dropdownEl, ClassName.dropup)) {
       placement = AttachmentMap.top;
       if (hasClass(dropdownMenuEl, ClassName.menuright)) {
@@ -317,6 +302,125 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   }
 
 
+  @Listen('focusout')
+  handleFocusOut(event) {
+    if (this.show && !this.dropdownEl.contains(event.relatedTarget)) {
+      this.handleHideDropdown();
+    }
+  }
+
+  keydownIsADropdownCommand(event) {
+    // If input/textarea:
+    //  - If space key => not a dropdown command
+    //  - If key is other than escape
+    //    - If key is not up or down => not a dropdown command
+    //    - If trigger inside the menu => not a dropdown command
+    // If not input/textarea:
+    //  - And not a key in REGEXP_KEYDOWN => not a dropdown command
+    const ESCAPE_KEYCODE = 27; // KeyboardEvent.which value for Escape (Esc) key
+    const SPACE_KEYCODE = 32; // KeyboardEvent.which value for space key
+    const ARROW_UP_KEYCODE = 38; // KeyboardEvent.which value for up arrow key
+    const ARROW_DOWN_KEYCODE = 40; // KeyboardEvent.which value for down arrow key
+    // const REGEXP_KEYDOWN = new RegExp(`${ARROW_UP_KEYCODE}|${ARROW_DOWN_KEYCODE}|${ESCAPE_KEYCODE}`);
+    if (_toLower(event.target.tagName) === 'input' || _toLower(event.target.tagName) === 'textarea') {
+      if (event.which === SPACE_KEYCODE) {
+        return false;
+      }
+      if (event.which === ESCAPE_KEYCODE) {
+        return true;
+      }
+      if (event.which === ARROW_DOWN_KEYCODE) {
+        return false;
+      }
+      if (event.which === ARROW_UP_KEYCODE) {
+        return false;
+      }
+      const dropdownMenu = this.dropdownEl.querySelector('.dropdown-menu');
+      if (dropdownMenu.contains(event.target)) {
+        return false;
+      }
+    } else {
+      if (event.which === ARROW_UP_KEYCODE) {
+        return true;
+      }
+      if (event.which === ARROW_DOWN_KEYCODE) {
+        return true;
+      }
+      if (event.which === ESCAPE_KEYCODE) {
+        return true;
+      }
+      if (event.which === SPACE_KEYCODE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  @Listen('keydown')
+  handleKeyDown(event) {
+    // console.log('handleKeyDown event: ', event);
+    const ESCAPE_KEYCODE = 27; // KeyboardEvent.which value for Escape (Esc) key
+    const SPACE_KEYCODE = 32; // KeyboardEvent.which value for space key
+    // const TAB_KEYCODE = 9; // KeyboardEvent.which value for tab key
+    const ARROW_UP_KEYCODE = 38; // KeyboardEvent.which value for up arrow key
+    const ARROW_DOWN_KEYCODE = 40; // KeyboardEvent.which value for down arrow key
+    // const RIGHT_MOUSE_BUTTON_WHICH = 3; // MouseEvent.which value for the right button (assuming a right-handed mouse)
+    // const REGEXP_KEYDOWN = new RegExp(ARROW_UP_KEYCODE + "|" + ARROW_DOWN_KEYCODE + "|" + ESCAPE_KEYCODE);
+    if (!this.keydownIsADropdownCommand(event)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.target.hasAttribute('disabled') || hasClass(event.target, 'disabled')) {
+      return;
+    }
+    const relatedTarget:any = this.getAssumedRelatedTarget();
+    if (event.which === ESCAPE_KEYCODE) {
+      if (this.show === true) {
+        this.handleHideDropdown();
+      } else {
+        this.handleShowDropdown(relatedTarget);
+      }
+      relatedTarget.focus();
+      return;
+    }
+    if (event.which === SPACE_KEYCODE) {
+      if (relatedTarget === document.activeElement) {
+        if (this.show === true) {
+          this.handleHideDropdown();
+        } else {
+          this.handleShowDropdown(relatedTarget);
+        }
+      }
+      return;
+    }
+    if (event.which === ARROW_DOWN_KEYCODE && !this.show) {
+      this.handleShowDropdown(relatedTarget);
+      relatedTarget.focus();
+      return;
+    }
+    if (event.which !== 38 || event.which !== 40) {
+      console.warn('unhandled event.which: ', event.which);
+    }
+    const dropdownMenuItems = Array.prototype.slice.call(this.dropdownEl.querySelectorAll('.dropdown-menu .dropdown-item:not(.disabled):not(:disabled)'));
+    if (dropdownMenuItems.length === 0) {
+      return;
+    }
+    let myIndex = dropdownMenuItems.indexOf(document.activeElement);
+    if (event.which === ARROW_UP_KEYCODE && myIndex > 0) { // Up
+      myIndex -= 1;
+    }
+    if (event.which === ARROW_DOWN_KEYCODE && myIndex < dropdownMenuItems.length - 1) { // Down
+      myIndex += 1;
+    }
+    if (myIndex < 0) {
+      myIndex = 0;
+    }
+    dropdownMenuItems[myIndex].focus();
+  }
+
+
   @Method()
   dropdown(dropdownOptions = {}, relatedTarget = null) {
     if (_size(dropdownOptions) === 0) {
@@ -324,7 +428,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     if (dropdownOptions === 'toggle') {
       if (this.show === true) {
-        this.handleHideDropdown(relatedTarget);
+        this.handleHideDropdown();
       } else {
         this.handleShowDropdown(relatedTarget);
       }
