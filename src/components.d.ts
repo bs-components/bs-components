@@ -45,7 +45,6 @@ declare global {
       'dropdown': (dropdownOptions?: {}, relatedTarget?: any) => true | HTMLElement;
       'hiddenEventName': string;
       'hideEventName': string;
-      'keepOpen': boolean;
       'show': boolean;
       'showEventName': string;
       'shownEventName': string;
@@ -149,7 +148,6 @@ declare global {
       'defaults'?: any;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
-      'keepOpen'?: boolean;
       'show'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;

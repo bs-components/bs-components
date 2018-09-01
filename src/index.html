@@ -97,16 +97,26 @@
 
       <div class="tabs">
         <bs-dropdown class="dropdown" id="testing-dropdown-toggle">
-          <bs-button class="btn btn-secondary dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+          <a href="#" class="dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
             Dropdown
-          </bs-button>
+          </a>
           <div class="dropdown-menu" aria-labelledby="dropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Secondary link</a>
             <a class="dropdown-item" href="#">Something else here</a>
+            <div class="divider"></div>
+            <a class="dropdown-item" href="#">Another link</a>
           </div>
         </bs-dropdown>
       </div>
+
+      <bs-dropdown class="btn-group">
+        <button class="btn">Actions</button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action 1</a>
+        </div>
+      </bs-dropdown>
+
 
 
       <p>Popovers</p>
@@ -487,7 +497,7 @@
         show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
         hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
       >
-        <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Vue Dropdown button
           </bs-button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

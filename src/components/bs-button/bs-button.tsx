@@ -68,7 +68,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
 
   @Listen('keydown')
-  handleKeyUp(event) {
+  handleKeyDown(event) {
     // console.log('event: ', event);
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
@@ -188,13 +188,22 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Method()
   dropdown(dropdownOptions:any = {}) {
-    // this is a convenience proxy
+    // this is a proxy
     if (this.bsButtonEl.dataset.toggle !== 'dropdown') {
       throw new Error('dropdown method can only be run on a bs-button with [data-toggle="dropdown"]');
     }
     const bsDropdownEl:any = closest(this.bsButtonEl, 'bs-dropdown');
     if (!bsDropdownEl) {
       throw new Error('unable to find parent bs-dropdown component');
+    }
+    if (dropdownOptions === 'get-show') {
+      return bsDropdownEl.show;
+    }
+    if (dropdownOptions === 'get-config') {
+      return bsDropdownEl.config;
+    }
+    if (dropdownOptions === 'get-defaults') {
+      return bsDropdownEl.defaults;
     }
     return bsDropdownEl.dropdown(dropdownOptions, this.bsButtonEl);
   }
