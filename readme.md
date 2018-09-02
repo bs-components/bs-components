@@ -11,7 +11,6 @@ Status:
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`
 - [ ] collapse done with NO tests. needs tests before marking complete.
-  - note: planning to reevaluate how collapse was done for a more bootstrap consistent experience
 - [ ] alert todo low priority - not a show stopper for anyone
 - [ ] tab - aka navs and list group- todo low priority
   - many frameworks already have tab solutions in the form of spa routers

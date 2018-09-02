@@ -61,7 +61,7 @@
 <body>
 
   <header>
-    <div class="collapse bg-dark" id="navbarHeader">
+    <bs-collapse class="collapse bg-dark" id="navbarHeader">
       <div class="container">
         <div class="row">
           <div class="col-sm-8 col-md-7 py-4">
@@ -78,22 +78,68 @@
           </div>
         </div>
       </div>
-    </div>
+    </bs-collapse>
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
         <a href="#" class="navbar-brand d-flex align-items-center">
           <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> -->
           <strong>bs-components</strong>
         </a>
-        <bs-collapse class="btn  navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+        <bs-button class="btn navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
-        </bs-collapse>
+        </bs-button>
       </div>
     </div>
   </header>
 
 
   <div class="container mt-5">
+
+      <p>
+        <bs-button tabindex="-1">
+          <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              bs-button wrapped Link with href
+          </a>
+        </bs-button>
+
+        <bs-button tabindex="-1">
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            bs-button wrapped Button with data-target
+          </button>
+        </bs-button>
+
+        <bs-button class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          bs-Button with data-target
+        </bs-button>
+      </p>
+      <bs-collapse class="collapse" id="collapseExample">
+        <div class="card card-body">
+          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+        </div>
+      </bs-collapse>
+      <p>&nbsp;</p>
+
+      <p>
+
+          <bs-button tabindex="-1">
+            <a href="#exampleModal" class="btn btn-primary" data-toggle="modal">
+                Launch demo modal a
+            </a>
+          </bs-button>
+
+          <bs-button tabindex="-1">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Launch demo modal button
+            </button>
+          </bs-button>
+
+          <bs-button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Launch demo modal bs-button
+          </bs-button>
+      </p>
+
+        <p>&nbsp;</p>
+
 
       <div class="tabs">
         <bs-dropdown class="dropdown" id="testing-dropdown-toggle">
@@ -303,31 +349,36 @@
     <p>
       <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
 
-      <bs-collapse class="btn btn-primary"  data-toggle="collapse" data-target="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</bs-collapse>
+      <bs-button class="btn btn-primary"  data-toggle="collapse" data-target="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+        Toggle first element
+      </bs-button>
 
       <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</button> -->
 
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+        Toggle second element
+      </bs-button>
 
-      <bs-collapse class="btn btn-primary" id="second-bs-collapse" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Toggle second element</bs-collapse>
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+        Toggle both elements
+      </bs-button>
 
 
-
-      <bs-collapse class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Toggle both elements</bs-collapse>
     </p>
     <div class="row">
       <div class="col">
-        <div class="collapse multi-collapse" id="multiCollapseExample1">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample1">
           <div class="card card-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
           </div>
-        </div>
+        </bs-collapse>
       </div>
       <div class="col">
-        <div class="collapse multi-collapse" id="multiCollapseExample2">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample2">
           <div class="card card-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
           </div>
-        </div>
+        </bs-collapse>
       </div>
     </div>
 
@@ -339,48 +390,47 @@
       <div class="card">
         <div class="card-header" id="headingOne">
           <h5 class="mb-0">
-            <bs-collapse class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <bs-button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                 Collapsible Group Item #1
-            </bs-collapse>
+            </bs-button>
           </h5>
         </div>
 
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <bs-collapse id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
           <div class="card-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
           </div>
-        </div>
+        </bs-collapse>
       </div>
       <div class="card">
         <div class="card-header" id="headingTwo">
           <h5 class="mb-0">
-            <bs-collapse class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
               Collapsible Group Item #2
-            </bs-collapse>
+            </bs-button>
           </h5>
         </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <bs-collapse id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
           <div class="card-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
           </div>
-        </div>
+        </bs-collapse>
       </div>
       <div class="card">
         <div class="card-header" id="headingThree">
           <h5 class="mb-0">
-            <bs-collapse class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
               Collapsible Group Item #3
-            </bs-collapse>
+            </bs-button>
           </h5>
         </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <bs-collapse id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
           <div class="card-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
           </div>
-        </div>
+        </bs-collapse>
       </div>
     </div>
-
 
 
 
@@ -392,7 +442,7 @@
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
 
       <bs-dropdown class="btn-group mr-2">
-          <button type="button" class="btn btn-danger">Action</button>
+          <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
           <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">Toggle Dropdown</span>
           </button>
@@ -607,16 +657,20 @@
     document.getElementById("my-dropdown").addEventListener('hidden.bs.dropdown', handleMyComponentHidden);
 
     function handleMyCollapseShow(event) {
-      console.log('handleMyCollapseShow');
+      console.log('handleMyCollapseShow event: ', event);
+      // console.log('handleMyCollapseShow');
     }
     function handleMyCollapseShown(event) {
-      console.log('handleMyCollapseShown');
+      console.log('handleMyCollapseShown event: ', event);
+      // console.log('handleMyCollapseShown');
     }
     function handleMyCollapseHide(event) {
-      console.log('handleMyCollapseHide');
+      console.log('handleMyCollapseHide event: ', event);
+      // console.log('handleMyCollapseHide');
     }
     function handleMyCollapseHidden(event) {
-      console.log('handleMyCollapseHidden');
+      console.log('handleMyCollapseHidden event: ', event);
+      // console.log('handleMyCollapseHidden');
     }
 
     document.getElementById("multiCollapseExample2").addEventListener('show.bs.collapse', handleMyCollapseShow);
@@ -625,12 +679,12 @@
     document.getElementById("multiCollapseExample2").addEventListener('hidden.bs.collapse', handleMyCollapseHidden);
 
     function toggleSecondCollapse() {
-      const el = document.getElementById("second-bs-collapse");
+      const el = document.getElementById("collapseTwo");
 
     // .collapse('toggle|show|hide')
     // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
 
-      el.collapse(); // will toggle
+      el.collapse('toggle');
       // el.collapse('toggle');
       // el.collapse('show'); // will show this collapse
       // el.collapse('hide'); // will hide this collapse

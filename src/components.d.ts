@@ -30,13 +30,21 @@ declare global {
       'tabindex': string;
     }
 
-    interface BsCollapse {
+    interface BsCollapseOld {
       'collapse': (passedConfig: any) => void;
       'hiddenEventName': string;
       'hideEventName': string;
       'showEventName': string;
       'shownEventName': string;
       'tabindex': string;
+    }
+
+    interface BsCollapse {
+      'collapse': (collapseOptions: any, relatedTarget?: any) => true | HTMLElement;
+      'hiddenEventName': string;
+      'hideEventName': string;
+      'showEventName': string;
+      'shownEventName': string;
     }
 
     interface BsDropdown {
@@ -54,8 +62,7 @@ declare global {
       'getScrollbarWidth': () => number;
       'hiddenEventName': string;
       'hideEventName': string;
-      'modal': (modalOptions?: {}) => true | HTMLElement;
-      'modalToggleButtonClicked': (relatedTarget: any) => void;
+      'modal': (modalOptions?: {}, relatedTarget?: any) => true | HTMLElement;
       'showEventName': string;
       'shownEventName': string;
     }
@@ -83,6 +90,14 @@ declare global {
     var HTMLBsButtonElement: {
       prototype: HTMLBsButtonElement;
       new (): HTMLBsButtonElement;
+    };
+    
+
+    interface HTMLBsCollapseOldElement extends StencilComponents.BsCollapseOld, HTMLStencilElement {}
+
+    var HTMLBsCollapseOldElement: {
+      prototype: HTMLBsCollapseOldElement;
+      new (): HTMLBsCollapseOldElement;
     };
     
 
@@ -122,6 +137,7 @@ declare global {
     interface Element {}
     export interface IntrinsicElements {
     'bs-button': JSXElements.BsButtonAttributes;
+    'bs-collapse-old': JSXElements.BsCollapseOldAttributes;
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
     'bs-modal': JSXElements.BsModalAttributes;
@@ -135,12 +151,19 @@ declare global {
       'tabindex'?: string;
     }
 
-    export interface BsCollapseAttributes extends HTMLAttributes {
+    export interface BsCollapseOldAttributes extends HTMLAttributes {
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'showEventName'?: string;
       'shownEventName'?: string;
       'tabindex'?: string;
+    }
+
+    export interface BsCollapseAttributes extends HTMLAttributes {
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
+      'showEventName'?: string;
+      'shownEventName'?: string;
     }
 
     export interface BsDropdownAttributes extends HTMLAttributes {
@@ -177,6 +200,7 @@ declare global {
 
   interface HTMLElementTagNameMap {
     'bs-button': HTMLBsButtonElement
+    'bs-collapse-old': HTMLBsCollapseOldElement
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
     'bs-modal': HTMLBsModalElement
@@ -185,6 +209,7 @@ declare global {
 
   interface ElementTagNameMap {
     'bs-button': HTMLBsButtonElement;
+    'bs-collapse-old': HTMLBsCollapseOldElement;
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;
     'bs-modal': HTMLBsModalElement;

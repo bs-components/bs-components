@@ -433,19 +433,19 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     callback();
   }
 
-  @Method()
-  modalToggleButtonClicked(relatedTarget) {
-    this.getConfig();
-    if (this.isShown) {
-      this.hide();
-    } else {
-      this.show(relatedTarget);
-      // console.log('relatedTarget: ', relatedTarget);
-    }
-  }
+  // @Method()
+  // modalToggleButtonClicked(relatedTarget) {
+  //   this.getConfig();
+  //   if (this.isShown) {
+  //     this.hide();
+  //   } else {
+  //     this.show(relatedTarget);
+  //     // console.log('relatedTarget: ', relatedTarget);
+  //   }
+  // }
 
   @Method()
-  modal(modalOptions = {}) {
+  modal(modalOptions = {}, relatedTarget = null) {
     // console.log('modalOptions: ', modalOptions);
     if (_size(modalOptions) === 0) {
       return this.modalEl;
@@ -462,7 +462,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
       if (this.isShown) {
         this.hide();
       } else {
-        this.show();
+        this.show(relatedTarget);
       }
       return true;
     }

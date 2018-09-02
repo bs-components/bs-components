@@ -9,13 +9,14 @@ import {
 
 
 import _size from 'lodash/size';
+import _toLower from 'lodash/toLower';
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
 import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
-
+import getDuplicatesInArray from '../../utilities/get-duplicates-In-array';
 
 @Component({ tag: 'bs-button', shadow: false })
 export class BsButton { // eslint-disable-line import/prefer-default-export
@@ -69,23 +70,72 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Listen('keydown')
   handleKeyDown(event) {
-    // console.log('event: ', event);
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
     }
+    if (!this.bsButtonEl.contains(event.target)) {
+      return;
+    }
     if (event.which === 32) { // space
+      if (!this.bsButtonEl.isEqualNode(event.target)) {
+        // user pressed enter on some element element wrapped within bs-button
+        if (_toLower(event.target.tagName) === 'button'
+          && event.target.dataset.toggle !== 'collapse'
+          && event.target.dataset.toggle !== 'modal') {
+          // we let space go through if the button is not a collapse or modal trigger
+          return;
+        }
+        if (_toLower(event.target.tagName) === 'a'
+          // && event.target.dataset.toggle !== 'collapse'
+          && event.target.dataset.toggle !== 'modal') {
+          // we let space go through if the button is not a modal trigger
+          return;
+        }
+      }
       if (event.stopPropagation) {
         event.stopPropagation();
         event.preventDefault();
+      }
+      console.log('space event: ', event);
+      if (event.target.dataset.toggle === 'collapse') {
+        BsButton.handleCollapseToggle(event.target);
+        return;
+      }
+      if (event.target.dataset.toggle === 'modal') {
+        BsButton.handleModalToggle(event.target);
+        return;
       }
       this.handleToggle(this.bsButtonEl);
       return;
     }
     if (event.which === 13) { // enter
+      if (!this.bsButtonEl.isEqualNode(event.target)) {
+        // user pressed enter on some element element wrapped within bs-button
+        if (_toLower(event.target.tagName) === 'button'
+          && event.target.dataset.toggle !== 'collapse'
+          && event.target.dataset.toggle !== 'modal') {
+          // we let enter go through if the button is not a collapse or modal trigger
+          return; // leaving without preventing default
+        }
+        if (_toLower(event.target.tagName) === 'a'
+          && event.target.dataset.toggle !== 'collapse'
+          && event.target.dataset.toggle !== 'modal') {
+          // we let enter go through if the anchor is not a collapse or modal trigger
+          return; // leaving without preventing default
+        }
+      }
       if (event.stopPropagation) {
         event.stopPropagation();
         event.preventDefault();
+      }
+      if (event.target.dataset.toggle === 'collapse') {
+        BsButton.handleCollapseToggle(event.target);
+        return;
+      }
+      if (event.target.dataset.toggle === 'modal') {
+        BsButton.handleModalToggle(event.target);
+        return;
       }
       this.handleToggle(this.bsButtonEl);
       return;
@@ -95,7 +145,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         event.stopPropagation();
         event.preventDefault();
       }
-      this.bsButtonEl.blur();
+      (document.activeElement as any).blur();
       if (this.addFocusClass) {
         removeClass(this.bsButtonEl, 'focus');
       }
@@ -109,7 +159,70 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (isDisabled) {
       return;
     }
+    const closestCollapseToggleEl = closest(event.target, '[data-toggle="collapse"]');
+    if (closestCollapseToggleEl && this.bsButtonEl.contains(closestCollapseToggleEl)) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      BsButton.handleCollapseToggle(closestCollapseToggleEl);
+      return;
+    }
+    const closestModalToggleEl = closest(event.target, '[data-toggle="modal"]');
+    if (closestModalToggleEl && this.bsButtonEl.contains(closestModalToggleEl)) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      BsButton.handleModalToggle(closestModalToggleEl);
+    }
     this.handleToggle(event.target);
+  }
+
+  static getTargetSelector(relatedTarget) {
+    if (_toLower(relatedTarget.tagName) === 'a') {
+      return relatedTarget.getAttribute('href');
+    }
+    return relatedTarget.dataset.target;
+  }
+
+
+  static handleCollapseToggle(relatedTarget) {
+    const targetSelector = BsButton.getTargetSelector(relatedTarget);
+    if (targetSelector) {
+      const parentArr = [];
+      const targetElArr: any = Array.prototype.slice.call(document.querySelectorAll(targetSelector));
+      for (let j = 0, len = targetElArr.length; j < len; j += 1) {
+        if (targetElArr[j].collapse) {
+          targetElArr[j].collapse('toggle', relatedTarget);
+          if (targetElArr[j].dataset.parent) {
+            parentArr.push(targetElArr[j].dataset.parent);
+          }
+        } else {
+          console.error('Unable to toggle collapse for all targets due to unavailable bs-collapse method "collapse');
+        }
+      }
+      const parentDupes = getDuplicatesInArray(parentArr);
+      for (let j = 0, len = parentDupes.length; j < len; j += 1) {
+        console.warn(`You are trying to toggle multiple collapses that have the same parent accordion (${parentDupes[j]}).
+                      Normally only one item in an accordion is toggled at one time.`);
+      }
+    }
+  }
+
+  static handleModalToggle(relatedTarget) {
+    const targetSelector = BsButton.getTargetSelector(relatedTarget);
+    if (targetSelector) {
+      try {
+        const targetEl: any = document.querySelector(targetSelector);
+        if (targetEl.modal) {
+          targetEl.modal('toggle', relatedTarget);
+        }
+      } catch (err) {
+        console.log('bs-button modal toggle target must be a valid css selector string');
+        console.error(err.message);
+      }
+    }
   }
 
 
@@ -168,23 +281,8 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
       toggleClass(this.bsButtonEl, 'active');
     }
-    if (this.bsButtonEl.dataset.toggle === 'modal') {
-      // modal toggler
-      // <bs-button class="btn" data-toggle="modal" data-target="#exampleModal">modal</bs-button>
-      const modalTargetSelector = this.bsButtonEl.dataset.target;
-      if (modalTargetSelector) {
-        try {
-          const modalTargetEl: any = document.querySelector(modalTargetSelector);
-          if (modalTargetEl.modalToggleButtonClicked) {
-            modalTargetEl.modalToggleButtonClicked(this.bsButtonEl);
-          }
-        } catch (err) {
-          console.log('bs-button modal toggle target must be a valid css selector string');
-          console.error(err.message);
-        }
-      }
-    }
   }
+
 
   @Method()
   dropdown(dropdownOptions:any = {}) {
