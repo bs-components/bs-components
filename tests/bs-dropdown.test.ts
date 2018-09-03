@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components dropdown tests').page('./bs-dropdown.test.html');
+fixture('bs-components dropdown tests').page('./bs.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/dropdown.js
 

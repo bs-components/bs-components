@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components modal tests').page('./bs-modal.test.html');
+fixture('bs-components modal tests').page('./bs.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/button.js
 // NOTE: Ideally, every test should leave the page state the same way it was before the test started.
@@ -139,7 +139,6 @@ const getCssComputedStyleBySelector = ClientFunction((selector, styleName) => {
 
 const getInlineCssStyleBySelector = ClientFunction((selector, styleName) => {
   const el = document.querySelector(selector);
-  // const style = window.getComputedStyle(el);
   return el.style[styleName];
 });
 

@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components button tests').page('./bs-button.test.html');
+fixture('bs-components button tests').page('./bs.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/button.js
 // NOTE: Ideally, every test should leave the page state the same way it was before the test started.

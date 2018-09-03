@@ -10,6 +10,7 @@ import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _size from 'lodash/size';
 import _upperFirst from 'lodash/upperFirst';
+import _toLower from 'lodash/toLower';
 
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
@@ -17,6 +18,7 @@ import removeClass from '../../utilities/remove-class';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import customEvent from '../../utilities/custom-event';
 import reflow from '../../utilities/reflow';
+import elementMatches from '../../utilities/element-matches';
 
 @Component({ tag: 'bs-collapse', styleUrl: 'bs-collapse.css', shadow: false })
 export class BsCollapse { // eslint-disable-line import/prefer-default-export
@@ -38,6 +40,10 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     const config: any = {};
     config.relatedTarget = relatedTarget;
     config.toggle = _get(overrideConfig, 'toggle', 'toggle');
+    config.ignoreAccordion = _get(overrideConfig, 'ignoreAccordion', false);
+    config.ignoreDataToggles = _get(overrideConfig, 'ignoreDataToggles', false);
+    config.collapseElPlannedToBeOpened = [];
+    config.collapseElPlannedToBeClosed = [];
     if (_has(overrideConfig, 'target')) {
       config.targetSelector = overrideConfig.target;
     } else if (relatedTarget && _has(relatedTarget.dataset, 'target')) {
@@ -55,54 +61,109 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     return config;
   }
 
-  static closeOtherOpenAccordions(AllOtherOpenCollapses) {
-    for (let j = 0, len = AllOtherOpenCollapses.length; j < len; j += 1) {
-      if (AllOtherOpenCollapses[j].collapse) {
-        AllOtherOpenCollapses[j].collapse({ toggle: 'hide', parent: '' });
+  closeOtherOpenAccordions(config) {
+    for (let j = 0, len = config.collapseElPlannedToBeClosed.length; j < len; j += 1) {
+      if (config.collapseElPlannedToBeClosed[j].collapse && !this.collapseEl.isEqualNode(config.collapseElPlannedToBeClosed[j])) {
+        config.collapseElPlannedToBeClosed[j].collapse({ toggle: 'hide', ignoreAccordion: true, ignoreDataToggles: true });
       } else {
         console.error('Unable to toggle collapse for all targets due to unavailable bs-collapse method "collapse');
       }
     }
   }
 
-  handleToggle(config) {
-    const AllOtherOpenCollapses = [];
-    if (_has(config, 'parent') && config.parent !== null) {
-      // if it has a parent then it is part of an accordion
-      const accordionParentEl = document.querySelector(config.parent);
-      const childCollapseArr = Array.prototype.slice.call(accordionParentEl.querySelectorAll('.collapse'));
-      for (let j = 0, len = childCollapseArr.length; j < len; j += 1) {
-        if (!this.collapseEl.isEqualNode(childCollapseArr[j]) && hasClass(childCollapseArr[j], 'show')) {
-          AllOtherOpenCollapses.push(childCollapseArr[j]);
+  static getTargetSelector(relatedTarget) {
+    if (_toLower(relatedTarget.tagName) === 'a') {
+      return relatedTarget.getAttribute('href');
+    }
+    return relatedTarget.dataset.target;
+  }
+
+  static handleToggleDataToggles(config) {
+    // handle all of the toggler [data-toggle="collapse"] dom state (mark them expanded or not)
+    const allCollapsesOnPage = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="collapse"]'));
+    for (let j = 0, len = allCollapsesOnPage.length; j < len; j += 1) {
+      const targetSelector = BsCollapse.getTargetSelector(allCollapsesOnPage[j]);
+      let thisCollapseWasOpened = false;
+      if (_size(targetSelector) > 0) {
+      // see if we need to open this collapse
+        for (let x = 0, innerLen = config.collapseElPlannedToBeOpened.length; x < innerLen; x += 1) {
+          const shouldOpen = elementMatches(config.collapseElPlannedToBeOpened[x], targetSelector);
+          if (shouldOpen === true && thisCollapseWasOpened === false) {
+            removeClass(allCollapsesOnPage[j], 'collapsed');
+            allCollapsesOnPage[j].setAttribute('aria-expanded', 'true');
+            thisCollapseWasOpened = true;
+          }
+        }
+        // see if we need to close this collapse
+        if (thisCollapseWasOpened === false) {
+          for (let x = 0, innerLen = config.collapseElPlannedToBeClosed.length; x < innerLen; x += 1) {
+            const shouldClose = elementMatches(config.collapseElPlannedToBeClosed[x], targetSelector);
+            if (shouldClose === true) {
+              const preExistingOpenTargets = document.querySelectorAll(`${targetSelector}.show`);
+              if (_size(preExistingOpenTargets) === 0) {
+                addClass(allCollapsesOnPage[j], 'collapsed');
+                allCollapsesOnPage[j].setAttribute('aria-expanded', 'false');
+              }
+            }
+          }
         }
       }
     }
+  }
+
+  handleToggle(config) {
+    if (_has(config, 'parent') && config.ignoreAccordion !== true) {
+      // if it has a parent then it is part of an accordion
+      const accordionParentEl = document.querySelector(config.parent);
+      if (accordionParentEl) {
+        const childCollapseArr = Array.prototype.slice.call(accordionParentEl.querySelectorAll('.collapse'));
+        for (let j = 0, len = childCollapseArr.length; j < len; j += 1) {
+          if (hasClass(childCollapseArr[j], 'show')) {
+            config.collapseElPlannedToBeClosed.push(childCollapseArr[j]);
+          }
+        }
+      } else {
+        console.warn(`unable to find accordion parent by selector: "${config.parent}"`);
+      }
+    }
     if (config.toggle === 'show') {
-      this.showCollapse(this.collapseEl, config.relatedTarget);
-      BsCollapse.closeOtherOpenAccordions(AllOtherOpenCollapses);
+      config.collapseElPlannedToBeOpened.push(this.collapseEl);
+      this.showCollapse(this.collapseEl, config);
       return;
     }
     if (config.toggle === 'hide') {
-      this.hideCollapse(this.collapseEl);
+      config.collapseElPlannedToBeClosed.push(this.collapseEl);
+      this.hideCollapse(this.collapseEl, config);
       return;
     }
-    if (hasClass(this.collapseEl, 'show') || hasClass(this.collapseEl, 'collapsing')) {
-      this.hideCollapse(this.collapseEl);
+    const thisCollapseIsShown = hasClass(this.collapseEl, 'show') || hasClass(this.collapseEl, 'collapsing');
+    if (thisCollapseIsShown) {
+      config.collapseElPlannedToBeClosed.push(this.collapseEl);
+      this.hideCollapse(this.collapseEl, config);
       return;
     }
-    this.showCollapse(this.collapseEl, config.relatedTarget);
-    BsCollapse.closeOtherOpenAccordions(AllOtherOpenCollapses);
+    config.collapseElPlannedToBeOpened.push(this.collapseEl);
+    this.showCollapse(this.collapseEl, config);
   }
 
-  showCollapse(targetEl, relatedTarget) {
+  showCollapse(targetEl, config) {
     if (hasClass(targetEl, 'show') || hasClass(targetEl, 'collapsing')) {
       return;
     }
-    customEvent(targetEl, this.showEventName, {}, relatedTarget);
+    const showEvent = customEvent(targetEl, this.showEventName, {}, config.relatedTarget);
+    if (showEvent.defaultPrevented) {
+      return;
+    }
     const dimension = BsCollapse.getDimension(targetEl);
     const scrollSize = `scroll${_upperFirst(dimension)}`;
     addClass(targetEl, 'collapsing');
     removeClass(targetEl, 'collapse');
+    if (config.ignoreAccordion !== true) {
+      this.closeOtherOpenAccordions(config);
+    }
+    if (config.ignoreDataToggles !== true) {
+      BsCollapse.handleToggleDataToggles(config);
+    }
     const collapsingTransitionDuration = getTransitionDurationFromElement(targetEl);
     setTimeout(() => {
       removeClass(targetEl, 'collapsing');
@@ -110,21 +171,23 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
       addClass(targetEl, 'show');
       // eslint-disable-next-line no-param-reassign
       targetEl.style[dimension] = '';
-      if (relatedTarget) {
-        relatedTarget.setAttribute('aria-expanded', 'true');
-        this.relatedTarget = relatedTarget;
+      if (config.relatedTarget) {
+        this.relatedTarget = config.relatedTarget;
       }
-      customEvent(targetEl, this.shownEventName, {}, relatedTarget);
+      customEvent(targetEl, this.shownEventName, {}, config.relatedTarget);
     }, collapsingTransitionDuration);
     // eslint-disable-next-line no-param-reassign
     targetEl.style[dimension] = `${targetEl[scrollSize]}px`;
   }
 
-  hideCollapse(targetEl) {
+  hideCollapse(targetEl, config) {
     if (!hasClass(targetEl, 'show')) {
       return;
     }
-    customEvent(targetEl, this.hideEventName, {}, this.relatedTarget);
+    const hideEvent = customEvent(targetEl, this.hideEventName, {}, this.relatedTarget);
+    if (hideEvent.defaultPrevented) {
+      return;
+    }
     const dimension = BsCollapse.getDimension(targetEl);
     // eslint-disable-next-line no-param-reassign
     targetEl.style[dimension] = `${targetEl.getBoundingClientRect()[dimension]}px`;
@@ -134,13 +197,13 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     removeClass(targetEl, 'show');
     // eslint-disable-next-line no-param-reassign
     targetEl.style[dimension] = '';
+    if (config.ignoreDataToggles !== true) {
+      BsCollapse.handleToggleDataToggles(config);
+    }
     const collapsingTransitionDuration = getTransitionDurationFromElement(targetEl);
     setTimeout(() => {
       removeClass(targetEl, 'collapsing');
       addClass(targetEl, 'collapse');
-      if (this.relatedTarget) {
-        this.relatedTarget.setAttribute('aria-expanded', 'false');
-      }
       customEvent(targetEl, this.hiddenEventName, {}, this.relatedTarget);
       this.relatedTarget = null;
     }, collapsingTransitionDuration);

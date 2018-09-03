@@ -95,6 +95,33 @@
 
   <div class="container mt-5">
 
+
+
+      <div class="accordion">
+        <div class="card">
+          <bs-button tabindex="-1">
+            <a role="button" id="target1" data-toggle="collapse" href="#body1">1 trigger</a>
+          </bs-button>
+          <bs-collapse id="body1" class="collapse show" data-parent=".accordion">1 collapse</bs-collapse>
+        </div>
+        <div class="card">
+          <bs-button tabindex="-1">
+            <a class="collapsed" id="target2" data-toggle="collapse" role="button" href="#body2">2 trigger</a>
+          </bs-button>
+          <bs-collapse id="body2" class="collapse" data-parent=".accordion">2 collapse</bs-collapse>
+        </div>
+        <div class="card">
+          <bs-button tabindex="-1">
+            <a class="collapsed" id="target3" data-toggle="collapse" role="button" href="#body3">3 trigger</a>
+          </bs-button>
+          <bs-collapse id="body3" class="collapse" data-parent=".accordion">3 collapse</bs-collapse>
+        </div>
+      </div>
+
+      <p>&nbsp;</p>
+
+
+
       <p>
         <bs-button tabindex="-1">
           <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">

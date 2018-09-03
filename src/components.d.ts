@@ -30,15 +30,6 @@ declare global {
       'tabindex': string;
     }
 
-    interface BsCollapseOld {
-      'collapse': (passedConfig: any) => void;
-      'hiddenEventName': string;
-      'hideEventName': string;
-      'showEventName': string;
-      'shownEventName': string;
-      'tabindex': string;
-    }
-
     interface BsCollapse {
       'collapse': (collapseOptions: any, relatedTarget?: any) => true | HTMLElement;
       'hiddenEventName': string;
@@ -93,14 +84,6 @@ declare global {
     };
     
 
-    interface HTMLBsCollapseOldElement extends StencilComponents.BsCollapseOld, HTMLStencilElement {}
-
-    var HTMLBsCollapseOldElement: {
-      prototype: HTMLBsCollapseOldElement;
-      new (): HTMLBsCollapseOldElement;
-    };
-    
-
     interface HTMLBsCollapseElement extends StencilComponents.BsCollapse, HTMLStencilElement {}
 
     var HTMLBsCollapseElement: {
@@ -137,7 +120,6 @@ declare global {
     interface Element {}
     export interface IntrinsicElements {
     'bs-button': JSXElements.BsButtonAttributes;
-    'bs-collapse-old': JSXElements.BsCollapseOldAttributes;
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
     'bs-modal': JSXElements.BsModalAttributes;
@@ -148,14 +130,6 @@ declare global {
   namespace JSXElements {
 
     export interface BsButtonAttributes extends HTMLAttributes {
-      'tabindex'?: string;
-    }
-
-    export interface BsCollapseOldAttributes extends HTMLAttributes {
-      'hiddenEventName'?: string;
-      'hideEventName'?: string;
-      'showEventName'?: string;
-      'shownEventName'?: string;
       'tabindex'?: string;
     }
 
@@ -200,7 +174,6 @@ declare global {
 
   interface HTMLElementTagNameMap {
     'bs-button': HTMLBsButtonElement
-    'bs-collapse-old': HTMLBsCollapseOldElement
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
     'bs-modal': HTMLBsModalElement
@@ -209,7 +182,6 @@ declare global {
 
   interface ElementTagNameMap {
     'bs-button': HTMLBsButtonElement;
-    'bs-collapse-old': HTMLBsCollapseOldElement;
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;
     'bs-modal': HTMLBsModalElement;

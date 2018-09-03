@@ -3,7 +3,7 @@ import { Selector, ClientFunction } from 'testcafe';
 
 const _ = require('lodash');
 
-fixture('bs-components popover tests').page('./bs-popover.test.html');
+fixture('bs-components popover tests').page('./bs.test.html');
 
 // similar to: https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/popover.js
 
