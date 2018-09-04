@@ -160,21 +160,24 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (isDisabled) {
       return;
     }
+    if (_toLower(event.target.tagName) === 'a' && event.stopPropagation) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     const closestCollapseToggleEl = closest(event.target, '[data-toggle="collapse"]');
     if (closestCollapseToggleEl && this.bsButtonEl.contains(closestCollapseToggleEl)) {
-      if (event.stopPropagation) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
+      // if (event.stopPropagation) {
+      //   event.stopPropagation();
+      //   event.preventDefault();
+      // }
       BsButton.handleCollapseToggle(closestCollapseToggleEl);
-      return;
     }
     const closestModalToggleEl = closest(event.target, '[data-toggle="modal"]');
     if (closestModalToggleEl && this.bsButtonEl.contains(closestModalToggleEl)) {
-      if (event.stopPropagation) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
+      // if (event.stopPropagation) {
+      //   event.stopPropagation();
+      //   event.preventDefault();
+      // }
       BsButton.handleModalToggle(closestModalToggleEl);
     }
     this.handleToggle(event.target);

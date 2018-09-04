@@ -10,15 +10,13 @@ Status:
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`
-- [ ] collapse done with some tests. needs more tests before marking complete.
-- [ ] alert todo low priority - not a show stopper for anyone
-- [ ] tab - aka navs and list group- todo low priority
-  - many frameworks already have tab solutions in the form of spa routers
+- [x] collapse - run tests using: `yarn test-bs-collapse`
+- [ ] alert todo
+- [ ] tab todo - (aka navs and list group) - many frameworks have spa router solutions for this
 - [ ] scrollspy todo - low priority
-- [ ] carousel not planned currently but maybe later.
-  - there are a lot of carousel solutions already available
+- [ ] carousel not planned currently but maybe later
 
-For everything else including forms there is no web component needed to implement because they are a css only solution. Just use html as usual.
+For all of the other bootstrap components a web component solution is not needed because they can be done with just css. Use the bootstrap webpage component documents.
 
 Note: bootstrap forms do tend to use some javascript validation to show or hide tooltip helpers. These do not have methods that are provided by bootstrap.js so this project will not have web component counterparts.
 
