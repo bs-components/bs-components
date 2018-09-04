@@ -24,6 +24,13 @@ declare global {
 
   namespace StencilComponents {
 
+    interface BsAlert {
+      'alert': (alertOptions: any) => true | HTMLElement;
+      'close': () => void;
+      'closeEventName': string;
+      'closedEventName': string;
+    }
+
     interface BsButton {
       'button': (buttonOptions?: any) => true | HTMLElement;
       'dropdown': (dropdownOptions?: any) => any;
@@ -76,6 +83,14 @@ declare global {
   }
 
 
+    interface HTMLBsAlertElement extends StencilComponents.BsAlert, HTMLStencilElement {}
+
+    var HTMLBsAlertElement: {
+      prototype: HTMLBsAlertElement;
+      new (): HTMLBsAlertElement;
+    };
+    
+
     interface HTMLBsButtonElement extends StencilComponents.BsButton, HTMLStencilElement {}
 
     var HTMLBsButtonElement: {
@@ -119,6 +134,7 @@ declare global {
   namespace JSX {
     interface Element {}
     export interface IntrinsicElements {
+    'bs-alert': JSXElements.BsAlertAttributes;
     'bs-button': JSXElements.BsButtonAttributes;
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
@@ -128,6 +144,11 @@ declare global {
   }
 
   namespace JSXElements {
+
+    export interface BsAlertAttributes extends HTMLAttributes {
+      'closeEventName'?: string;
+      'closedEventName'?: string;
+    }
 
     export interface BsButtonAttributes extends HTMLAttributes {
       'tabindex'?: string;
@@ -173,6 +194,7 @@ declare global {
   }
 
   interface HTMLElementTagNameMap {
+    'bs-alert': HTMLBsAlertElement
     'bs-button': HTMLBsButtonElement
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
@@ -181,6 +203,7 @@ declare global {
   }
 
   interface ElementTagNameMap {
+    'bs-alert': HTMLBsAlertElement;
     'bs-button': HTMLBsButtonElement;
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;

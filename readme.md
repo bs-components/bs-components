@@ -11,7 +11,7 @@ Status:
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`
 - [x] collapse - run tests using: `yarn test-bs-collapse`
-- [ ] alert todo
+- [x] alert - run tests using: `yarn test-bs-alert`
 - [ ] tab todo - (aka navs and list group) - many frameworks have spa router solutions for this
 - [ ] scrollspy todo - low priority
 - [ ] carousel not planned currently but maybe later
@@ -35,4 +35,15 @@ Tests Using:
 
 ---
 
-Put a script tag similar to this `<script src='https://unpkg.com/bs-components@0.0.1/dist/bscomponents.js'></script>` in the head of your index.html
+First make sure to include the bootstrap.css resource
+
+Then:
+- for plain html and js:
+  - Put a script tag similar to this `<script src='https://unpkg.com/bs-components@0.0.1/dist/bscomponents.js'></script>` in the head of your index.html
+  - you do **not** need to include jQuery, Popper.js or the bootstrap.js resource
+- for one of the other frameworks: [Stenciljs Framework Integration](https://stenciljs.com/docs/framework-integration)
+
+---
+
+TODO: Simple integration examples for vue, react, and angular
+
