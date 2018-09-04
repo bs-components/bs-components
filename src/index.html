@@ -96,6 +96,34 @@
   <div class="container mt-5">
 
 
+    <div id="accordion">
+      <div class="item">
+        <bs-button tabindex="-1">
+          <a id="linkTrigger" data-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">trigger</a>
+        </bs-button>
+        <bs-collapse id="collapseOne" data-parent="#accordion" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+          collapseOne
+          <div id="nestedAccordion">
+            <div class="item">
+              <bs-button tabindex="-1">
+                <a id="nestedLinkTrigger" data-toggle="collapse" href="#nestedCollapseOne" aria-expanded="false" aria-controls="nestedCollapseOne">nestedTrigger</a>
+              </bs-button>
+              <bs-collapse id="nestedCollapseOne" data-parent="#nestedAccordion" class="collapse" role="tabpanel" aria-labelledby="headingThree">nestedCollapseOne</bs-collapse>
+            </div>
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="item">
+        <bs-button tabindex="-1">
+          <a id="linkTriggerTwo" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">triggerTwo</a>
+        </bs-button>
+        <bs-collapse id="collapseTwo" data-parent="#accordion" class="collapse show" role="tabpanel" aria-labelledby="headingTwo">collapseTwo</bs-collapse>
+      </div>
+    </div>
+
+    <p>&nbsp;</p>
+
+
 
       <div class="accordion">
         <div class="card">

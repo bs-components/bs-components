@@ -17,6 +17,7 @@ import removeClass from '../../utilities/remove-class';
 import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
 import getDuplicatesInArray from '../../utilities/get-duplicates-In-array';
+import getTargetSelector from '../../utilities/get-target-selector';
 
 @Component({ tag: 'bs-button', shadow: false })
 export class BsButton { // eslint-disable-line import/prefer-default-export
@@ -179,16 +180,9 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     this.handleToggle(event.target);
   }
 
-  static getTargetSelector(relatedTarget) {
-    if (_toLower(relatedTarget.tagName) === 'a') {
-      return relatedTarget.getAttribute('href');
-    }
-    return relatedTarget.dataset.target;
-  }
-
 
   static handleCollapseToggle(relatedTarget) {
-    const targetSelector = BsButton.getTargetSelector(relatedTarget);
+    const targetSelector = getTargetSelector(relatedTarget);
     if (targetSelector) {
       const parentArr = [];
       const targetElArr: any = Array.prototype.slice.call(document.querySelectorAll(targetSelector));
@@ -211,7 +205,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   static handleModalToggle(relatedTarget) {
-    const targetSelector = BsButton.getTargetSelector(relatedTarget);
+    const targetSelector = getTargetSelector(relatedTarget);
     if (targetSelector) {
       try {
         const targetEl: any = document.querySelector(targetSelector);

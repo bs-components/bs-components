@@ -10,7 +10,6 @@ import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _size from 'lodash/size';
 import _upperFirst from 'lodash/upperFirst';
-import _toLower from 'lodash/toLower';
 
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
@@ -19,6 +18,7 @@ import getTransitionDurationFromElement from '../../utilities/get-transition-dur
 import customEvent from '../../utilities/custom-event';
 import reflow from '../../utilities/reflow';
 import elementMatches from '../../utilities/element-matches';
+import getTargetSelector from '../../utilities/get-target-selector';
 
 @Component({ tag: 'bs-collapse', styleUrl: 'bs-collapse.css', shadow: false })
 export class BsCollapse { // eslint-disable-line import/prefer-default-export
@@ -36,7 +36,6 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   }
 
   getConfig(overrideConfig:any = {}, relatedTarget:any = null) {
-    // console.log('overrideConfig: ', overrideConfig);
     const config: any = {};
     config.relatedTarget = relatedTarget;
     config.toggle = _get(overrideConfig, 'toggle', 'toggle');
@@ -71,18 +70,12 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  static getTargetSelector(relatedTarget) {
-    if (_toLower(relatedTarget.tagName) === 'a') {
-      return relatedTarget.getAttribute('href');
-    }
-    return relatedTarget.dataset.target;
-  }
 
   static handleToggleDataToggles(config) {
     // handle all of the toggler [data-toggle="collapse"] dom state (mark them expanded or not)
     const allCollapsesOnPage = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="collapse"]'));
     for (let j = 0, len = allCollapsesOnPage.length; j < len; j += 1) {
-      const targetSelector = BsCollapse.getTargetSelector(allCollapsesOnPage[j]);
+      const targetSelector = getTargetSelector(allCollapsesOnPage[j]);
       let thisCollapseWasOpened = false;
       if (_size(targetSelector) > 0) {
       // see if we need to open this collapse
@@ -119,7 +112,10 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
         const childCollapseArr = Array.prototype.slice.call(accordionParentEl.querySelectorAll('.collapse'));
         for (let j = 0, len = childCollapseArr.length; j < len; j += 1) {
           if (hasClass(childCollapseArr[j], 'show')) {
-            config.collapseElPlannedToBeClosed.push(childCollapseArr[j]);
+            const isAMemberOfThisAccordion = elementMatches(accordionParentEl, childCollapseArr[j].dataset.parent);
+            if (isAMemberOfThisAccordion) {
+              config.collapseElPlannedToBeClosed.push(childCollapseArr[j]);
+            }
           }
         }
       } else {
