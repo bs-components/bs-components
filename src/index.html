@@ -85,7 +85,7 @@
           <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> -->
           <strong>bs-components</strong>
         </a>
-        <bs-button class="btn navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+        <bs-button role="button" class="btn navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </bs-button>
       </div>
@@ -148,7 +148,7 @@
           </button>
         </bs-button>
 
-        <bs-button class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        <bs-button role="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
           bs-Button with data-target
         </bs-button>
       </p>
@@ -280,7 +280,7 @@
 
 
   <!-- Button trigger modal -->
-  <bs-button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  <bs-button role="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
       Launch demo modal
   </bs-button>
 
@@ -317,15 +317,15 @@
 
 
   <div class="btn-group disabled" data-toggle="buttons" aria-disabled="true" disabled>
-    <bs-button id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
+    <bs-button role="button" id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
       <input id="my-button-input" type="checkbox" aria-disabled="true" autocomplete="off" disabled class="disabled"/>
     </bs-button>
   </div>
 
 
   <div class="btn-group" data-toggle="buttons">
-    <bs-button id="btn1" class="btn btn-secondary">One</bs-button>
-    <bs-button class="btn btn-secondary">Two</bs-button>
+    <bs-button role="button" id="btn1" class="btn btn-secondary">One</bs-button>
+    <bs-button role="button" class="btn btn-secondary">Two</bs-button>
   </div>
 
 
@@ -342,14 +342,14 @@
   </div>
 
 
-  <bs-button class="btn btn-info">
+  <bs-button role="button" class="btn btn-info">
     Just a bs-button
   </bs-button>
 
     <!-- <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
       Single toggle
     </bs-button> -->
-    <bs-button id="single-toggle-button" class="btn" data-toggle="button">
+    <bs-button role="button" id="single-toggle-button" class="btn" data-toggle="button">
       <i id="inner-italc">Single toggle</i>
     </bs-button>
 
@@ -359,7 +359,7 @@
 
 
     <div class="btn-group-toggle" data-toggle="buttons">
-      <bs-button class="btn btn-secondary active">
+      <bs-button role="button" class="btn btn-secondary active">
         <input type="checkbox" checked autocomplete="off"> Checked
       </bs-button>
     </div>
@@ -482,22 +482,22 @@
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
 
       <bs-dropdown class="btn-group mr-2">
-          <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
-          <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Separated link</a>
-          </div>
-        </bs-dropdown>
+        <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
+        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
 
 
       <bs-dropdown id="my-dropdown" class="dropdown mr-2">
-        <bs-button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <bs-button class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Dropdown button
           </bs-button>
           <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
@@ -907,18 +907,18 @@
       //   </div>
       // </div>
 
-      function shouldAllowDomObjectInParentConfig(selector, parentSelector) {
-        const collapseEl = document.querySelector(selector);
-        const parentEl = document.querySelector(parentSelector);
-        const sentConfig = { parent: parentEl, toggle: true };
-        console.log('sentConfig: ', sentConfig);
-        collapseEl.collapse(sentConfig);
-      }
+    //   function shouldAllowDomObjectInParentConfig(selector, parentSelector) {
+    //     const collapseEl = document.querySelector(selector);
+    //     const parentEl = document.querySelector(parentSelector);
+    //     const sentConfig = { parent: parentEl, toggle: true };
+    //     console.log('sentConfig: ', sentConfig);
+    //     collapseEl.collapse(sentConfig);
+    //   }
 
 
-    setTimeout(() => {
-      shouldAllowDomObjectInParentConfig('#dom-collapse-test', '.my-collapse');
-    }, 1000)
+    // setTimeout(() => {
+    //   shouldAllowDomObjectInParentConfig('#dom-collapse-test', '.my-collapse');
+    // }, 1000)
 
 
     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
