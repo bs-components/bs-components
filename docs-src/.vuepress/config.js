@@ -6,6 +6,7 @@
 module.exports = {
   title: 'BS-Components',
   description: 'Bootstrap StencilJs Web Components',
+  base: '/bs-components/',
   dest: './docs',
 
   // https://github.com/vuejs/vuepress/issues/790
@@ -21,7 +22,6 @@ module.exports = {
   ],
   themeConfig: {
     repo: 'JasonCubic/bs-components',
-    // base: '/bs-components/',
     docsDir: 'docs',
     serviceWorker: true,
     sidebar: [
