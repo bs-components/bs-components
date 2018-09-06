@@ -1,6 +1,6 @@
 # Collapse
 
-## Example
+## bs-collapse Example
 
 <vue-html-wrapper>
   <template slot="example">
@@ -220,8 +220,13 @@
     </bs-collapse>
   </div>
 </div>
-
 ```
+
+## Without bs-components
+
+Without the bs-collapse tag a collapse/accordion will not open or close by itself.
+
+
 
 ## Options
 

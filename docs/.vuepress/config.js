@@ -6,7 +6,6 @@
 module.exports = {
   title: 'BS-Components',
   description: 'Bootstrap StencilJs Web Components',
-  // dest: '../bs-components.github.io/docs',
 
   // https://github.com/vuejs/vuepress/issues/790
   head: [
@@ -31,12 +30,9 @@ module.exports = {
         s.parentNode.insertBefore(myLink, s);
       })();`
     ],
-
-
-
   ],
   themeConfig: {
-    repo: 'JasonCubic/bs-components',
+    repo: 'bs-components/bs-components',
     docsDir: 'docs',
     serviceWorker: true,
     sidebar: [

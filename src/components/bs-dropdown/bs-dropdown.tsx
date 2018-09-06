@@ -89,7 +89,10 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   initPopper(dropdownMenuEl) {
     this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (!this.inNavbar) {
+      // console.log('this.config: ', this.config);
       const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, this.config);
+
+      // console.log('popperConfig: ', popperConfig);
 
       // If boundary is not `scrollParent`, then set position to `static`
       // to allow the menu to "escape" the scroll parent's boundaries
@@ -100,10 +103,11 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
       let referenceElement:any = this.relatedTarget;
       if (this.config.reference === 'parent') {
-        referenceElement = this.dropdownEl.parentNode;
+        referenceElement = this.relatedTarget.parentNode;
       } else if (this.config.reference instanceof Element) {
         referenceElement = this.config.reference;
       }
+      // console.log('this.config: ', this.config);
       // console.log('referenceElement: ', referenceElement);
       // console.log('dropdownMenuEl: ', dropdownMenuEl);
       // console.log('popperConfig: ', popperConfig);
@@ -169,6 +173,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       config.display = this.defaults.display;
     }
     this.config = config;
+    // console.log('this.config: ', this.config);
   }
 
   getAssumedRelatedTarget() {
@@ -285,7 +290,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     const popperConfig: any = {
       placement: BsDropdown.getPlacement(dropdownEl, dropdownMenuEl),
       modifiers: {
-        offset: popperSettings.offset,
+        offset: { offset: popperSettings.offset },
         flip: {
           enabled: popperSettings.flip,
         },
@@ -460,10 +465,10 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       }
       return true;
     }
-    if (dropdownOptions === 'dispose') {
-      this.dispose();
-      return true;
-    }
+    // if (dropdownOptions === 'dispose') {
+    //   this.dispose();
+    //   return true;
+    // }
     if (typeof dropdownOptions === 'string') {
       throw new Error(`No method named "${dropdownOptions}"`);
     }

@@ -1,5 +1,7 @@
 # Alerts
 
+## bs-alert Example
+
 <vue-html-wrapper>
   <template slot="example">
   <bs-alert v-pre class="alert alert-warning alert-dismissible fade show" role="alert">

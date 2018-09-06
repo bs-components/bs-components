@@ -13,7 +13,7 @@ Status:
 - [x] collapse - run tests using: `yarn test-bs-collapse`
 - [x] alert - run tests using: `yarn test-bs-alert`
 - [ ] tab todo - (aka navs and list group) - many frameworks have spa router solutions for this
-- [ ] scrollspy todo - low priority
+- [ ] scrollspy todo
 - [ ] carousel not planned currently but maybe later
 
 For all of the other bootstrap components a web component solution is not needed because they can be done with just css. Use the bootstrap webpage component documents.
@@ -42,8 +42,4 @@ Then:
   - Put a script tag similar to this `<script src='https://unpkg.com/bs-components@0.0.3/dist/bscomponents.js'></script>` in the head of your index.html
   - you do **not** need to include jQuery, Popper.js or the bootstrap.js resource
 - for one of the other frameworks: [Stenciljs Framework Integration](https://stenciljs.com/docs/framework-integration)
-
----
-
-TODO: Simple integration examples for vue, react, and angular
 
