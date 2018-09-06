@@ -21,7 +21,7 @@ module.exports = {
   ],
   themeConfig: {
     repo: 'JasonCubic/bs-components',
-    base: '/bs-components/',
+    // base: '/bs-components/',
     docsDir: 'docs',
     serviceWorker: true,
     sidebar: [
