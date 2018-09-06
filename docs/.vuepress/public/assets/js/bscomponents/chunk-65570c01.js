@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+const{h:t}=window.bscomponents;import{o as a,p as e}from"./chunk-d2b1926f.js";import{a as o}from"./chunk-ede00b3a.js";function r(t){if("a"===a(t.tagName)){const a=o(t.getAttribute("href"));if(e(a)>1)return a}return t.dataset.target}export{r as a};

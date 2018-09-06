@@ -270,13 +270,17 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       }
       return;
     }
-    if (this.bsButtonEl.dataset.toggle === 'button') {
+    const buttonTogglerEl = closest(element, '[data-toggle="button"]');
+    if (!this.bsButtonEl.contains(buttonTogglerEl)) {
+      return;
+    }
+    if (buttonTogglerEl) {
       // standard button toggler
       //  <bs-button class="btn btn-primary" data-toggle="button" aria-pressed="false">
       //    Single toggle
       //  </bs-button>
-      this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
-      toggleClass(this.bsButtonEl, 'active');
+      buttonTogglerEl.setAttribute('aria-pressed', hasClass(buttonTogglerEl, 'active') ? 'false' : 'true');
+      toggleClass(buttonTogglerEl, 'active');
     }
   }
 

@@ -80,7 +80,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
     }
-    if (this.popperHandle !== null) {
+    if (this.popperHandle && this.popperHandle.destroy) {
       this.popperHandle.destroy();
       this.popperHandle = null;
     }
