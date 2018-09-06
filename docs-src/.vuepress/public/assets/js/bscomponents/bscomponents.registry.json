@@ -1,0 +1,40 @@
+{
+  "namespace": "bscomponents",
+  "fsNamespace": "bscomponents",
+  "loader": "../bscomponents.js",
+  "global": "bscomponents.global.js",
+  "core": "bscomponents.g1nu6hwe.js",
+  "corePolyfilled": "bscomponents.z9a9vg1o.js",
+  "components": {
+    "bs-alert": {
+      "bundleIds": {
+        "$": "mjdrs611"
+      }
+    },
+    "bs-button": {
+      "bundleIds": {
+        "$": "orzgynw0"
+      }
+    },
+    "bs-collapse": {
+      "bundleIds": {
+        "$": "pldrmqwy"
+      }
+    },
+    "bs-dropdown": {
+      "bundleIds": {
+        "$": "n4dbo4yp"
+      }
+    },
+    "bs-modal": {
+      "bundleIds": {
+        "$": "lydwiads"
+      }
+    },
+    "bs-tooltip": {
+      "bundleIds": {
+        "$": "rzwvqvcr"
+      }
+    }
+  }
+}
