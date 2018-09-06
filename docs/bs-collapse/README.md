@@ -240,11 +240,11 @@ if toggle is set to true on the options object you can use this to toggle the co
 document.querySelector('#my-collapse').collapse({ toggle: 'show' });
 ```
 Note: the toggle option can have these options:
-* 'show': will show the collapse if it is not already shown
-* 'hide': will hide the collapse if it is not already hidden
-* 'toggle': will toggle the collapse
-* true: will toggle the collapse
-* false: will not toggle the collapse
+* `'show'`: will show the collapse if it is not already shown
+* `'hide'`: will hide the collapse if it is not already hidden
+* `'toggle'`: will toggle the collapse
+* `true`: will toggle the collapse
+* `false`: will not toggle the collapse
 
 ### .collapse('toggle');
 will toggle the collapse
