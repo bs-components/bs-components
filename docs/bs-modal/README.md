@@ -249,7 +249,6 @@ document.querySelector('#my-modal').addEventListener('hidden.bs.modal', function
 });
 ```
 
-
 ## Event Renaming Attributes
 
 | Attribute | Default |
@@ -288,3 +287,5 @@ document.getElementById('my-modal').addEventListener('modalFinishedClosing', fun
   console.log('my modal is hidden');
 });
 ```
+
+

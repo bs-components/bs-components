@@ -895,11 +895,11 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       this.disableTooltip();
       return true;
     }
-    if (tooltipOptions === 'dispose') {
-      this.disableTooltip();
-      this.config = {};
-      return true;
-    }
+    // if (tooltipOptions === 'dispose') {
+    //   this.disableTooltip();
+    //   this.config = {};
+    //   return true;
+    // }
     if (tooltipOptions === 'toggleEnabled') {
       if (this.isEnabled) {
         this.disableTooltip();

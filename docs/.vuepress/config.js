@@ -1,8 +1,3 @@
-
-// https://router.vuejs.org/
-// https://github.com/vuejs/vue-router/blob/dev/docs/.vuepress/config.js
-
-
 module.exports = {
   title: 'BS-Components',
   description: 'Bootstrap StencilJs Web Components',
@@ -36,26 +31,35 @@ module.exports = {
     docsDir: 'docs',
     serviceWorker: true,
     sidebar: [
-      '/installation.md',
       '/',
+      '/installation/',
+      '/getting-started/',
       {
         title: 'Components',
         collapsable: false,
         children: [
-          'getting-started.md',
           '/bs-alert/',
           '/bs-button/',
-          '/bs-carousel/',
+          // '/bs-carousel/',
           '/bs-collapse/',
           '/bs-dropdown/',
           '/bs-modal/',
           '/bs-popover/',
-          '/bs-scrollspy/',
-          '/bs-tab/',
+          // '/bs-scrollspy/',
+          // '/bs-tab/',
           '/bs-tooltip/',
         ]
       },
-      '/example-projects.md',
+      {
+        title: 'Example Projects',
+        collapsable: false,
+        children: [
+          '/example-projects/no-framework/',
+          '/example-projects/angular/',
+          '/example-projects/react/',
+          '/example-projects/vue/',
+        ]
+      },
     ],
   }
 }

@@ -25,15 +25,16 @@ $('#my-bs-component')[0].modal('show');
 
 ## Events
 
+### How To Listen For Events
 bs-components does not use jQuery events it uses DOM customEvents.  You can listen for them using addEventListener.
-
 ```js
 document.getElementById("example-modal").addEventListener('shown.bs.modal', function(event) {
   console.log('example modal was shown');
 });
 ```
 
-You can still prevent default similar to how you could in bootstrap.
+### Prevent Default
+you can still prevent default
 ```js
 document.getElementById("example-modal").addEventListener('show.bs.modal', function(event) {
   event.preventDefault();
