@@ -5,39 +5,83 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 
 import _size from 'lodash/size';
 import _toLower from 'lodash/toLower';
+
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
-import toggleClass from '../../utilities/toggle-class';
+// import toggleClass from '../../utilities/toggle-class';
 import customEvent from '../../utilities/custom-event';
 import getDuplicatesInArray from '../../utilities/get-duplicates-In-array';
 import getTargetSelector from '../../utilities/get-target-selector';
+// import getUniqueId from '../../utilities/get-unique-id';
 
 @Component({ tag: 'bs-button', shadow: false })
+
 export class BsButton { // eslint-disable-line import/prefer-default-export
   @Element() bsButtonEl: HTMLElement;
 
-  @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
+  @Prop({ mutable: true, reflectToAttr: true }) tabindex: string|number = '0';
+  @Prop() changeEventName: string = 'change.bs.button';
+
+  // @Prop({ mutable: true, reflectToAttr: true }) dataBsId: string = getUniqueId('button');
+
+  @Prop({ mutable: true, reflectToAttr: true }) active: boolean = false;
 
   @State() addFocusClass: boolean;
 
+  @State() activeState: boolean;
+
   componentWillLoad() {
+    // console.log('componentWillLoad');
+    // console.log('this.active: ', this.active);
+    this.activeState = this.active;
     this.addFocusClass = false;
     if (this.tabindex === '-1') {
-      this.tabindex = '';
+      this.tabindex = -1;
     }
     if (this.tabindex === '0') {
       const input = this.bsButtonEl.querySelector('input');
       const buttonsToggler = closest(this.bsButtonEl, '[data-toggle="buttons"]');
       if (buttonsToggler && input) {
         this.addFocusClass = true;
-        this.tabindex = '';
+        this.tabindex = -1;
+      }
+    }
+    // make sure the button activeState matches the dom
+    let buttonTogglerEl;
+    if (this.bsButtonEl.dataset.toggle === 'button') {
+      buttonTogglerEl = this.bsButtonEl;
+    } else {
+      buttonTogglerEl = this.bsButtonEl.querySelector('[data-toggle="button"]');
+    }
+    if (buttonTogglerEl) {
+      // console.log('buttonTogglerEl: ', buttonTogglerEl);
+      if (!hasClass(buttonTogglerEl, 'active') && this.activeState === true) {
+        addClass(buttonTogglerEl, 'active');
+      } else if (hasClass(buttonTogglerEl, 'active') && this.activeState === false) {
+        removeClass(buttonTogglerEl, 'active');
+      }
+      buttonTogglerEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
+    }
+    const buttonsToggler = closest(this.bsButtonEl, '[data-toggle="buttons"]');
+    if (buttonsToggler) {
+      if (!hasClass(this.bsButtonEl, 'active') && this.activeState === true) {
+        addClass(this.bsButtonEl, 'active');
+      } else if (hasClass(this.bsButtonEl, 'active') && this.activeState === false) {
+        removeClass(this.bsButtonEl, 'active');
+      }
+      this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
+      const input = this.bsButtonEl.querySelector('input');
+      // console.log('input: ', input);
+      if (input) {
+        input.checked = this.activeState;
       }
     }
   }
@@ -49,7 +93,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       return;
     }
     if (this.tabindex === '-1') {
-      this.tabindex = '';
+      this.tabindex = -1;
     }
     if (this.addFocusClass) {
       const closestButton = closest(event.target, '.btn');
@@ -100,11 +144,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       }
       console.log('space event: ', event);
       if (event.target.dataset.toggle === 'collapse') {
-        BsButton.handleCollapseToggle(event.target);
+        BsButton.handleCollapseToggle(event.target); // TODO: toggle a prop
         return;
       }
       if (event.target.dataset.toggle === 'modal') {
-        BsButton.handleModalToggle(event.target);
+        BsButton.handleModalToggle(event.target); // TODO: toggle a prop
         return;
       }
       this.handleToggle(this.bsButtonEl);
@@ -131,11 +175,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         event.preventDefault();
       }
       if (event.target.dataset.toggle === 'collapse') {
-        BsButton.handleCollapseToggle(event.target);
+        BsButton.handleCollapseToggle(event.target); // TODO: toggle a prop
         return;
       }
       if (event.target.dataset.toggle === 'modal') {
-        BsButton.handleModalToggle(event.target);
+        BsButton.handleModalToggle(event.target); // TODO: toggle a prop
         return;
       }
       this.handleToggle(this.bsButtonEl);
@@ -170,7 +214,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //   event.stopPropagation();
       //   event.preventDefault();
       // }
-      BsButton.handleCollapseToggle(closestCollapseToggleEl);
+      BsButton.handleCollapseToggle(closestCollapseToggleEl); // TODO: toggle a prop
     }
     const closestModalToggleEl = closest(event.target, '[data-toggle="modal"]');
     if (closestModalToggleEl && this.bsButtonEl.contains(closestModalToggleEl)) {
@@ -178,7 +222,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //   event.stopPropagation();
       //   event.preventDefault();
       // }
-      BsButton.handleModalToggle(closestModalToggleEl);
+      BsButton.handleModalToggle(closestModalToggleEl); // TODO: toggle a prop
     }
     this.handleToggle(event.target);
   }
@@ -244,29 +288,42 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       const input = this.bsButtonEl.querySelector('input');
       if (input) {
         if (input.type === 'radio') {
-          if (input.checked && hasClass(input, 'active')) {
+          if (input.checked && this.activeState) {
             triggerChangeEvent = false;
           } else {
-            const activeElement = buttonsToggler.querySelector('.active');
-            if (activeElement) {
-              removeClass(activeElement, 'active');
+            const activeBsButton:any = buttonsToggler.querySelector('.active');
+            if (activeBsButton) {
+              activeBsButton.removeAttribute('active');
             }
           }
         }
         if (triggerChangeEvent) {
-          input.checked = !hasClass(this.bsButtonEl, 'active');
-          customEvent(input, 'change');
+          input.checked = !this.activeState;
+          // customEvent(input, 'change');
         }
         if (this.addFocusClass) {
           input.focus();
         }
         addAriaPressed = false;
       }
-      if (addAriaPressed) {
-        this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
-      }
+
       if (triggerChangeEvent) {
-        toggleClass(this.bsButtonEl, 'active');
+        const handleChangeEvent = customEvent(this.bsButtonEl, this.changeEventName, { active: !this.activeState });
+        if (handleChangeEvent.defaultPrevented) {
+          return;
+        }
+        this.activeState = !this.activeState;
+        if (!hasClass(this.bsButtonEl, 'active') && this.activeState === true) {
+          addClass(this.bsButtonEl, 'active');
+        } else if (hasClass(this.bsButtonEl, 'active') && this.activeState === false) {
+          removeClass(this.bsButtonEl, 'active');
+        }
+        this.active = this.activeState;
+        // toggleClass(this.bsButtonEl, 'active');
+      }
+      if (addAriaPressed) {
+        this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'false' : 'true');
+        // this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
       }
       return;
     }
@@ -279,8 +336,64 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //  <bs-button class="btn btn-primary" data-toggle="button" aria-pressed="false">
       //    Single toggle
       //  </bs-button>
-      buttonTogglerEl.setAttribute('aria-pressed', hasClass(buttonTogglerEl, 'active') ? 'false' : 'true');
-      toggleClass(buttonTogglerEl, 'active');
+
+      const handleChangeEvent = customEvent(buttonTogglerEl, this.changeEventName, { active: !this.activeState });
+      if (handleChangeEvent.defaultPrevented) {
+        return;
+      }
+      this.activeState = !this.activeState;
+
+
+      buttonTogglerEl.setAttribute('aria-pressed', this.activeState ? 'false' : 'true');
+      if (!hasClass(buttonTogglerEl, 'active') && this.activeState === true) {
+        addClass(buttonTogglerEl, 'active');
+      } else if (hasClass(buttonTogglerEl, 'active') && this.activeState === false) {
+        removeClass(buttonTogglerEl, 'active');
+      }
+      this.active = this.activeState;
+      // toggleClass(buttonTogglerEl, 'active');
+    }
+  }
+
+
+  @Watch('active')
+  handleActiveWatch(newValue /* , oldValue */) {
+    // console.log('made it');
+    // console.log('handleActiveWatch');
+    // console.log('newValue: ', newValue);
+    // console.log('this.activeState: ', this.activeState);
+    // if (!_isBoolean(newValue)) {
+    //   console.error(`unable to set active state because "${newValue}" is not of type boolean`);
+    //   return;
+    // }
+    if (newValue !== true && this.activeState !== true) {
+      // console.log('nothing to change!');
+      return;
+    }
+    if (newValue === true && this.activeState === true) {
+      // console.log('nothing to change!');
+      return;
+    }
+
+    // this.handleToggle(this.bsButtonEl);
+
+
+    if (newValue === true) {
+      this.handleToggle(this.bsButtonEl);
+    } else {
+      this.activeState = false;
+      customEvent(this.bsButtonEl, this.changeEventName, { active: this.activeState });
+      let buttonTogglerEl;
+      if (hasClass(this.bsButtonEl, 'btn')) {
+        buttonTogglerEl = this.bsButtonEl;
+      } else {
+        buttonTogglerEl = this.bsButtonEl.querySelector('.btn');
+      }
+      if (buttonTogglerEl) {
+        removeClass(buttonTogglerEl, 'active');
+        buttonTogglerEl.setAttribute('aria-pressed', 'false');
+      }
+      this.active = this.activeState;
     }
   }
 

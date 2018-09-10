@@ -32,9 +32,11 @@ declare global {
     }
 
     interface BsButton {
+      'active': boolean;
       'button': (buttonOptions?: any) => true | HTMLElement;
+      'changeEventName': string;
       'dropdown': (dropdownOptions?: any) => any;
-      'tabindex': string;
+      'tabindex': string|number;
     }
 
     interface BsCollapse {
@@ -151,7 +153,9 @@ declare global {
     }
 
     export interface BsButtonAttributes extends HTMLAttributes {
-      'tabindex'?: string;
+      'active'?: boolean;
+      'changeEventName'?: string;
+      'tabindex'?: string|number;
     }
 
     export interface BsCollapseAttributes extends HTMLAttributes {
