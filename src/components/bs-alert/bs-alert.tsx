@@ -4,6 +4,7 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _size from 'lodash/size';
@@ -11,6 +12,7 @@ import _size from 'lodash/size';
 import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
 import removeClass from '../../utilities/remove-class';
+import addClass from '../../utilities/add-class';
 import hasClass from '../../utilities/has-class';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 
@@ -18,8 +20,35 @@ import getTransitionDurationFromElement from '../../utilities/get-transition-dur
 export class BsAlert { // eslint-disable-line import/prefer-default-export
   @Element() alertEl: HTMLElement;
 
+  @Prop() openEventName: string = 'open.bs.alert';
+  @Prop() openedEventName: string = 'opened.bs.alert';
   @Prop() closeEventName: string = 'close.bs.alert';
   @Prop() closedEventName: string = 'closed.bs.alert';
+
+  @Prop() noSelfRemoveFromDom: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) dismiss: boolean = false;
+
+  componentWillLoad() {
+    if (this.dismiss === true) {
+      if (!hasClass(this.alertEl, 'fade')) {
+        removeClass(this.alertEl, 'show');
+        if (!this.noSelfRemoveFromDom) {
+          this.alertEl.parentNode.removeChild(this.alertEl);
+        }
+        return;
+      }
+      removeClass(this.alertEl, 'fade'); // no animation when setting the initial state
+      removeClass(this.alertEl, 'show');
+      const transitionDuration = getTransitionDurationFromElement(this.alertEl);
+      setTimeout(() => {
+        addClass(this.alertEl, 'fade');
+        if (!this.noSelfRemoveFromDom) {
+          this.alertEl.parentNode.removeChild(this.alertEl);
+        }
+      }, transitionDuration);
+      this.close();
+    }
+  }
 
   @Listen('click')
   handleFocusOut(event) {
@@ -34,17 +63,43 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
   }
 
   destroyAlert() {
-    this.alertEl.parentNode.removeChild(this.alertEl);
-    customEvent(this.alertEl, this.closedEventName);
+    if (!this.noSelfRemoveFromDom) {
+      this.alertEl.parentNode.removeChild(this.alertEl);
+    } else {
+      addClass(this.alertEl, 'd-none');
+    }
+    window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+      window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+        setTimeout(() => {
+          customEvent(this.alertEl, this.closedEventName);
+        }, 0);
+      });
+    });
   }
+
+  @Watch('dismiss')
+  handleActiveWatch(newValue /* , oldValue */) {
+    // console.log('newValue: ', newValue);
+    if (newValue === true) {
+      this.close();
+      return;
+    }
+    this.open();
+  }
+
 
   @Method()
   close() {
+    // console.log('close');
     const closeEvent = customEvent(this.alertEl, this.closeEventName);
     if (closeEvent.defaultPrevented) {
       return;
     }
+    // console.log('made it');
+    // debugger;
+
     removeClass(this.alertEl, 'show');
+    console.log('this.alertEl: ', this.alertEl);
     if (!hasClass(this.alertEl, 'fade')) {
       this.destroyAlert();
       return;
@@ -56,12 +111,38 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
+  open() {
+    const openEvent = customEvent(this.alertEl, this.openEventName);
+    if (openEvent.defaultPrevented) {
+      return;
+    }
+    if (this.noSelfRemoveFromDom) {
+      removeClass(this.alertEl, 'd-none');
+    }
+    addClass(this.alertEl, 'show');
+    const transitionDuration = getTransitionDurationFromElement(this.alertEl);
+    setTimeout(() => {
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          setTimeout(() => {
+            customEvent(this.alertEl, this.openedEventName);
+          }, 0);
+        });
+      });
+    }, transitionDuration);
+  }
+
+  @Method()
   alert(alertOptions) {
     if (_size(alertOptions) === 0) {
       return this.alertEl;
     }
     if (alertOptions === 'close') {
       this.close();
+      return true;
+    }
+    if (alertOptions === 'open') {
+      this.open();
       return true;
     }
     if (typeof alertOptions === 'string') {

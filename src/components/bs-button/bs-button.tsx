@@ -61,6 +61,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     } else {
       buttonTogglerEl = this.bsButtonEl.querySelector('[data-toggle="button"]');
     }
+    // console.log('buttonTogglerEl: ', buttonTogglerEl);
     if (buttonTogglerEl) {
       // console.log('buttonTogglerEl: ', buttonTogglerEl);
       if (!hasClass(buttonTogglerEl, 'active') && this.activeState === true) {
@@ -77,7 +78,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       } else if (hasClass(this.bsButtonEl, 'active') && this.activeState === false) {
         removeClass(this.bsButtonEl, 'active');
       }
-      this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
+      // this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
       const input = this.bsButtonEl.querySelector('input');
       // console.log('input: ', input);
       if (input) {
@@ -142,7 +143,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         event.stopPropagation();
         event.preventDefault();
       }
-      console.log('space event: ', event);
+      // console.log('space event: ', event);
       if (event.target.dataset.toggle === 'collapse') {
         BsButton.handleCollapseToggle(event.target); // TODO: toggle a prop
         return;
@@ -299,7 +300,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         }
         if (triggerChangeEvent) {
           input.checked = !this.activeState;
-          // customEvent(input, 'change');
+          customEvent(input, 'change');
         }
         if (this.addFocusClass) {
           input.focus();
@@ -322,7 +323,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         // toggleClass(this.bsButtonEl, 'active');
       }
       if (addAriaPressed) {
-        this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'false' : 'true');
+        this.bsButtonEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
         // this.bsButtonEl.setAttribute('aria-pressed', hasClass(this.bsButtonEl, 'active') ? 'false' : 'true');
       }
       return;
@@ -342,9 +343,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         return;
       }
       this.activeState = !this.activeState;
-
-
-      buttonTogglerEl.setAttribute('aria-pressed', this.activeState ? 'false' : 'true');
+      buttonTogglerEl.setAttribute('aria-pressed', this.activeState ? 'true' : 'false');
       if (!hasClass(buttonTogglerEl, 'active') && this.activeState === true) {
         addClass(buttonTogglerEl, 'active');
       } else if (hasClass(buttonTogglerEl, 'active') && this.activeState === false) {
@@ -358,42 +357,37 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Watch('active')
   handleActiveWatch(newValue /* , oldValue */) {
-    // console.log('made it');
-    // console.log('handleActiveWatch');
-    // console.log('newValue: ', newValue);
-    // console.log('this.activeState: ', this.activeState);
-    // if (!_isBoolean(newValue)) {
-    //   console.error(`unable to set active state because "${newValue}" is not of type boolean`);
-    //   return;
-    // }
     if (newValue !== true && this.activeState !== true) {
-      // console.log('nothing to change!');
       return;
     }
     if (newValue === true && this.activeState === true) {
-      // console.log('nothing to change!');
       return;
     }
-
-    // this.handleToggle(this.bsButtonEl);
-
-
-    if (newValue === true) {
-      this.handleToggle(this.bsButtonEl);
-    } else {
+    const buttonsToggler = closest(this.bsButtonEl, '[data-toggle="buttons"]');
+    if (buttonsToggler) {
+      if (newValue === true) {
+        this.handleToggle(this.bsButtonEl);
+        return;
+      }
+      // we are un-toggling this
       this.activeState = false;
       customEvent(this.bsButtonEl, this.changeEventName, { active: this.activeState });
-      let buttonTogglerEl;
-      if (hasClass(this.bsButtonEl, 'btn')) {
-        buttonTogglerEl = this.bsButtonEl;
-      } else {
-        buttonTogglerEl = this.bsButtonEl.querySelector('.btn');
-      }
-      if (buttonTogglerEl) {
-        removeClass(buttonTogglerEl, 'active');
-        buttonTogglerEl.setAttribute('aria-pressed', 'false');
+      removeClass(this.bsButtonEl, 'active');
+      const input = this.bsButtonEl.querySelector('input');
+      if (input) {
+        input.checked = this.activeState;
       }
       this.active = this.activeState;
+      return;
+    }
+    let buttonTogglerEl;
+    if (this.bsButtonEl.dataset.toggle === 'button') {
+      buttonTogglerEl = this.bsButtonEl;
+    } else {
+      buttonTogglerEl = this.bsButtonEl.querySelector('[data-toggle="button"]');
+    }
+    if (buttonTogglerEl) {
+      this.handleToggle(buttonTogglerEl);
     }
   }
 

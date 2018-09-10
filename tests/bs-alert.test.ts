@@ -49,6 +49,11 @@ const clickBySelectorAndWaitForEventBySelector = ClientFunction((clickSelector, 
   });
 }));
 
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
 test('alert method is defined', async (t) => {
   const alertHtml = `
     <bs-alert class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -188,4 +193,55 @@ test('close should use internal element if no element provided', async (t) => {
   }));
   await t.expect(await runAlertClosedMethodAndWaitForEventBySelector('.alert', 'closed.bs.alert')).ok('close method closed alert');
   await t.expect(await myAlert.nth(0).exists).notOk('alert was removed', { timeout: 5000 });
+});
+
+// ---------- testing props ----------
+
+
+test('Do not remove from DOM if attribute no-self-remove-from-dom is set true', async (t) => {
+  const alertHtml = `
+    <bs-alert class="alert alert-danger fade show" no-self-remove-from-dom>
+      <a class="close" href="#" data-dismiss="alert">×</a>
+      <p><strong>Holy guacamole!</strong> Best check yo self, you're not looking too good.</p>
+    </bs-alert>`;
+  const myAlert = Selector('.alert');
+  await t.expect(await setHtml(_.trim(alertHtml))).ok();
+  await t.expect(await myAlert.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(await myAlert.nth(0).hasClass('show')).ok('element is shown');
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('.close', '.alert', 'closed.bs.alert')).ok();
+  await t.expect(await myAlert.nth(0).exists).ok('element is still in DOM', { timeout: 5000 });
+  await t.expect(await myAlert.nth(0).hasClass('show')).notOk('element is not shown');
+});
+
+
+test('Dismiss attribute triggers element close', async (t) => {
+  const alertHtml = `
+    <bs-alert class="alert alert-danger fade show" no-self-remove-from-dom>
+      <a class="close" href="#" data-dismiss="alert">×</a>
+      <p><strong>Holy guacamole!</strong> Best check yo self, you're not looking too good.</p>
+    </bs-alert>`;
+  const myAlert = Selector('.alert');
+  await t.expect(await setHtml(_.trim(alertHtml))).ok();
+  await t.expect(await myAlert.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(await myAlert.nth(0).hasClass('show')).ok('element is shown');
+  await t.expect(setAttributeBySelector('.alert', 'dismiss', true)).ok();
+  await t.wait(200);
+  await t.expect(await myAlert.nth(0).exists).ok('element is still in DOM', { timeout: 5000 });
+  await t.expect(await myAlert.nth(0).hasClass('show')).notOk('element is not shown');
+});
+
+
+test('alert starts closed with no fade out animation', async (t) => {
+  const alertHtml = `
+    <bs-alert class="alert alert-danger fade show d-none" dismiss no-self-remove-from-dom>
+      <a class="close" href="#" data-dismiss="alert">×</a>
+      <p><strong>Holy guacamole!</strong> Best check yo self, you're not looking too good.</p>
+    </bs-alert>`;
+  const myAlert = Selector('.alert');
+  await t.expect(await setHtml(_.trim(alertHtml))).ok();
+  await t.expect(await myAlert.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(await myAlert.nth(0).hasClass('show')).notOk('element is not shown');
+  await t.expect(setAttributeBySelector('.alert', 'dismiss', false)).ok();
+  await t.expect(await myAlert.nth(0).hasClass('show')).ok('element is shown');
+  await t.expect(await myAlert.nth(0).hasClass('d-none')).notOk('element is shown');
 });

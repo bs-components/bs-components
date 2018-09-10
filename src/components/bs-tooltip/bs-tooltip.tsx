@@ -71,7 +71,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     content: '',
   };
 
-  // @State() config: any;
   @State() isEnabled: boolean;
   @State() activeTrigger: any;
   @State() tooltipId: string;

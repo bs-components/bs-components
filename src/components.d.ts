@@ -29,6 +29,11 @@ declare global {
       'close': () => void;
       'closeEventName': string;
       'closedEventName': string;
+      'dismiss': boolean;
+      'noSelfRemoveFromDom': boolean;
+      'open': () => void;
+      'openEventName': string;
+      'openedEventName': string;
     }
 
     interface BsButton {
@@ -150,6 +155,10 @@ declare global {
     export interface BsAlertAttributes extends HTMLAttributes {
       'closeEventName'?: string;
       'closedEventName'?: string;
+      'dismiss'?: boolean;
+      'noSelfRemoveFromDom'?: boolean;
+      'openEventName'?: string;
+      'openedEventName'?: string;
     }
 
     export interface BsButtonAttributes extends HTMLAttributes {

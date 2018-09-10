@@ -36,6 +36,11 @@ const callButtonById = ClientFunction((id, passedOption) => {
   }
 });
 
+const setAttributeById = ClientFunction((id, attribute, value) => {
+  document.getElementById(id).setAttribute(attribute, value);
+  return true;
+});
+
 
 test('button method is defined', async (t) => {
   const hasButtonMethodById = ClientFunction((selector) => {
@@ -175,7 +180,7 @@ test('should trigger input change event when toggled button has input field', as
 test('should check for closest matching toggle', async (t) => {
   const groupHTML = `
   <div class="btn-group" data-toggle="buttons">
-    <bs-button class="btn btn-primary active">
+    <bs-button class="btn btn-primary active" active>
       <input type="radio" name="options" id="option1" checked="true"> Option 1
     </bs-button>
     <bs-button class="btn btn-primary">
@@ -257,4 +262,184 @@ test('should handle disabled attribute on non-button elements', async (t) => {
   await t.expect(await callButtonById('my-button', 'toggle')).ok();
   await t.expect(btn1.hasClass('active')).notOk('button did not become active');
   await t.expect(btn1Input.checked).notOk('checkbox did not get checked');
+});
+
+
+// ---------- testing props ----------
+
+test('Button toggle self removes active class to match active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button class="btn btn-primary active" id="my-button" data-toggle="button" role="button">
+      My Button
+    </bs-button>`;
+  const myButton = Selector('#my-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(myButton.exists).ok();
+  await t.expect(myButton.visible).ok();
+  await t.expect(myButton.hasClass('active')).notOk({ timeout: 5000 });
+});
+
+
+test('Wrapped button toggle self removes active class to match active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button tabindex="-1">
+      <a class="btn btn-primary active" id="link-button" data-toggle="button" href="#" role="button">Link</a>
+    </bs-button>`;
+  const linkButton = Selector('#link-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(linkButton.exists).ok();
+  await t.expect(linkButton.visible).ok();
+  await t.expect(linkButton.hasClass('active')).notOk({ timeout: 5000 });
+});
+
+test('Button toggle self adds active class to match active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button class="btn btn-primary" active id="my-button" data-toggle="button" role="button">
+      My Button
+    </bs-button>`;
+  const myButton = Selector('#my-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(myButton.exists).ok();
+  await t.expect(myButton.visible).ok();
+  await t.expect(myButton.hasClass('active')).ok({ timeout: 5000 });
+});
+
+
+test('Wrapped button toggle self adds active class to match active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button tabindex="-1" active>
+      <a class="btn btn-primary" id="link-button" data-toggle="button" href="#" role="button">Link</a>
+    </bs-button>`;
+  const linkButton = Selector('#link-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(linkButton.exists).ok();
+  await t.expect(linkButton.visible).ok();
+  await t.expect(linkButton.hasClass('active')).ok({ timeout: 5000 });
+});
+
+test('Button toggle using active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button class="btn btn-primary" id="my-button" data-toggle="button" role="button">
+      My Button
+    </bs-button>`;
+  const myButton = Selector('#my-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(myButton.exists).ok();
+  await t.expect(myButton.visible).ok();
+  await t.expect(myButton.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(setAttributeById('my-button', 'active', true)).ok();
+  await t.expect(myButton.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(setAttributeById('my-button', 'active', false)).ok();
+  await t.expect(myButton.hasClass('active')).notOk({ timeout: 5000 });
+});
+
+
+test('Wrapped button toggle using active prop', async (t) => {
+  const buttonHtml = `
+    <bs-button tabindex="-1" id="link-button-wrapper">
+      <a class="btn btn-primary" id="link-button" data-toggle="button" href="#" role="button">Link</a>
+    </bs-button>`;
+  const linkButton = Selector('#link-button');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(linkButton.exists).ok();
+  await t.expect(linkButton.visible).ok();
+  await t.expect(linkButton.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(setAttributeById('link-button-wrapper', 'active', true)).ok();
+  await t.expect(linkButton.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(setAttributeById('link-button-wrapper', 'active', false)).ok();
+  await t.expect(linkButton.hasClass('active')).notOk({ timeout: 5000 });
+});
+
+
+test('test active prop with button radio group', async (t) => {
+  const buttonHtml = `
+    <div id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <bs-button class="btn btn-secondary" active id="wrap1">
+        <input type="radio" name="optionsv" id="option1" autocomplete="off"> Active
+      </bs-button>
+      <bs-button class="btn btn-secondary" id="wrap2">
+        <input type="radio" name="optionsv" id="option2" autocomplete="off"> Radio
+      </bs-button>
+      <bs-button class="btn btn-secondary" id="wrap3">
+        <input type="radio" name="optionsv" id="option3" autocomplete="off"> Radio
+      </bs-button>
+    </div>`;
+  const wrap1 = Selector('#wrap1');
+  const wrap2 = Selector('#wrap2');
+  const wrap3 = Selector('#wrap3');
+  const option1 = Selector('#option1');
+  const option2 = Selector('#option2');
+  const option3 = Selector('#option3');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(wrap1.exists).ok();
+  await t.expect(wrap1.visible).ok();
+
+  await t.expect(wrap1.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option1.checked).ok();
+  await t.expect(wrap2.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option2.checked).notOk();
+  await t.expect(wrap3.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option3.checked).notOk();
+
+  await t.expect(setAttributeById('wrap2', 'active', true)).ok();
+  await t.expect(wrap2.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option2.checked).ok();
+  await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option1.checked).notOk();
+  await t.expect(wrap3.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option3.checked).notOk();
+
+  await t.expect(setAttributeById('wrap3', 'active', true)).ok();
+  await t.expect(wrap3.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option3.checked).ok();
+  await t.expect(wrap2.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option2.checked).notOk();
+  await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option1.checked).notOk();
+
+  await t.expect(setAttributeById('wrap1', 'active', true)).ok();
+  await t.expect(wrap1.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option1.checked).ok();
+  await t.expect(wrap2.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option2.checked).notOk();
+  await t.expect(wrap3.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option3.checked).notOk();
+
+  await t.expect(setAttributeById('wrap1', 'active', false)).ok();
+  await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option1.checked).notOk();
+  await t.expect(wrap2.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option2.checked).notOk();
+  await t.expect(wrap3.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option3.checked).notOk();
+});
+
+test('test active prop with button checkbox group', async (t) => {
+  const buttonHtml = `
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <bs-button role="button" class="btn btn-secondary" active id="wrap1">
+        <input type="checkbox" id="option1" autocomplete="off"> Checked
+      </bs-button>
+    </div>`;
+  const wrap1 = Selector('#wrap1');
+  const option1 = Selector('#option1');
+
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(wrap1.exists).ok();
+  await t.expect(wrap1.visible).ok();
+
+  await t.expect(wrap1.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option1.checked).ok();
+
+  await t.expect(setAttributeById('wrap1', 'active', false)).ok();
+  await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option1.checked).notOk();
+
+  await t.expect(setAttributeById('wrap1', 'active', true)).ok();
+  await t.expect(wrap1.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(option1.checked).ok();
+
+  await t.expect(setAttributeById('wrap1', 'active', false)).ok();
+  await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
+  await t.expect(option1.checked).notOk();
 });
