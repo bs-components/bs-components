@@ -4,9 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
   <title>bs-components</title>
+
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+
+
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+
+
   <script src="build/bscomponents.js"></script>
+
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+
+
 <style>
   /*
 .dropdown .dropdown-menu {
@@ -81,136 +93,499 @@
   </header>
 
 
+  <div class="container">
+    <p>&nbsp;</p>
 
 
-  <div class="container mt-5">
+    <bs-alert id="my-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </bs-alert>
 
-      <bs-alert class="alert alert-danger fade show d-none" dismiss no-self-remove-from-dom>
-          <a class="close" href="#" data-dismiss="alert">×</a>
-          <p><strong>Holy guacamole!</strong> Best check yo self, you're not looking too good.</p>
-        </bs-alert>
 
 
-    <div id="app"></div>
-    <script type="x/template" id="vdom">
-      <div>
 
-        <div v-if="pageVisible">
 
-          <bs-button @click="handleButtonClick" role="button" id="single-toggle-button" class="btn btn-primary" data-toggle="button"
+      <p>
+        <bs-button tabindex="-1">
+          <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              bs-button wrapped Link with href
+          </a>
+        </bs-button>
 
-          :active="this.toggleAnchorActiveState['single-toggle-button']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)"
-          >
-            <i id="inner-italc">Single toggle</i>
-          </bs-button>
+        <bs-button tabindex="-1">
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            bs-button wrapped Button with data-target
+          </button>
+        </bs-button>
 
-          <button @click="handleManualToggle"> toggle this.toggleAnchorActiveState['single-toggle-button'] </button>
+        <bs-button role="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          bs-Button with data-target
+        </bs-button>
+      </p>
+      <bs-collapse class="collapse" id="collapseExample">
+        <div class="card card-body">
+          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+        </div>
+      </bs-collapse>
+      <p>&nbsp;</p>
 
-          <bs-button tabindex="-1" :active="this.toggleAnchorActiveState['toggle-anchor']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)">
-            <a href="#" @click="handleButtonClick" id="toggle-anchor" role="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              toggle anchor
+      <p>
+
+          <bs-button tabindex="-1">
+            <a href="#exampleModal" class="btn btn-primary" data-toggle="modal">
+                Launch demo modal a
             </a>
           </bs-button>
 
-          <p>&nbsp;</p>
-
-
-          <div class="btn-group-toggle" data-toggle="buttons">
-            <bs-button role="button" class="btn btn-secondary active" active id="bheck-butto"
-
-            :active="this.toggleAnchorActiveState['bheck-butto']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)"
-
-            >
-              <input type="checkbox" checked autocomplete="off"> Checked
-            </bs-button>
-          </div>
-
-          <p>&nbsp;</p>
-
-
-          <div id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <bs-button class="btn btn-secondary active" active id="radio1"
-            :active="this.toggleAnchorActiveState['radio1']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)"
-
-            >
-              <input type="radio" name="optionsv" id="option1" autocomplete="off" checked> Active
-            </bs-button>
-            <bs-button class="btn btn-secondary" id="radio2"
-              :active="this.toggleAnchorActiveState['radio2']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)"
-            >
-              <input type="radio" name="optionsv" id="option2" autocomplete="off"> Radio
-            </bs-button>
-            <bs-button class="btn btn-secondary" id="radio3"
-              :active="this.toggleAnchorActiveState['radio3']" change-event-name="change" v-on:change="(event) => this.$set(this.toggleAnchorActiveState, event.target.id, event.detail.active)"
-
-            >
-              <input type="radio" name="optionsv" id="option3" autocomplete="off"> Radio
-            </bs-button>
-          </div>
-
-
-
-          <bs-button class="btn btn-primary" data-toggle="modal" data-target="#vue-exampleModal">
-              Launch vue demo modal
+          <bs-button tabindex="-1">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Launch demo modal button
+            </button>
           </bs-button>
-          <!-- Modal -->
-          <bs-modal class="modal fade" id="vue-exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                    <p>modalTitle: <input v-model="modalTitle"> {{ modalTitle }}</p>
 
+          <bs-button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Launch demo modal bs-button
+          </bs-button>
+      </p>
 
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-              </div>
-            </div>
-          </bs-modal>
-
-          <bs-dropdown ref="bsDropdownInVueExample" class="dropdown"
-            show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
-            hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
-          >
-            <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Vue Dropdown button
-              </bs-button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-          </bs-dropdown>
-
-          <bs-tooltip id="vue-test-tooltip" class="btn btn-secondary" data-toggle="popover"
-          v-bind:bs-title="tooltipTitle" title="fallback default title"
-          v-bind:bs-content="tooltipContent" data-content="fallback default content"      >
-            Vue Tooltip
-          </bs-tooltip>
-          <p>tooltipTitle: <input v-model="tooltipTitle"> {{ tooltipTitle }}</p>
-          <p>tooltipContent: <input v-model="tooltipContent"> {{ tooltipContent }}</p>
-          <p>&nbsp;</p>
-          <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
-        </div>
         <p>&nbsp;</p>
-        <button type="button" @click="handleTogglePageVisibile" class="btn btn-primary">toggle page visisble</button>
+
+
+      <div class="tabs">
+        <bs-dropdown class="dropdown" id="testing-dropdown-toggle">
+          <!-- <a href="#" class="dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </a> -->
+          <input type="text" id="input" data-toggle="dropdown">
+          <div class="dropdown-menu" aria-labelledby="dropdown">
+            <a class="dropdown-item" href="#">Secondary link</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+            <div class="divider"></div>
+            <a class="dropdown-item" href="#">Another link</a>
+            <input type="text" id="input" />
+            <textarea id="textarea"></textarea>
+          </div>
+        </bs-dropdown>
       </div>
-    </script>
+
+      <bs-dropdown class="btn-group">
+        <button class="btn">Actions</button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+        <bs-dropdown-menu>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action 1</a>
+        </div>
+      </bs-dropdown-menu>
+      </bs-dropdown>
 
 
-    <!-- <button type="button" id="refresh-virtual-dom-button" class="btn btn-primary">refresh virtual dom</button> -->
+
+      <p>Popovers</p>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" bs-title="" bs-content="" data-placement="top" data-title="abc123" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on top
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on right
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+      sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on bottom
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on left
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</bs-tooltip>
+
+      <bs-tooltip class="d-inline-block" data-toggle="popover" data-content="Disabled popover">
+        <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+      </bs-tooltip>
+
+
+    <p>&nbsp;</p>
+    <p>Tooltips</p>
+
+
+      <!-- <p>
+          should not reload the tooltip on subsequent mouseenter events
+          <bs-tooltip id="tt-outer" no-enable-on-load data-trigger="hover" data-placement="top">
+            some text
+          </bs-tooltip>
+        </p> -->
+
+
+    <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
+      Tooltip on top
+    </bs-tooltip>
+
+    <!-- <bs-tooltip id="another-tooltip" title="Another tooltip"></bs-tooltip> -->
+
+    <bs-tooltip id="right-tooltip-button" class="btn btn-secondary" data-dispose-time-to-wait="0" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+      Tooltip on right
+    </bs-tooltip>
+    <bs-tooltip id="bottom-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
+      Tooltip on bottom
+    </bs-tooltip>
+    <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
+      Tooltip on left
+    </bs-tooltip>
+    <bs-tooltip id="tooltip-with-html" class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
+      Tooltip with HTML
+    </bs-tooltip>
+    <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
+      <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+    </bs-tooltip>
+    <p>&nbsp;</p>
+
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
+    <button id="show-right-tooltip-button" type="button" class="btn btn-default">show right tooltip</button>
+    <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
+
+    <hr>
+    <p>Modal</p>
+
+
+
+
+  <!-- Button trigger modal -->
+  <bs-button role="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      Launch demo modal
+  </bs-button>
+
+  <button id="open-modal" type="button" class="btn btn-default">JavaScript Open Modal</button>
+
+  <bs-modal id="modal-test"></bs-modal>
+
+  <!-- Modal -->
+  <bs-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+          <!-- <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" data-trigger="manual" title="Tooltip on right">
+            manual triggered tooltip
+          </bs-tooltip> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </bs-modal>
+
+  <p>&nbsp;</p>
+  <p>Buttons</p>
+
+
+  <div class="btn-group disabled" data-toggle="buttons" aria-disabled="true" disabled>
+    <bs-button role="button" id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
+      <input id="my-button-input" type="checkbox" aria-disabled="true" autocomplete="off" disabled class="disabled"/>
+    </bs-button>
   </div>
 
 
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button role="button" id="btn1" class="btn btn-secondary">One</bs-button>
+    <bs-button role="button" class="btn btn-secondary">Two</bs-button>
+  </div>
 
+
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button class="btn btn-primary active">
+      <input type="radio" name="options" id="option1" checked="true"> Option 1
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option2"> Option 2
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option3"> Option 3
+    </bs-button>
+  </div>
+
+
+  <bs-button role="button" class="btn btn-info">
+    Just a bs-button
+  </bs-button>
+
+    <!-- <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      Single toggle
+    </bs-button> -->
+    <bs-button role="button" id="single-toggle-button" class="btn" data-toggle="button">
+      <i id="inner-italc">Single toggle</i>
+    </bs-button>
+
+
+    <button id="toggle-single-toggle-button" type="button" class="btn btn-default">toggle single toggle</button>
+    <p>&nbsp;</p>
+
+
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <bs-button role="button" class="btn btn-secondary active">
+        <input type="checkbox" checked autocomplete="off"> Checked
+      </bs-button>
+    </div>
+
+    <p>&nbsp;</p>
+
+
+    <div id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <bs-button class="btn btn-secondary active">
+        <input type="radio" name="optionsv" id="option1" autocomplete="off" checked> Active
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option2" autocomplete="off"> Radio
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option3" autocomplete="off"> Radio
+      </bs-button>
+    </div>
+
+    <button id="toggle-second-radio-button" type="button" class="btn btn-default">press Second Radio Button</button>
+
+    <p>&nbsp;</p>
+
+    <p>Collapse</p>
+
+
+    <p>
+      <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
+
+      <bs-button class="btn btn-primary"  data-toggle="collapse" data-target="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+        Toggle first element
+      </bs-button>
+
+      <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</button> -->
+
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+        Toggle second element
+      </bs-button>
+
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+        Toggle both elements
+      </bs-button>
+
+
+    </p>
+    <div class="row">
+      <div class="col">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample1">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="col">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample2">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </bs-collapse>
+      </div>
+    </div>
+
+    <button id="toggle-second-collapse" type="button" class="btn btn-default">Toggle Second Collapse</button>
+
+
+
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Collapsible Group Item #1
+            </bs-button>
+          </h5>
+        </div>
+
+        <bs-collapse id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Collapsible Group Item #2
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Collapsible Group Item #3
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+    </div>
+
+
+
+    <p>Dropdowns</p>
+
+
+
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+      <bs-dropdown class="btn-group mr-2">
+        <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
+        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+
+
+      <bs-dropdown id="my-dropdown" class="dropdown mr-2">
+        <bs-button class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+          </bs-button>
+          <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </bs-dropdown>
+
+
+      <bs-dropdown class="btn-group mr-2">
+        <!-- <button type="button" class="btn btn-danger">Action</button> -->
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+          Toggle Dropdown
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+
+
+      <!-- <div class="btn-group dropleft"> -->
+      <bs-dropdown class="btn-group dropleft ">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</button>
+        <div class="dropdown-menu" x-placement="left-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-196px, 0px, 0px);">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+      <!-- </div> -->
+
+
+    </div>
+
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <button id="toggle-my-dropdown-button" type="button" class="btn btn-primary">Toggle Dropdown</button>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <div id="app"></div>
+
+  </div>
+
+
+  <script type="x/template" id="dropdown-vue-test">
+    <div>
+
+      <bs-button class="btn btn-primary" data-toggle="modal" data-target="#vue-exampleModal">
+          Launch vue demo modal
+      </bs-button>
+      <!-- Modal -->
+      <bs-modal class="modal fade" id="vue-exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p>modalTitle: <input v-model="modalTitle"> {{ modalTitle }}</p>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </bs-modal>
+
+      <bs-dropdown ref="bsDropdownInVueExample" class="dropdown"
+        show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
+        hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
+      >
+        <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Vue Dropdown button
+          </bs-button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </bs-dropdown>
+
+      <bs-tooltip id="vue-test-tooltip" class="btn btn-secondary" data-toggle="popover"
+      v-bind:bs-title="tooltipTitle" title="fallback default title"
+      v-bind:bs-content="tooltipContent" data-content="fallback default content"      >
+        Vue Tooltip
+      </bs-tooltip>
+      <p>tooltipTitle: <input v-model="tooltipTitle"> {{ tooltipTitle }}</p>
+      <p>tooltipContent: <input v-model="tooltipContent"> {{ tooltipContent }}</p>
+      <p>&nbsp;</p>
+      <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
+    </div>
+  </script>
 
 
   <script>
@@ -243,366 +618,314 @@
       // }
     }
 
-    function handleButtonClick() {
-      console.log('made it to vue');
-    }
-
-    function handleTogglePageVisibile() {
-      // console.log('handleTogglePageVisibile');
-      this.pageVisible = !this.pageVisible;
-      // console.log('this.pageVisible: ', this.pageVisible);
-    }
-
-    function handleActiveChange(event) {
-      console.log('handleActiveChange');
-      console.log('event: ', event);
-      // event.preventDefault();
-    }
-
-    function handleManualToggle() {
-      console.log('this.toggleAnchorActiveState: ', this.toggleAnchorActiveState);
-
-
-      // this.$set(this, "toggleAnchorActiveState['single-toggle-button']", !this.toggleAnchorActiveState['single-toggle-button']);
-
-      // const myToggle = this.toggleAnchorActiveState['single-toggle-button'];
-      // console.log('myToggle: ', myToggle);
-
-
-      if (this.toggleAnchorActiveState['single-toggle-button']) {
-        // this.$set(this.toggleAnchorActiveState, 'single-toggle-button', !this.toggleAnchorActiveState['single-toggle-button']);
-        // this.toggleAnchorActiveState['single-toggle-button'] = !this.toggleAnchorActiveState['single-toggle-button'];
-        this.$set(this.toggleAnchorActiveState, 'single-toggle-button', false);
-      } else {
-        this.$set(this.toggleAnchorActiveState, 'single-toggle-button', true);
-        // this.$set(this, "toggleAnchorActiveState['single-toggle-button']", true);
-        // this.toggleAnchorActiveState['single-toggle-button'] = true;
-      }
-    }
-
     Vue.config.ignoredElements = ['dtna-bs-modal'];
-    const vm = new Vue({
-      template: '#vdom',
+    new Vue({
+      template: '#dropdown-vue-test',
       el: '#app',
       data: {
-        pageVisible: true,
         message: 'Hello Vue!',
         showDropdown: 'false',
         tooltipTitle: 'vue tooltip title',
         tooltipContent: 'vue tooltip content',
         modalTitle: 'Modal Title',
-        toggleAnchorActiveState: {
-          radio2: true,
-        },
       },
       methods: {
         handleShownBsDropdown: handleShownBsDropdown,
         handleHiddenBsDropdown: handleHiddenBsDropdown,
         handleUserClickedToggleDropdownButton: handleUserClickedToggleDropdownButton,
-        handleTogglePageVisibile: handleTogglePageVisibile,
-        handleButtonClick: handleButtonClick,
-        handleActiveChange: handleActiveChange,
-        handleManualToggle: handleManualToggle,
       }
     });
 
 
     // -- everything below here is not in the vue scope --
 
-    // function handleForceVueRefresh() {
-    //   vm.$forceUpdate();
+    function toggleDropdown() {
+      const el = document.getElementById("dropdownMenuButton");
+      el.dropdown('toggle');
+    }
+
+    function handleMyComponentShow(event) {
+      console.log('handleMyComponentShow event: ', event);
+      // console.log('handleMyComponentShow');
+    }
+
+    function handleMyComponentShown(event) {
+      console.log('handleMyComponentShown event: ', event);
+      // console.log('handleMyComponentShown');
+    }
+
+    function handleMyComponentHide(event) {
+      console.log('handleMyComponentHide event: ', event);
+      // console.log('handleMyComponentHide');
+    }
+
+    function handleMyComponentHidden(event) {
+      console.log('handleMyComponentHidden event: ', event);
+      // console.log('handleMyComponentHidden');
+    }
+
+
+
+    document.getElementById("my-dropdown").addEventListener('show.bs.dropdown', handleMyComponentShow);
+    document.getElementById("my-dropdown").addEventListener('shown.bs.dropdown', handleMyComponentShown);
+    document.getElementById("my-dropdown").addEventListener('hide.bs.dropdown', handleMyComponentHide);
+    document.getElementById("my-dropdown").addEventListener('hidden.bs.dropdown', handleMyComponentHidden);
+
+    function handleMyCollapseShow(event) {
+      console.log('handleMyCollapseShow event: ', event);
+      // console.log('handleMyCollapseShow');
+    }
+    function handleMyCollapseShown(event) {
+      console.log('handleMyCollapseShown event: ', event);
+      // console.log('handleMyCollapseShown');
+    }
+    function handleMyCollapseHide(event) {
+      console.log('handleMyCollapseHide event: ', event);
+      // console.log('handleMyCollapseHide');
+    }
+    function handleMyCollapseHidden(event) {
+      console.log('handleMyCollapseHidden event: ', event);
+      // console.log('handleMyCollapseHidden');
+    }
+
+    document.getElementById("multiCollapseExample2").addEventListener('show.bs.collapse', handleMyCollapseShow);
+    document.getElementById("multiCollapseExample2").addEventListener('shown.bs.collapse', handleMyCollapseShown);
+    document.getElementById("multiCollapseExample2").addEventListener('hide.bs.collapse', handleMyCollapseHide);
+    document.getElementById("multiCollapseExample2").addEventListener('hidden.bs.collapse', handleMyCollapseHidden);
+
+    function toggleSecondCollapse() {
+      const el = document.getElementById("collapseTwo");
+
+    // .collapse('toggle|show|hide')
+    // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
+
+      el.collapse('toggle');
+      // el.collapse('toggle');
+      // el.collapse('show'); // will show this collapse
+      // el.collapse('hide'); // will hide this collapse
+      // el.collapse({ toggle: 'toggle', target: '', parent:'' }); // will do nothing
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'body' }); // toggle all accordions
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'' }); // will open everything ignoring accordion rules
+      // el.collapse({ toggle: 'show', parent:'body' }); // will show this collapse and close every other collapse on the page
+    }
+
+    function toggleSingleToggleButton() {
+      const el = document.getElementById("single-toggle-button");
+      el.button('toggle');
+      // el.click();
+    }
+
+    function toggleSecondRadioButton() {
+      const el = document.getElementById("bs-button-radio-buttons");
+      // // el.button('toggle', '.btn:nth-child(2)');
+      el.querySelector('.btn:nth-child(2)').button('toggle');
+
+      // $('#bs-button-radio-buttons').find('.btn:nth-child(2)').button('toggle');
+    }
+
+    function handleModalShow(event) {
+      // event.preventDefault();
+      console.log('handleModalShow event: ', event);
+      event.preventDefault();
+    }
+
+    function handleModalHide(event) {
+      // event.preventDefault();
+    }
+
+    function handleModalShown(event) {
+      console.log('handleModalShown event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleModalHidden(event) {
+      console.log('handleModalHidden event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleOpenModalWithJavaScript() {
+      // const el = document.getElementById("exampleModal");
+      const el = document.getElementById("modal-test");
+      el.modal('show');
+      // el.modal('toggle');
+
+      // setTimeout(() => {
+      //   el.modal('hide');
+      // }, 5 * 1000);
+
+      // el.modal('show');
+      // el.modal('hide');
+      // el.modal('handleUpdate');
+      // el.modal({ backdrop: true, keyboard: true, focus: true, show: true });
+    }
+
+    // function handleFocusIn(event) {
+    //   console.log('handleFocusIn event: ', event);
     // }
 
-    // document.getElementById("refresh-virtual-dom-button").addEventListener('click', handleForceVueRefresh);
-
-
-
-
-//     function toggleDropdown() {
-//       const el = document.getElementById("dropdownMenuButton");
-//       el.dropdown('toggle');
-//     }
-
-//     function handleMyComponentShow(event) {
-//       console.log('handleMyComponentShow event: ', event);
-//       // console.log('handleMyComponentShow');
-//     }
-
-//     function handleMyComponentShown(event) {
-//       console.log('handleMyComponentShown event: ', event);
-//       // console.log('handleMyComponentShown');
-//     }
-
-//     function handleMyComponentHide(event) {
-//       console.log('handleMyComponentHide event: ', event);
-//       // console.log('handleMyComponentHide');
-//     }
-
-//     function handleMyComponentHidden(event) {
-//       console.log('handleMyComponentHidden event: ', event);
-//       // console.log('handleMyComponentHidden');
-//     }
-
-
-
-//     document.getElementById("my-dropdown").addEventListener('show.bs.dropdown', handleMyComponentShow);
-//     document.getElementById("my-dropdown").addEventListener('shown.bs.dropdown', handleMyComponentShown);
-//     document.getElementById("my-dropdown").addEventListener('hide.bs.dropdown', handleMyComponentHide);
-//     document.getElementById("my-dropdown").addEventListener('hidden.bs.dropdown', handleMyComponentHidden);
-
-//     function handleMyCollapseShow(event) {
-//       console.log('handleMyCollapseShow event: ', event);
-//       // console.log('handleMyCollapseShow');
-//     }
-//     function handleMyCollapseShown(event) {
-//       console.log('handleMyCollapseShown event: ', event);
-//       // console.log('handleMyCollapseShown');
-//     }
-//     function handleMyCollapseHide(event) {
-//       console.log('handleMyCollapseHide event: ', event);
-//       // console.log('handleMyCollapseHide');
-//     }
-//     function handleMyCollapseHidden(event) {
-//       console.log('handleMyCollapseHidden event: ', event);
-//       // console.log('handleMyCollapseHidden');
-//     }
-
-//     document.getElementById("multiCollapseExample2").addEventListener('show.bs.collapse', handleMyCollapseShow);
-//     document.getElementById("multiCollapseExample2").addEventListener('shown.bs.collapse', handleMyCollapseShown);
-//     document.getElementById("multiCollapseExample2").addEventListener('hide.bs.collapse', handleMyCollapseHide);
-//     document.getElementById("multiCollapseExample2").addEventListener('hidden.bs.collapse', handleMyCollapseHidden);
-
-//     function toggleSecondCollapse() {
-//       const el = document.getElementById("collapseTwo");
-
-//     // .collapse('toggle|show|hide')
-//     // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
-
-//       el.collapse('toggle');
-//       // el.collapse('toggle');
-//       // el.collapse('show'); // will show this collapse
-//       // el.collapse('hide'); // will hide this collapse
-//       // el.collapse({ toggle: 'toggle', target: '', parent:'' }); // will do nothing
-//       // el.collapse({ toggle: 'show', target: '.collapse', parent:'body' }); // toggle all accordions
-//       // el.collapse({ toggle: 'show', target: '.collapse', parent:'' }); // will open everything ignoring accordion rules
-//       // el.collapse({ toggle: 'show', parent:'body' }); // will show this collapse and close every other collapse on the page
-//     }
+    function handleClickOnTopTooltipButton() {
+      const el = document.getElementById("top-tooltip-button");
+      el.focus()
+    }
 
-//     function toggleSingleToggleButton() {
-//       const el = document.getElementById("single-toggle-button");
-//       el.button('toggle');
-//       // el.click();
-//     }
+    function handleShowRightTooltip() {
+      const el = document.getElementById("right-tooltip-button");
+      el.tooltip('show');
+    }
 
-//     function toggleSecondRadioButton() {
-//       const el = document.getElementById("bs-button-radio-buttons");
-//       // // el.button('toggle', '.btn:nth-child(2)');
-//       el.querySelector('.btn:nth-child(2)').button('toggle');
+    function handleToggleBottomTooltip() {
+      const el = document.getElementById("bottom-tooltip-button");
+      el.tooltip('toggle');
+    }
 
-//       // $('#bs-button-radio-buttons').find('.btn:nth-child(2)').button('toggle');
-//     }
+    function handleTooltipWithHtmlShown(event) {
+      console.log('handleTooltipWithHtmlShown event: ', event);
+      // event.preventDefault();
+    }
 
-//     function handleModalShow(event) {
-//       // event.preventDefault();
-//       // console.log('handleModalShow event: ', event);
-//     }
-
-//     function handleModalHide(event) {
-//       // event.preventDefault();
-//     }
-
-//     function handleModalShown(event) {
-//       console.log('handleModalShown event:', event);
-//       // console.log('time: ', new Date(event.detail.sentAtTime));
-//     }
 
-//     function handleModalHidden(event) {
-//       console.log('handleModalHidden event:', event);
-//       // console.log('time: ', new Date(event.detail.sentAtTime));
-//     }
+    document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
 
-//     function handleOpenModalWithJavaScript() {
-//       // const el = document.getElementById("exampleModal");
-//       const el = document.getElementById("modal-test");
-//       el.modal('show');
-//       // el.modal('toggle');
+    document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
 
-//       // setTimeout(() => {
-//       //   el.modal('hide');
-//       // }, 5 * 1000);
+    document.getElementById("toggle-single-toggle-button").addEventListener('click', toggleSingleToggleButton);
 
-//       // el.modal('show');
-//       // el.modal('hide');
-//       // el.modal('handleUpdate');
-//       // el.modal({ backdrop: true, keyboard: true, focus: true, show: true });
-//     }
+    document.getElementById("toggle-second-radio-button").addEventListener('click', toggleSecondRadioButton);
 
-//     // function handleFocusIn(event) {
-//     //   console.log('handleFocusIn event: ', event);
-//     // }
 
-//     function handleClickOnTopTooltipButton() {
-//       const el = document.getElementById("top-tooltip-button");
-//       el.focus()
-//     }
+    document.getElementById("exampleModal").addEventListener('show.bs.modal', handleModalShow);
+    document.getElementById("exampleModal").addEventListener('hide.bs.modal', handleModalHide);
 
-//     function handleShowRightTooltip() {
-//       const el = document.getElementById("right-tooltip-button");
-//       el.tooltip('show');
-//     }
+    document.getElementById("modal-test").addEventListener('shown.bs.modal', handleModalShown);
 
-//     function handleToggleBottomTooltip() {
-//       const el = document.getElementById("bottom-tooltip-button");
-//       el.tooltip('toggle');
-//     }
+    document.getElementById("modal-test").addEventListener('hidden.bs.modal', handleModalHidden);
 
-//     function handleTooltipWithHtmlShown(event) {
-//       console.log('handleTooltipWithHtmlShown event: ', event);
-//       // event.preventDefault();
-//     }
 
 
-//     document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
+    document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 
-//     document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
 
-//     document.getElementById("toggle-single-toggle-button").addEventListener('click', toggleSingleToggleButton);
+    document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+    document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
+    document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
 
-//     document.getElementById("toggle-second-radio-button").addEventListener('click', toggleSecondRadioButton);
+    // function setupPopover() {
+    //   const myPopoverConfig = {
+    //     html: true,
+    //     trigger: 'manual',
+    //     container: 'body',
+    //     animation: false,
+    //     content: () => document.querySelector('.content-with-handler'),
+    //   };
+    //   const el = document.getElementById('popover-test');
+    //   el.popover(myPopoverConfig);
 
+    //   el.popover('show');
 
-//     document.getElementById("exampleModal").addEventListener('show.bs.modal', handleModalShow);
-//     document.getElementById("exampleModal").addEventListener('hide.bs.modal', handleModalHide);
+    //   // const template = document.createElement('div');
+    //   // template.innerHTML = '<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>';
+    //   // const contentEl = template.firstChild;
+    //   // popoverEl.popover({ html: true, content: contentEl });
+    //   // console.log('popoverEl.config: ', popoverEl.config);
+    //   // popoverEl.popover('show');
+    //   // console.log('show fired!');
+    // }
+    // setTimeout(() => {
+    //   setupPopover();
 
-//     document.getElementById("modal-test").addEventListener('shown.bs.modal', handleModalShown);
+    // }, 1000);
 
-//     document.getElementById("modal-test").addEventListener('hidden.bs.modal', handleModalHidden);
 
 
 
-//     document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
 
+    // function handleInsertedTopTooltip(event) {
+    //   console.log('handleInsertedTopTooltip event: ', event);
+    // }
+    // document.getElementById("top-tooltip-button").addEventListener('inserted.bs.tooltip', handleInsertedTopTooltip);
+    // setTimeout(() => {
+    //   document.getElementById("top-tooltip-button").tooltip('show');
+    // }, 4000)
 
-//     document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
-//     document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
-//     document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
 
-//     // function setupPopover() {
-//     //   const myPopoverConfig = {
-//     //     html: true,
-//     //     trigger: 'manual',
-//     //     container: 'body',
-//     //     animation: false,
-//     //     content: () => document.querySelector('.content-with-handler'),
-//     //   };
-//     //   const el = document.getElementById('popover-test');
-//     //   el.popover(myPopoverConfig);
+    // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
 
-//     //   el.popover('show');
 
-//     //   // const template = document.createElement('div');
-//     //   // template.innerHTML = '<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>';
-//     //   // const contentEl = template.firstChild;
-//     //   // popoverEl.popover({ html: true, content: contentEl });
-//     //   // console.log('popoverEl.config: ', popoverEl.config);
-//     //   // popoverEl.popover('show');
-//     //   // console.log('show fired!');
-//     // }
-//     // setTimeout(() => {
-//     //   setupPopover();
+    // const addStylesToHead = () => {
+    //   const template = document.createElement('template');
+    //   template.innerHTML = '<style>' +
+    //   '.bs-tooltip-right { white-space: nowrap; }' +
+    //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
+    //   '</style>';
+    //   const styles = template.content.firstChild;
+    //   if (document.head.appendChild(styles)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // };
 
-//     // }, 1000);
+    // setTimeout(() => {
+    //   addStylesToHead();
+    //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
+    //   console.log('setupReturn: ', setupReturn);
+    //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
+    //   console.log('showReturn: ', showReturn);
+    // }, 2000)
 
 
+      // <div id="my-collapse">
+      //   <div class="item">
+      //     <bs-button tabindex="-1">
+      //       <a data-toggle="collapse" href="#">Toggle item</a>
+      //     </bs-button>
+      //     <bs-collapse id="dom-collapse-test" class="collapse">Lorem ipsum</bs-collapse>
+      //   </div>
+      // </div>
 
+    //   function shouldAllowDomObjectInParentConfig(selector, parentSelector) {
+    //     const collapseEl = document.querySelector(selector);
+    //     const parentEl = document.querySelector(parentSelector);
+    //     const sentConfig = { parent: parentEl, toggle: true };
+    //     console.log('sentConfig: ', sentConfig);
+    //     collapseEl.collapse(sentConfig);
+    //   }
 
 
-//     // function handleInsertedTopTooltip(event) {
-//     //   console.log('handleInsertedTopTooltip event: ', event);
-//     // }
-//     // document.getElementById("top-tooltip-button").addEventListener('inserted.bs.tooltip', handleInsertedTopTooltip);
-//     // setTimeout(() => {
-//     //   document.getElementById("top-tooltip-button").tooltip('show');
-//     // }, 4000)
+    // setTimeout(() => {
+    //   shouldAllowDomObjectInParentConfig('#dom-collapse-test', '.my-collapse');
+    // }, 1000)
 
 
-//     // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
+    // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
 
 
-//     // const addStylesToHead = () => {
-//     //   const template = document.createElement('template');
-//     //   template.innerHTML = '<style>' +
-//     //   '.bs-tooltip-right { white-space: nowrap; }' +
-//     //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
-//     //   '</style>';
-//     //   const styles = template.content.firstChild;
-//     //   if (document.head.appendChild(styles)) {
-//     //     return true;
-//     //   } else {
-//     //     return false;
-//     //   }
-//     // };
+// const titleHtml = () => {
+//   var uid = btoa(Math.random().toString()).substring(5, 10);
+//   return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
+// }
 
-//     // setTimeout(() => {
-//     //   addStylesToHead();
-//     //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
-//     //   console.log('setupReturn: ', setupReturn);
-//     //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
-//     //   console.log('showReturn: ', showReturn);
-//     // }, 2000)
+// function setupTooltip() {
+//   console.log('setupTooltip');
 
+//   const mySetupResults = document.getElementById("tt-outer").tooltip({
+//     html: true,
+//     animation: false,
+//     trigger: 'hover',
+//     delay: {
+//       show: 0,
+//       hide: 500
+//     },
+//     title: titleHtml
+//   });
+// }
 
-//       // <div id="my-collapse">
-//       //   <div class="item">
-//       //     <bs-button tabindex="-1">
-//       //       <a data-toggle="collapse" href="#">Toggle item</a>
-//       //     </bs-button>
-//       //     <bs-collapse id="dom-collapse-test" class="collapse">Lorem ipsum</bs-collapse>
-//       //   </div>
-//       // </div>
 
-//     //   function shouldAllowDomObjectInParentConfig(selector, parentSelector) {
-//     //     const collapseEl = document.querySelector(selector);
-//     //     const parentEl = document.querySelector(parentSelector);
-//     //     const sentConfig = { parent: parentEl, toggle: true };
-//     //     console.log('sentConfig: ', sentConfig);
-//     //     collapseEl.collapse(sentConfig);
-//     //   }
 
+    // $(document).ready(function() {
+    //   $('#exampleModal')[0].addEventListener('shown.bs.modal', handleModalShown);
+    // });
 
-//     // setTimeout(() => {
-//     //   shouldAllowDomObjectInParentConfig('#dom-collapse-test', '.my-collapse');
-//     // }, 1000)
-
-
-//     // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
-
-
-// // const titleHtml = () => {
-// //   var uid = btoa(Math.random().toString()).substring(5, 10);
-// //   return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
-// // }
-
-// // function setupTooltip() {
-// //   console.log('setupTooltip');
-
-// //   const mySetupResults = document.getElementById("tt-outer").tooltip({
-// //     html: true,
-// //     animation: false,
-// //     trigger: 'hover',
-// //     delay: {
-// //       show: 0,
-// //       hide: 500
-// //     },
-// //     title: titleHtml
-// //   });
-// // }
-
-
-
-//     // $(document).ready(function() {
-//     //   $('#exampleModal')[0].addEventListener('shown.bs.modal', handleModalShown);
-//     // });
 
 
 

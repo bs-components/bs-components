@@ -1,11 +1,12 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
 
-// function preventDefault() {
-//   Object.defineProperty(this,
-//     'defaultPrevented', {
-//       get: () => true,
-//     });
-// }
+function preventDefault() {
+  // needed for IE compatibility
+  Object.defineProperty(this,
+    'defaultPrevented', {
+      get: () => true,
+    });
+}
 
 export default function customEvent(el, eventName, payload = {}, relatedTarget = {}) {
   const myPayload = Object.assign({}, { sentAtTime: new Date().getTime() }, payload);
@@ -18,16 +19,12 @@ export default function customEvent(el, eventName, payload = {}, relatedTarget =
     event = document.createEvent('CustomEvent');
     event.initCustomEvent(eventName, bubbles, cancelable, { detail: myPayload });
   }
-  // Object.defineProperties(event, {
-  //   preventDefault: {
-  //     value: preventDefault,
-  //     writable: true,
-  //   },
-  //   // bubbles: {
-  //   //   value: true,
-  //   //   writable: true,
-  //   // },
-  // });
+  Object.defineProperties(event, {
+    preventDefault: {
+      value: preventDefault,
+      writable: true,
+    },
+  });
   if (relatedTarget instanceof Element) {
     Object.defineProperties(event, {
       relatedTarget: {

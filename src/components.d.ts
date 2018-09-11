@@ -69,6 +69,7 @@ declare global {
       'hideEventName': string;
       'modal': (modalOptions?: {}, relatedTarget?: any) => true | HTMLElement;
       'showEventName': string;
+      'showModal': boolean;
       'shownEventName': string;
     }
 
@@ -188,6 +189,7 @@ declare global {
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'showEventName'?: string;
+      'showModal'?: boolean;
       'shownEventName'?: string;
     }
 

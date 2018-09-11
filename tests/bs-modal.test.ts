@@ -590,6 +590,7 @@ test('should not adjust the inline body padding when it does not overflow', asyn
   const myModal = Selector('#modal-test');
   const myModalBackdrop = Selector('.modal-backdrop');
   await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.maximizeWindow();
   await t.expect(await myModal.exists).ok();
   const originalPadding = await getCssComputedStyleBySelector('body', 'paddingRight');
   // console.log('originalPadding: ', originalPadding);
@@ -842,4 +843,39 @@ test('should not try to open a modal which is already visible', async (t) => {
   await t.expect(await callModalMethodAndWaitForEventById('modal-test', 'hide', 'hidden.bs.modal')).ok('hidden event fired');
   await t.expect(await myModalBackdrop.exists).notOk();
   await t.expect(getStyleDisplayById('modal-test')).eql('none', 'modal not visible');
+});
+
+// ---------- testing props ----------
+
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
+test('should open and close modal using show-modal attribute', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(await myModal.hasClass('show')).notOk('modal is not shown');
+  await t.expect(setAttributeBySelector('#modal-test', 'show-modal', true)).ok();
+  await t.expect(await myModal.hasClass('show')).ok('modal is shown');
+  await t.expect(setAttributeBySelector('#modal-test', 'show-modal', false)).ok();
+  await t.expect(await myModal.hasClass('show')).notOk('modal is not shown');
+});
+
+test('should auto open modal if it starts with show-modal attribute', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test" show-modal></bs-modal>';
+  const myModal = Selector('#modal-test');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(await myModal.hasClass('show')).ok('modal is shown');
+});
+
+test('should auto close modal if it does not start with show-modal attribute', async (t) => {
+  const modalHtml = '<bs-modal id="modal-test" class="show"></bs-modal>';
+  const myModal = Selector('#modal-test');
+  await t.expect(await appendHtml(_.trim(modalHtml))).ok();
+  await t.expect(await myModal.exists).ok();
+  await t.expect(await myModal.hasClass('show')).notOk('modal is not shown');
 });

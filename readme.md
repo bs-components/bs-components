@@ -8,7 +8,7 @@ Status:
 - [ ] tooltip - needs vdom compliance
 - [ ] popover - needs vdom compliance
 - [x] button - run tests using: `yarn test-bs-button`
-- [ ] modal - needs vdom compliance
+- [x] modal - run tests using: `yarn test-bs-modal`
 - [ ] dropdown - needs vdom compliance
 - [ ] collapse - needs vdom compliance
 - [x] alert - run tests using: `yarn test-bs-alert`

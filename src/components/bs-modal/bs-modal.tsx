@@ -4,6 +4,7 @@ import {
   State,
   Element,
   Method, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 
@@ -29,6 +30,8 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   @Prop() hideEventName: string = 'hide.bs.modal';
   @Prop() hiddenEventName: string = 'hidden.bs.modal';
 
+  @Prop({ mutable: true, reflectToAttr: true }) showModal: boolean = false;
+
   @State() isShown: boolean;
   @State() isTransitioning: boolean;
   @State() isBodyOverflowing: boolean;
@@ -40,6 +43,32 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   componentWillLoad() {
     this.isShown = hasClass(this.modalEl, 'show');
     this.isTransitioning = false;
+    // TODO: open of close modal with no transition
+    if (this.showModal && !this.isShown) {
+      this.getConfig();
+      if (!hasClass(this.modalEl, 'fade')) {
+        this.show();
+        return;
+      }
+      removeClass(this.modalEl, 'fade'); // no animation when setting the initial state
+      const transitionDuration = getTransitionDurationFromElement(this.modalEl);
+      this.show();
+      setTimeout(() => {
+        addClass(this.modalEl, 'fade');
+      }, transitionDuration);
+    } else if (!this.showModal && this.isShown) {
+      this.getConfig();
+      if (!hasClass(this.modalEl, 'fade')) {
+        this.hide();
+        return;
+      }
+      const transitionDuration = getTransitionDurationFromElement(this.modalEl);
+      removeClass(this.modalEl, 'fade'); // no animation when setting the initial state
+      this.hide();
+      setTimeout(() => {
+        addClass(this.modalEl, 'fade');
+      }, transitionDuration);
+    }
   }
 
   componentDidUnload() {
@@ -443,6 +472,17 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   //     // console.log('relatedTarget: ', relatedTarget);
   //   }
   // }
+
+  @Watch('showModal')
+  handleActiveWatch(newValue /* , oldValue */) {
+    if (newValue === true) {
+      this.getConfig();
+      this.show();
+      return;
+    }
+    this.hide();
+  }
+
 
   @Method()
   modal(modalOptions = {}, relatedTarget = null) {
