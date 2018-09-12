@@ -154,6 +154,11 @@ const triggerKeyboardEventBySelector = ClientFunction((selector, eventType, keyC
   return true;
 });
 
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
 test('modal method is defined', async (t) => {
   const hasModalMethodById = ClientFunction((selector) => {
     const myModalEl:any = document.getElementById(selector);
@@ -846,11 +851,6 @@ test('should not try to open a modal which is already visible', async (t) => {
 });
 
 // ---------- testing props ----------
-
-const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
-  document.querySelector(selector).setAttribute(attribute, value);
-  return true;
-});
 
 test('should open and close modal using show-modal attribute', async (t) => {
   const modalHtml = '<bs-modal id="modal-test"></bs-modal>';

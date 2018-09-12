@@ -44,8 +44,14 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) hideEventName: string = 'hide.bs.tooltip';
   @Prop({ mutable: true }) hiddenEventName: string = 'hidden.bs.tooltip';
   @Prop({ mutable: true }) insertedEventName: string = 'inserted.bs.tooltip';
+  @Prop({ mutable: true }) enableEventName: string = 'enable.bs.tooltip';
+  @Prop({ mutable: true }) enabledEventName: string = 'enabled.bs.tooltip';
+  @Prop({ mutable: true }) disableEventName: string = 'disable.bs.tooltip';
+  @Prop({ mutable: true }) disabledEventName: string = 'disabled.bs.tooltip';
 
-  @Prop() noEnableOnLoad: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) present: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) disabled: boolean = false;
+  // @Prop() noEnableOnLoad: boolean = false;
   @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
   @Prop({ mutable: true }) bsContent: string = '';
   @Prop({ mutable: true }) bsTitle: string = '';
@@ -81,8 +87,33 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @State() disposeTimeout: any;
 
   componentWillLoad() {
-    if (!this.noEnableOnLoad && !this.isEnabled) {
+    if (this.disabled) {
+      this.disableTooltip();
+      return;
+    }
+    if (!this.isEnabled) {
       this.enableTooltip();
+    }
+    if (this.isEnabled && this.present) {
+      const hasAnimation = this.config.animation;
+      if (hasAnimation) {
+        this.setConfig({ animation: false });
+      }
+      this.tooltipEl.addEventListener(this.shownEventName, () => {
+        if (_includes(this.config.trigger, 'click')) {
+          this.activeTrigger.click = true;
+        } else if (_includes(this.config.trigger, 'hover') && !_includes(this.config.trigger, 'manual')) {
+          this.activeTrigger.hover = true;
+          this.hoverState = 'show';
+        } else if (_includes(this.config.trigger, 'focus') && !_includes(this.config.trigger, 'manual')) {
+          this.activeTrigger.focus = true;
+        }
+        if (hasAnimation) {
+          addClass(this.tip, 'fade');
+          this.setConfig();
+        }
+      }, { once: true });
+      this.enter();
     }
   }
 
@@ -103,6 +134,13 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   enableTooltip() {
+    if (this.disabled === true) {
+      return;
+    }
+    const enableEvent = customEvent(this.tooltipEl, this.enableEventName);
+    if (enableEvent.defaultPrevented) {
+      return;
+    }
     this.isEnabled = true;
     this.activeTrigger = {};
     this.hoverState = '';
@@ -113,9 +151,23 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       this.setConfig();
     }
     this.setListeners();
+    window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+      window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+        setTimeout(() => {
+          customEvent(this.tooltipEl, this.enabledEventName);
+        }, 0);
+      });
+    });
   }
 
   disableTooltip() {
+    // if (this.disabled === false) {
+    //   return;
+    // }
+    const disableEvent = customEvent(this.tooltipEl, this.disableEventName);
+    if (disableEvent.defaultPrevented) {
+      return;
+    }
     this.isEnabled = false;
     clearTimeout(this.timeout);
     this.bsRemoveEventListener('click', this.handleClickTrigger);
@@ -138,6 +190,13 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.hoverState = '';
     clearTimeout(this.disposeTimeout);
     this.removeTooltipFromDom();
+    window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+      window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+        setTimeout(() => {
+          customEvent(this.tooltipEl, this.disabledEventName);
+        }, 0);
+      });
+    });
   }
 
   makeTip() {
@@ -266,6 +325,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   show() {
+    console.log('show');
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
@@ -875,7 +935,44 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       if (!this.tooltipEl.hasAttribute('inserted-event-name')) {
         this.insertedEventName = 'inserted.bs.popover';
       }
+      if (!this.tooltipEl.hasAttribute('enable-event-name')) {
+        this.enableEventName = 'enable.bs.popover';
+      }
+      if (!this.tooltipEl.hasAttribute('enabled-event-name')) {
+        this.enabledEventName = 'enabled.bs.popover';
+      }
+      if (!this.tooltipEl.hasAttribute('disable-event-name')) {
+        this.disableEventName = 'disable.bs.popover';
+      }
+      if (!this.tooltipEl.hasAttribute('disabled-event-name')) {
+        this.disabledEventName = 'disabled.bs.popover';
+      }
     }
+  }
+
+
+  @Watch('disabled')
+  handleDisabledWatch(newValue /* , oldValue */) {
+    if (this.disabled === newValue && !this.isEnabled === newValue) {
+      return;
+    }
+    if (newValue === true) {
+      this.disableTooltip();
+      return;
+    }
+    this.enableTooltip();
+  }
+
+  @Watch('present')
+  handlePresentWatch(newValue /* , oldValue */) {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (newValue === true) {
+      this.enter();
+      return;
+    }
+    this.leave();
   }
 
   setupMethod(tooltipOptions) {
@@ -908,6 +1005,8 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       return true;
     }
     if (tooltipOptions === 'show') {
+      console.log('show');
+      console.log('this.isEnabled: ', this.isEnabled);
       if (!this.isEnabled) {
         return null;
       }

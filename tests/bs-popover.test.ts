@@ -67,6 +67,22 @@ const callModalMethodAndWaitForEventById = ClientFunction((id, passedOption, eve
   modalEl.modal(passedOption);
 }));
 
+const callPopoverMethodAndWaitForEventById = ClientFunction((id, passedOption, eventName) => new Promise((resolve) => {
+  const myTimeout = setTimeout(() => {
+    // 6 seconds should be more than long enough for any reasonable real world transition
+    // eslint-disable-next-line no-use-before-define
+    document.getElementById(id).removeEventListener(eventName, handleEventHappened);
+    resolve(false);
+  }, 6000);
+  const handleEventHappened = () => {
+    clearTimeout(myTimeout);
+    resolve(true);
+  };
+  document.getElementById(id).addEventListener(eventName, handleEventHappened, { once: true });
+  const el:any = document.getElementById(id);
+  el.popover(passedOption);
+}));
+
 
 const getStyleDisplayById = ClientFunction((id) => {
   // https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
@@ -333,11 +349,15 @@ test('should destroy popover', async (t) => {
   await t.expect(popoverConfig.trigger).notContains('click', 'no extra click event');
   await t.hover('#popover-test');
   await t.expect(await insertedPopover.nth(0).exists).ok('popover was inserted');
-  await t.expect(await callPopoverById('popover-test', 'dispose')).ok();
-  await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed');
-  const postDisposePopoverConfig = await getPopoverConfig('popover-test');
-  // console.log('postDisposePopoverConfig: ', postDisposePopoverConfig);
-  await t.expect(_.size(postDisposePopoverConfig)).eql(0, 'popover does not have config');
+
+  await t.expect(await callPopoverMethodAndWaitForEventById('popover-test', 'disable', 'disabled.bs.popover')).ok();
+
+  // await t.expect(await callPopoverById('popover-test', 'disable')).ok();
+  // await t.wait(500); // transition time
+  await t.expect(await insertedPopover.nth(0).exists).notOk('popover was removed', { timeout: 5000 });
+  // const postDisposePopoverConfig = await getPopoverConfig('popover-test');
+  // // console.log('postDisposePopoverConfig: ', postDisposePopoverConfig);
+  // await t.expect(_.size(postDisposePopoverConfig)).eql(0, 'popover does not have config');
   await t.click('#popover-test');
   await t.expect(await insertedPopover.nth(0).exists).notOk('does not open after click');
   await t.hover('#popover-test');
@@ -423,7 +443,7 @@ test('should detach popover content rather than removing it so that event handle
 
 
 test('should do nothing when an attempt is made to hide an uninitialized popover', async (t) => {
-  const popoverHtml = '<bs-tooltip id="popover-test" no-enable-on-load data-toggle="popover" data-title="some title" data-content="some content">ace</bs-tooltip>';
+  const popoverHtml = '<bs-tooltip id="popover-test" disabled data-toggle="popover" data-title="some title" data-content="some content">ace</bs-tooltip>';
   const myPopover = Selector('#popover-test');
   const insertedPopover = Selector('.popover');
   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();

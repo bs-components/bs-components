@@ -5,8 +5,8 @@ Aren't we all tired of binding listeners on component ready for the bootstrap jQ
 Status:
 
 - [ ] Documentation w/examples - todo - When tests are complete this should be easier
-- [ ] tooltip - needs vdom compliance
-- [ ] popover - needs vdom compliance
+- [x] tooltip - run tests using: `yarn test-bs-tooltip`
+- [x] popover - run tests using: `yarn test-bs-popover`
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [ ] dropdown - needs vdom compliance
