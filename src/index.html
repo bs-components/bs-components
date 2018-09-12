@@ -85,9 +85,49 @@
 
   <div class="container mt-5">
 
-    <bs-tooltip id="delay-tooltip" role="button" class="btn btn-secondary" data-toggle="tooltip" title="Another tooltip">
-      Tooltip
-    </bs-tooltip>
+    <p>Dropdowns</p>
+
+
+
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+
+
+
+
+      <bs-dropdown class="btn-group mr-2">
+        <!-- <button type="button" class="btn btn-danger">Action</button> -->
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+          Dropdown Dropdown
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+
+
+      <!-- <div class="btn-group dropleft"> -->
+      <bs-dropdown class="btn-group dropleft ">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</button>
+        <div class="dropdown-menu" x-placement="left-start">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+      <!-- </div> -->
+
+
+    </div>
+    <p>&nbsp;</p>
 
     <div id="app"></div>
     <script type="x/template" id="vdom">
@@ -95,14 +135,26 @@
 
         <div v-if="pageVisible">
 
+          <bs-dropdown id="dropdown-test" class="btn-group mr-2">
+            <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
+            <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Separated link</a>
+            </div>
+          </bs-dropdown>
 
 
-
-          <bs-tooltip class="btn btn-secondary" data-toggle="popover" bs-title="my title" bs-content="my content" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+          <bs-tooltip show-popover class="btn btn-secondary" data-toggle="popover" bs-title="my title" bs-content="my content" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
             Popover
           </bs-tooltip>
 
-          <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" bs-title="my title">
+          <bs-tooltip show-tooltip class="btn btn-secondary" data-toggle="tooltip" bs-title="my title">
             tooltip
           </bs-tooltip>
 

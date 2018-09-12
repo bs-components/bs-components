@@ -1,4 +1,3 @@
-
 import {
   Component, // eslint-disable-line no-unused-vars
   Prop,
@@ -6,6 +5,7 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import Popper from 'popper.js';
@@ -31,6 +31,8 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Prop() shownEventName: string = 'shown.bs.dropdown';
   @Prop() hideEventName: string = 'hide.bs.dropdown';
   @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
+
+  @Prop({ mutable: true, reflectToAttr: true }) showDropdown: boolean = false;
 
   @Prop({ mutable: true }) show: boolean = false;
   @Prop({ mutable: true }) config: any = {};
@@ -63,6 +65,25 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     for (let j = 0, len = toggles.length; j < len; j += 1) {
       toggles[j].removeEventListener('click', this.handleToggleBsDropdown);
       toggles[j].addEventListener('click', this.handleToggleBsDropdown);
+    }
+    // obey initial show-dropdown prop
+    if (this.showDropdown === true && this.show === false) {
+      const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
+      if (!dropdownMenuEl) {
+        return;
+      }
+      const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
+      if (hasClass(dropdownMenuEl, 'fade')) {
+        removeClass(dropdownMenuEl, 'fade');
+        this.handleShowDropdown();
+        setTimeout(() => {
+          addClass(dropdownMenuEl, 'fade');
+        }, dropdownMenuTransitionDuration);
+      } else {
+        this.handleShowDropdown();
+      }
+    } else if (this.showDropdown === false && this.show === true) {
+      this.handleHideDropdown();
     }
   }
 
@@ -197,6 +218,9 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     this.show = true;
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
+    if (!dropdownMenuEl) {
+      return;
+    }
     // const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     addClass(this.dropdownEl, 'show');
     addClass(dropdownMenuEl, 'show');
@@ -226,6 +250,9 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     this.show = false;
     const dropdownMenuEl = this.dropdownEl.querySelector('.dropdown-menu');
+    if (!dropdownMenuEl) {
+      return;
+    }
     const toggles = this.dropdownEl.querySelectorAll('[data-toggle="dropdown"]');
     document.removeEventListener('click', this.handleDropdownClickOutside);
     removeClass(this.dropdownEl, 'show');
@@ -442,6 +469,15 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     // console.log('myIndex: ', myIndex);
     dropdownMenuItems[myIndex].focus();
+  }
+
+  @Watch('showDropdown')
+  handlePresentWatch(newValue /* , oldValue */) {
+    if (newValue === true && this.show === false) {
+      this.handleShowDropdown();
+    } else if (newValue === false && this.show === true) {
+      this.handleHideDropdown();
+    }
   }
 
 

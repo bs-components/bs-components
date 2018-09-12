@@ -49,7 +49,9 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) disableEventName: string = 'disable.bs.tooltip';
   @Prop({ mutable: true }) disabledEventName: string = 'disabled.bs.tooltip';
 
-  @Prop({ mutable: true, reflectToAttr: true }) present: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) showTooltip: boolean = false;
+  @Prop({ mutable: true, reflectToAttr: true }) showPopover: boolean = false;
+
   @Prop({ mutable: true, reflectToAttr: true }) disabled: boolean = false;
   // @Prop() noEnableOnLoad: boolean = false;
   @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
@@ -94,7 +96,15 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     if (!this.isEnabled) {
       this.enableTooltip();
     }
-    if (this.isEnabled && this.present) {
+    if (this.tooltipEl.dataset.toggle === 'tooltip' && this.showTooltip === true) {
+      this.setInitialOpenOrCloseState(this.showTooltip);
+    } else if (this.tooltipEl.dataset.toggle === 'popover' && this.showPopover === true) {
+      this.setInitialOpenOrCloseState(this.showPopover);
+    }
+  }
+
+  setInitialOpenOrCloseState(present) {
+    if (this.isEnabled && present) {
       const hasAnimation = this.config.animation;
       if (hasAnimation) {
         this.setConfig({ animation: false });
@@ -109,8 +119,9 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
           this.activeTrigger.focus = true;
         }
         if (hasAnimation) {
-          addClass(this.tip, 'fade');
           this.setConfig();
+          const tipEl = this.tip || this.makeTip();
+          addClass(tipEl, 'fade');
         }
       }, { once: true });
       this.enter();
@@ -325,12 +336,10 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   show() {
-    console.log('show');
     if (this.tooltipEl.style.display === 'none') {
       throw new Error('Please use show on visible elements');
     }
     if (this.okToShow()) {
-      // console.log('Showing');
       const showEvent = customEvent(this.tooltipEl, this.showEventName);
       this.tooltipEl.setAttribute('aria-describedby', this.tooltipId);
       const isInTheDom = this.tooltipEl.ownerDocument.documentElement.contains(this.tooltipEl);
@@ -963,8 +972,26 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.enableTooltip();
   }
 
-  @Watch('present')
-  handlePresentWatch(newValue /* , oldValue */) {
+  @Watch('showPopover')
+  handleShowPopoverWatch(newValue /* , oldValue */) {
+    if (this.tooltipEl.dataset.toggle !== 'popover') {
+      throw new Error('A popover must have [data-toggle="popover"]');
+    }
+    if (!this.isEnabled) {
+      return;
+    }
+    if (newValue === true) {
+      this.enter();
+      return;
+    }
+    this.leave();
+  }
+
+  @Watch('showTooltip')
+  handleShowTooltipWatch(newValue /* , oldValue */) {
+    if (this.tooltipEl.dataset.toggle !== 'tooltip') {
+      throw new Error('A tooltip must have [data-toggle="tooltip"]');
+    }
     if (!this.isEnabled) {
       return;
     }

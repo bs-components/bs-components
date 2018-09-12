@@ -111,6 +111,12 @@ const getPopoverConfig = ClientFunction((selector) => {
   return el.config;
 });
 
+
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
 test('popover method is defined', async (t) => {
   const hasPopoverMethodById = ClientFunction((selector) => {
     const myPopoverEl:any = document.getElementById(selector);
@@ -578,4 +584,30 @@ test('popover should call content function only once', async (t) => {
   await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
   await t.expect(await myPopover.exists).ok();
   await t.expect(await popoverShouldCallContentFunctionOnlyOnce()).eql(1, 'call content function only once');
+});
+
+
+// ---------- testing props ----------
+
+
+test('should open and close popover using show-popover attribute', async (t) => {
+  const popoverHtml = '<bs-tooltip data-toggle="popover" bs-title="Ace Backer" bs-content="loves attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻">ace</bs-tooltip>';
+  const myPopover = Selector('[data-toggle="popover"]');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  await t.expect(setAttributeBySelector('[data-toggle="popover"]', 'show-popover', true)).ok();
+  await t.expect(await insertedPopover.nth(0).hasClass('show')).ok('popover has show class');
+  await t.expect(setAttributeBySelector('[data-toggle="popover"]', 'show-popover', false)).ok();
+  await t.expect(await insertedPopover.nth(0).hasClass('show')).notOk('popover does not have show class');
+});
+
+test('should auto open popover if it starts with show-popover attribute', async (t) => {
+  const popoverHtml = '<bs-tooltip show-popover data-toggle="popover" bs-title="Ace Backer" bs-content="loves attributes (づ｡◕‿‿◕｡)づ ︵ ┻━┻">ace</bs-tooltip>';
+  const myPopover = Selector('[data-toggle="popover"]');
+  const insertedPopover = Selector('.popover');
+  await t.expect(await appendHtml(_.trim(popoverHtml))).ok();
+  await t.expect(await myPopover.exists).ok();
+  await t.expect(await insertedPopover.nth(0).exists).ok();
+  await t.expect(await insertedPopover.nth(0).hasClass('show')).ok('popover has show class');
 });

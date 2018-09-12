@@ -79,6 +79,11 @@ const focusBySelector = ClientFunction((selector) => {
   return true;
 });
 
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
 
 test('dropdown method is defined', async (t) => {
   const hasDropdownMethodBySelector = ClientFunction((selector) => {
@@ -1007,22 +1012,56 @@ test('should not use Popper.js if display set to static', async (t) => {
 // // https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/dropdown.js#L1066
 // // this is a popper.js test - skipping due to not having sinon (not doing unit tests)
 
+// // should dispose dropdown
+// // https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/dropdown.js#L1066
+// // this is a popper.js test - skipping due to not having sinon (not doing unit tests)
 
-test('should dispose dropdown', async (t) => {
+
+// // should dispose dropdown
+// // https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/dropdown.js#L1097
+// // the way to dispose web component is to remove it from the DOM
+// // this unbinds any listeners being used
+
+// ---------- testing props ----------
+
+test('should open and close dropdown using show-dropdown attribute', async (t) => {
   const dropdownHtml = `
     <bs-dropdown class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown</a>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" href="#">Another link</a>
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropdown
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdown">
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
       </div>
     </bs-dropdown>`;
   const myDropdown = Selector('.dropdown');
   await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
   await t.expect(await myDropdown.nth(0).exists).ok();
-  await t.click('[data-toggle="dropdown"]');
-  await t.expect(await myDropdown.nth(0).hasClass('show')).ok('dropdown is open');
-  await t.expect(await callDropdownBySelector('.dropdown', 'dispose')).ok('dispose dropdown');
-  await t.expect(await myDropdown.nth(0).hasClass('show')).notOk('dropdown not open');
-  await t.click('[data-toggle="dropdown"]');
-  await t.expect(await myDropdown.nth(0).hasClass('show')).notOk('dropdown still not open');
+
+  await t.expect(setAttributeBySelector('.dropdown', 'show-dropdown', true)).ok();
+  await t.expect(await myDropdown.nth(0).hasClass('show')).ok('dropdown menu is shown', { timeout: 5000 });
+
+  await t.expect(setAttributeBySelector('.dropdown', 'show-dropdown', false)).ok();
+  await t.expect(await myDropdown.nth(0).hasClass('show')).notOk('dropdown menu is not shown', { timeout: 5000 });
+});
+
+
+test('should auto open dropdown if it starts with show-dropdown attribute', async (t) => {
+  const dropdownHtml = `
+    <bs-dropdown show-dropdown class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropdown
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdown">
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+      </div>
+    </bs-dropdown>`;
+  const myDropdown = Selector('.dropdown');
+  await t.expect(await appendHtml(_.trim(dropdownHtml))).ok();
+  await t.expect(await myDropdown.nth(0).exists).ok();
+  await t.expect(await myDropdown.nth(0).hasClass('show')).ok('dropdown menu is shown', { timeout: 5000 });
 });

@@ -960,7 +960,7 @@ test('should hide tooltip when their containing modal is closed', async (t) => {
   await t.expect(await modal.hasClass('show')).ok('modal is shown');
 
   // present tooltip
-  await t.expect(setAttributeBySelector('[data-toggle="tooltip"]', 'present', true)).ok();
+  await t.expect(setAttributeBySelector('[data-toggle="tooltip"]', 'show-tooltip', true)).ok();
   await t.expect(await tooltip.nth(0).exists).ok({ timeout: 5000 });
 
   // hide modal
@@ -1051,14 +1051,14 @@ test('should prefer bs-title attribute dynamically over title attribute', async 
   const tooltip = Selector('.tooltip');
   await t.expect(await setHtml(_.trim(tooltipHtml))).ok();
   await t.expect(await tooltipToggle.nth(0).exists).ok({ timeout: 5000 });
-  await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'present', true));
-  await t.expect(await tooltip.nth(0).exists).ok('showed tooltip using present attribute', { timeout: 5000 });
+  await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'show-tooltip', true));
+  await t.expect(await tooltip.nth(0).exists).ok('showed tooltip using show-tooltip attribute', { timeout: 5000 });
   await t.expect(await tooltip.nth(0).find('.tooltip-inner').nth(0).innerText).eql('set using bs-title', 'bs-title has overridden title');
   await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'bs-title', 'abc123'));
   await t.expect(await tooltip.nth(0).find('.tooltip-inner').nth(0).innerText).eql('abc123', 'bs-title self updated');
   await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'bs-title', ''));
   await t.expect(await tooltip.nth(0).find('.tooltip-inner').nth(0).innerText).eql('default to title', 'back to using title now that attribute is gone');
-  await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'present', false));
+  await t.expect(await setAttributeBySelector('[data-toggle="tooltip"]', 'show-tooltip', false));
   await t.wait(300); // waiting for transition to fade out
-  await t.expect(await tooltip.nth(0).exists).notOk('hid tooltip using present attribute', { timeout: 5000 });
+  await t.expect(await tooltip.nth(0).exists).notOk('hid tooltip using show-tooltip attribute', { timeout: 5000 });
 });

@@ -59,6 +59,7 @@ declare global {
       'hiddenEventName': string;
       'hideEventName': string;
       'show': boolean;
+      'showDropdown': boolean;
       'showEventName': string;
       'shownEventName': string;
     }
@@ -87,8 +88,9 @@ declare global {
       'hideEventName': string;
       'insertedEventName': string;
       'popover': (popoverOptions?: any) => boolean | HTMLElement;
-      'present': boolean;
       'showEventName': string;
+      'showPopover': boolean;
+      'showTooltip': boolean;
       'shownEventName': string;
       'tabindex': string;
       'tooltip': (tooltipOptions?: any) => boolean | HTMLElement;
@@ -186,6 +188,7 @@ declare global {
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'show'?: boolean;
+      'showDropdown'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;
     }
@@ -211,8 +214,9 @@ declare global {
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'insertedEventName'?: string;
-      'present'?: boolean;
       'showEventName'?: string;
+      'showPopover'?: boolean;
+      'showTooltip'?: boolean;
       'shownEventName'?: string;
       'tabindex'?: string;
     }
