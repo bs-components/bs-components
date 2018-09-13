@@ -108,6 +108,11 @@ const getInlineCssStyleBySelector = ClientFunction((selector, styleName) => {
   return el.style[styleName];
 });
 
+const setAttributeBySelector = ClientFunction((selector, attribute, value) => {
+  document.querySelector(selector).setAttribute(attribute, value);
+  return true;
+});
+
 
 test('collapse method is defined', async (t) => {
   const collapseHtml = `
@@ -930,4 +935,125 @@ test('should allow DOM object in parent config', async (t) => {
     }
   });
   await t.expect(await shouldAllowDomObjectInParentConfig('.collapse', '.my-collapse')).ok();
+});
+
+// ---------- testing props ----------
+
+test('should open and close collapse using show-collapse attribute', async (t) => {
+  const collapseHtml = `
+    <div>
+      <bs-button tabindex="-1">
+        <a role="button" data-toggle="collapse" class="btn btn-primary collapsed" href="#test1">collapse toggle</a>
+      </bs-button>
+      <bs-collapse class="collapse" id="test1">collapse content</bs-collapse>
+    </div>`;
+  const collapseToggle = Selector('[data-toggle="collapse"]');
+  const collapse = Selector('.collapse');
+  await t.expect(await setHtml(_.trim(collapseHtml))).ok();
+  await t.expect(await collapseToggle.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(setAttributeBySelector('.collapse', 'show-collapse', true)).ok();
+  await t.wait(333); // wait for transition
+  await t.expect(await collapse.nth(0).hasClass('show')).ok('collapse open');
+  await t.expect(setAttributeBySelector('.collapse', 'show-collapse', false)).ok();
+  await t.wait(333); // wait for transition
+  await t.expect(await collapse.nth(0).hasClass('show')).notOk('collapse closed');
+});
+
+test('should auto open collapse if it starts with show-collapse attribute', async (t) => {
+  const collapseHtml = `
+    <div>
+      <bs-button tabindex="-1">
+        <a role="button" data-toggle="collapse" class="btn btn-primary collapsed" href="#test1">collapse toggle</a>
+      </bs-button>
+      <bs-collapse show-collapse class="collapse" id="test1">collapse content</bs-collapse>
+    </div>`;
+  const collapseToggle = Selector('[data-toggle="collapse"]');
+  const collapse = Selector('.collapse');
+  await t.expect(await setHtml(_.trim(collapseHtml))).ok();
+  await t.expect(await collapseToggle.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(await collapse.nth(0).hasClass('show')).ok('collapse open');
+});
+
+
+test('should ignore data toggles if using ignore-data-toggles attribute', async (t) => {
+  const collapseHtml = `
+    <div>
+      <bs-button tabindex="-1">
+        <a role="button" data-toggle="collapse" class="btn btn-primary collapsed" aria-expanded="false" href="#test1">collapse toggle</a>
+      </bs-button>
+      <bs-collapse ignore-data-toggles class="collapse" id="test1">collapse content</bs-collapse>
+    </div>`;
+  const collapseToggle = Selector('[data-toggle="collapse"]');
+  const collapse = Selector('.collapse');
+  await t.expect(await setHtml(_.trim(collapseHtml))).ok();
+  await t.expect(await collapseToggle.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(setAttributeBySelector('.collapse', 'show-collapse', true)).ok();
+  await t.wait(333); // wait for transition
+  await t.expect(await collapse.nth(0).hasClass('show')).ok('collapse open');
+  await t.expect(await collapseToggle.nth(0).hasClass('collapsed')).ok('collapse trigger still has collapsed class');
+  await t.expect(await collapseToggle.nth(0).getAttribute('aria-expanded')).eql('false', 'aria-expanded on target is not changed');
+});
+
+
+test('should ignore accordion if using ignore-accordion attribute', async (t) => {
+  const collapseHtml = `
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Collapsible Group Item #1
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+          first accordion content
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Collapsible Group Item #2
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse ignore-accordion id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            second accordion content
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Collapsible Group Item #3
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+          third accordion content
+          </div>
+        </bs-collapse>
+      </div>
+    </div>`;
+  const collapseToggle = Selector('[data-toggle="collapse"]');
+  const collapseOne = Selector('#collapseOne');
+  const collapseTwo = Selector('#collapseTwo');
+  const collapseThree = Selector('#collapseThree');
+  await t.expect(await setHtml(_.trim(collapseHtml))).ok();
+  await t.expect(await collapseToggle.nth(0).exists).ok({ timeout: 5000 });
+  await t.expect(setAttributeBySelector('#collapseTwo', 'show-collapse', true)).ok();
+  await t.wait(333); // wait for transition
+  await t.expect(await collapseOne.hasClass('show')).ok('collapse open (accordion rules ignored)');
+  await t.expect(await collapseTwo.hasClass('show')).ok('collapse open');
+  await t.expect(setAttributeBySelector('#collapseThree', 'show-collapse', true)).ok();
+  await t.wait(333); // wait for transition
+  await t.expect(await collapseOne.hasClass('show')).notOk('collapse closed');
+  await t.expect(await collapseTwo.hasClass('show')).notOk('collapse closed');
+  await t.expect(await collapseThree.hasClass('show')).ok('collapse open');
 });

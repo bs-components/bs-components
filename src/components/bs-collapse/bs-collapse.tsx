@@ -4,6 +4,7 @@ import {
   Element,
   State,
   Method, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _get from 'lodash/get';
@@ -30,7 +31,55 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   @Prop() hideEventName: string = 'hide.bs.collapse';
   @Prop() hiddenEventName: string = 'hidden.bs.collapse';
 
+  @Prop({ mutable: true }) ignoreAccordion: boolean = false;
+  @Prop({ mutable: true }) ignoreDataToggles: boolean = false;
+  @Prop({ mutable: true }) showCollapse: boolean = false;
+
   @State() relatedTarget: Element;
+
+  componentWillLoad() {
+    const collapseIsOpen = this.thisCollapseIsShown();
+    if (collapseIsOpen === false && this.showCollapse === true) {
+      addClass(this.collapseEl, 'show');
+      removeClass(this.collapseEl, 'collapsing');
+      addClass(this.collapseEl, 'collapse');
+      const dimension = BsCollapse.getDimension(this.collapseEl);
+      this.collapseEl.style[dimension] = '';
+      const config = this.getConfig({ toggle: 'show' });
+      let accordionParentEl;
+      if (_isElement(config.parent)) {
+        accordionParentEl = config.parent;
+      } else {
+        accordionParentEl = document.querySelector(config.parent);
+        if (!accordionParentEl) {
+          console.warn(`unable to find accordion parent by selector: "${config.parent}"`);
+        }
+      }
+      if (accordionParentEl) {
+        const childCollapseArr = Array.prototype.slice.call(accordionParentEl.querySelectorAll('.collapse'));
+        for (let j = 0, len = childCollapseArr.length; j < len; j += 1) {
+          if (hasClass(childCollapseArr[j], 'show')) {
+            const isAMemberOfThisAccordion = elementMatches(accordionParentEl, childCollapseArr[j].dataset.parent);
+            if (isAMemberOfThisAccordion && !childCollapseArr[j].isEqualNode(this.collapseEl)) {
+              config.collapseElPlannedToBeClosed.push(childCollapseArr[j]);
+            }
+          }
+        }
+      }
+      if (config.ignoreAccordion !== true) {
+        for (let j = 0, len = config.collapseElPlannedToBeClosed.length; j < len; j += 1) {
+          removeClass(config.collapseElPlannedToBeClosed[j], 'show');
+          removeClass(config.collapseElPlannedToBeClosed[j], 'collapsing');
+          addClass(config.collapseElPlannedToBeClosed[j], 'collapse');
+          const childDimension = BsCollapse.getDimension(config.collapseElPlannedToBeClosed[j]);
+          this.collapseEl.style[childDimension] = '';
+        }
+      }
+      if (config.ignoreDataToggles !== true) {
+        BsCollapse.handleToggleDataToggles(config);
+      }
+    }
+  }
 
   componentDidUnload() {
     this.relatedTarget = null;
@@ -51,8 +100,18 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     } else {
       config.toggle = _get(overrideConfig, 'toggle', 'toggle');
     }
-    config.ignoreAccordion = _get(overrideConfig, 'ignoreAccordion', false);
-    config.ignoreDataToggles = _get(overrideConfig, 'ignoreDataToggles', false);
+
+    if (_has(overrideConfig, 'ignoreAccordion')) {
+      config.ignoreAccordion = overrideConfig.ignoreAccordion;
+    } else {
+      config.ignoreAccordion = this.ignoreAccordion;
+    }
+    if (_has(overrideConfig, 'ignoreDataToggles')) {
+      config.ignoreDataToggles = overrideConfig.ignoreDataToggles;
+    } else {
+      config.ignoreDataToggles = this.ignoreDataToggles;
+    }
+
     config.collapseElPlannedToBeOpened = [];
     config.collapseElPlannedToBeClosed = [];
     if (_has(overrideConfig, 'target')) {
@@ -144,7 +203,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     }
     if (config.toggle === 'show') {
       config.collapseElPlannedToBeOpened.push(this.collapseEl);
-      this.showCollapse(this.collapseEl, config);
+      this.show(this.collapseEl, config);
       return;
     }
     if (config.toggle === 'hide') {
@@ -159,10 +218,10 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
       return;
     }
     config.collapseElPlannedToBeOpened.push(this.collapseEl);
-    this.showCollapse(this.collapseEl, config);
+    this.show(this.collapseEl, config);
   }
 
-  showCollapse(targetEl, config) {
+  show(targetEl, config) {
     if (hasClass(targetEl, 'show') || hasClass(targetEl, 'collapsing')) {
       return;
     }
@@ -228,6 +287,15 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   static getDimension(el) {
     const hasWidth = hasClass(el, 'width');
     return hasWidth ? 'width' : 'height';
+  }
+
+  @Watch('showCollapse')
+  handlePresentWatch(newValue /* , oldValue */) {
+    if (newValue === true) {
+      this.handleToggle(this.getConfig({ toggle: 'show' }));
+    } else if (newValue === false) {
+      this.handleToggle(this.getConfig({ toggle: 'hide' }));
+    }
   }
 
   @Method()

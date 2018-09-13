@@ -48,6 +48,9 @@ declare global {
       'collapse': (collapseOptions: any, relatedTarget?: any) => true | HTMLElement;
       'hiddenEventName': string;
       'hideEventName': string;
+      'ignoreAccordion': boolean;
+      'ignoreDataToggles': boolean;
+      'showCollapse': boolean;
       'showEventName': string;
       'shownEventName': string;
     }
@@ -178,6 +181,9 @@ declare global {
     export interface BsCollapseAttributes extends HTMLAttributes {
       'hiddenEventName'?: string;
       'hideEventName'?: string;
+      'ignoreAccordion'?: boolean;
+      'ignoreDataToggles'?: boolean;
+      'showCollapse'?: boolean;
       'showEventName'?: string;
       'shownEventName'?: string;
     }

@@ -10,7 +10,7 @@ Status:
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`
-- [ ] collapse - needs vdom compliance
+- [x] collapse - run tests using: `yarn test-bs-collapse`
 - [x] alert - run tests using: `yarn test-bs-alert`
 - [ ] tab todo - (aka navs and list group) - many frameworks have spa router solutions for this
 - [ ] scrollspy todo
