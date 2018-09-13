@@ -26,7 +26,7 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
   @Prop() closedEventName: string = 'closed.bs.alert';
 
   @Prop() noSelfRemoveFromDom: boolean = false;
-  @Prop({ mutable: true, reflectToAttr: true }) dismiss: boolean = false;
+  @Prop({ mutable: true }) dismiss: boolean = false;
 
   componentWillLoad() {
     if (this.dismiss === true) {
@@ -90,6 +90,9 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
 
   @Method()
   close() {
+    if (!hasClass(this.alertEl, 'show')) {
+      return;
+    }
     // console.log('close');
     const closeEvent = customEvent(this.alertEl, this.closeEventName);
     if (closeEvent.defaultPrevented) {
@@ -99,7 +102,7 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
     // debugger;
 
     removeClass(this.alertEl, 'show');
-    console.log('this.alertEl: ', this.alertEl);
+    // console.log('this.alertEl: ', this.alertEl);
     if (!hasClass(this.alertEl, 'fade')) {
       this.destroyAlert();
       return;
@@ -112,6 +115,9 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
 
   @Method()
   open() {
+    if (hasClass(this.alertEl, 'show') && !hasClass(this.alertEl, 'd-none')) {
+      return;
+    }
     const openEvent = customEvent(this.alertEl, this.openEventName);
     if (openEvent.defaultPrevented) {
       return;

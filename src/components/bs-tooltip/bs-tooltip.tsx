@@ -49,12 +49,11 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @Prop({ mutable: true }) disableEventName: string = 'disable.bs.tooltip';
   @Prop({ mutable: true }) disabledEventName: string = 'disabled.bs.tooltip';
 
-  @Prop({ mutable: true, reflectToAttr: true }) showTooltip: boolean = false;
-  @Prop({ mutable: true, reflectToAttr: true }) showPopover: boolean = false;
+  @Prop({ mutable: true }) showTooltip: boolean = false;
+  @Prop({ mutable: true }) showPopover: boolean = false;
+  @Prop({ mutable: true }) disabled: boolean = false;
 
-  @Prop({ mutable: true, reflectToAttr: true }) disabled: boolean = false;
-  // @Prop() noEnableOnLoad: boolean = false;
-  @Prop({ mutable: true, reflectToAttr: true }) tabindex: string = '0';
+  @Prop({ mutable: true, reflectToAttr: true }) tabindex: string|number = '0';
   @Prop({ mutable: true }) bsContent: string = '';
   @Prop({ mutable: true }) bsTitle: string = '';
   @Prop({ mutable: true }) config: any = {};
@@ -89,6 +88,9 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   @State() disposeTimeout: any;
 
   componentWillLoad() {
+    if (this.tabindex === '-1') {
+      this.tabindex = -1;
+    }
     if (this.disabled) {
       this.disableTooltip();
       return;

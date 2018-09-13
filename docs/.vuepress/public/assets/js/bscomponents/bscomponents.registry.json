@@ -3,37 +3,37 @@
   "fsNamespace": "bscomponents",
   "loader": "../bscomponents.js",
   "global": "bscomponents.global.js",
+  "core": "bscomponents.g1nu6hwe.js",
   "corePolyfilled": "bscomponents.z9a9vg1o.js",
-  "core": "bscomponents.gfccht4t.js",
   "components": {
     "bs-alert": {
       "bundleIds": {
-        "$": "mjdrs611"
+        "$": "kx9hi7z9"
       }
     },
     "bs-button": {
       "bundleIds": {
-        "$": "orzgynw0"
+        "$": "giry92fd"
       }
     },
     "bs-collapse": {
       "bundleIds": {
-        "$": "pldrmqwy"
+        "$": "hsrfw2vx"
       }
     },
     "bs-dropdown": {
       "bundleIds": {
-        "$": "bto59b4q"
+        "$": "zgfh6grm"
       }
     },
     "bs-modal": {
       "bundleIds": {
-        "$": "lydwiads"
+        "$": "sbtvrwpj"
       }
     },
     "bs-tooltip": {
       "bundleIds": {
-        "$": "zxapepqa"
+        "$": "bvm58tqs"
       }
     }
   }

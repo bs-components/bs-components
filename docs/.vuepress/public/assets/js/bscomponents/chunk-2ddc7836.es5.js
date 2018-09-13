@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+bscomponents.loadBundle("chunk-2ddc7836.js",["exports","./chunk-04c5df2e.js","./chunk-d04497e8.js"],function(t,e,n){window.bscomponents.h,t.getTargetSelector=function(t){if("a"===e.toLower(t.tagName)){var r=n._trim(t.getAttribute("href"));if(e._size(r)>1)return r}return t.dataset.target}});

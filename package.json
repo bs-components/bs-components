@@ -1,6 +1,6 @@
 {
   "name": "bs-components",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Bootstrap Stenciljs Components",
   "author": "Jason Cubic",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "test-bs-tooltip": "stencil build && testcafe ie,chrome ./tests/bs-tooltip.test.ts",
-    "test-bs-button": "stencil build && testcafe chrome ./tests/bs-button.test.ts",
+    "test-bs-button": "stencil build && testcafe chrome ./tests/bs-button.test.ts --hostname CTNAL0042043380.us164.corpintra.net --proxy webproxy.us164.corpintra.net:8080",
     "test-bs-modal": "stencil build && testcafe ie,chrome ./tests/bs-modal.test.ts",
     "test-bs-popover": "stencil build && testcafe ie,chrome ./tests/bs-popover.test.ts",
     "test-bs-dropdown": "stencil build && testcafe ie,chrome ./tests/bs-dropdown.test.ts",

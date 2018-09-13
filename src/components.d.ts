@@ -38,9 +38,10 @@ declare global {
 
     interface BsButton {
       'active': boolean;
+      'activeEventName': string;
       'button': (buttonOptions?: any) => true | HTMLElement;
-      'changeEventName': string;
       'dropdown': (dropdownOptions?: any) => any;
+      'inactiveEventName': string;
       'tabindex': string|number;
     }
 
@@ -95,7 +96,7 @@ declare global {
       'showPopover': boolean;
       'showTooltip': boolean;
       'shownEventName': string;
-      'tabindex': string;
+      'tabindex': string|number;
       'tooltip': (tooltipOptions?: any) => boolean | HTMLElement;
     }
   }
@@ -174,7 +175,8 @@ declare global {
 
     export interface BsButtonAttributes extends HTMLAttributes {
       'active'?: boolean;
-      'changeEventName'?: string;
+      'activeEventName'?: string;
+      'inactiveEventName'?: string;
       'tabindex'?: string|number;
     }
 
@@ -224,7 +226,7 @@ declare global {
       'showPopover'?: boolean;
       'showTooltip'?: boolean;
       'shownEventName'?: string;
-      'tabindex'?: string;
+      'tabindex'?: string|number;
     }
   }
 

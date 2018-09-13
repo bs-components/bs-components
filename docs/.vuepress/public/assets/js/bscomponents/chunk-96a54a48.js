@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+const{h:n}=window.bscomponents;import{a as o,b as r}from"./chunk-79b4afa6.js";var a=function(n,a,t){var i=null==n?void 0:function(n,a){for(var t=0,i=(a=o(a,n)).length;null!=n&&t<i;)n=n[r(a[t++])];return t&&t==i?n:void 0}(n,a);return void 0===i?t:i};export{a};

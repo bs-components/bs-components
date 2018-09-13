@@ -41,6 +41,39 @@ const setAttributeById = ClientFunction((id, attribute, value) => {
   return true;
 });
 
+const clickBySelectorAndWaitForEventBySelector = ClientFunction((clickSelector, eventSelector, eventName) => new Promise((resolve) => {
+  function waitForEventBySelector(myEventSelector, myEventName) {
+    return new Promise((resolveWait) => {
+      const myTimeout = setTimeout(() => {
+        // 6 seconds should be more than long enough for any reasonable real world transition
+        // eslint-disable-next-line no-use-before-define
+        document.querySelector(eventSelector).removeEventListener(myEventName, handleEventHappened);
+        resolveWait(false);
+      }, 6000);
+      const handleEventHappened = () => {
+        clearTimeout(myTimeout);
+        resolveWait(true);
+      };
+      document.querySelector(myEventSelector).addEventListener(myEventName, handleEventHappened, { once: true });
+    });
+  }
+  function delayedClickBySelector(myClickSelector, delay) {
+    return new Promise((resolveClick) => {
+      setTimeout(() => {
+        const el:any = document.querySelector(myClickSelector);
+        el.click();
+        resolveClick(true);
+      }, delay);
+    });
+  }
+  Promise.all([
+    waitForEventBySelector(eventSelector, eventName),
+    delayedClickBySelector(clickSelector, 150),
+  ]).then((resultArr) => {
+    resolve(resultArr.every(result => result === true));
+  });
+}));
+
 
 test('button method is defined', async (t) => {
   const hasButtonMethodById = ClientFunction((selector) => {
@@ -190,7 +223,6 @@ test('should check for closest matching toggle', async (t) => {
       <input type="radio" name="options" id="option3"> Option 3
     </bs-button>
   </div>`;
-
   const btn1 = Selector('.btn').nth(0);
   const btn1Input = Selector('#option1');
   const btn2 = Selector('.btn').nth(1);
@@ -442,4 +474,19 @@ test('test active prop with button checkbox group', async (t) => {
   await t.expect(setAttributeById('wrap1', 'active', false)).ok();
   await t.expect(wrap1.hasClass('active')).notOk({ timeout: 5000 });
   await t.expect(option1.checked).notOk();
+});
+
+
+test('should send active and inactive events', async (t) => {
+  const buttonHtml = `
+  <bs-button class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+    Single toggle
+  </bs-button>`;
+  const singleToggleButton = Selector('[data-toggle="button"]');
+  await t.expect(await appendHtml(_.trim(buttonHtml))).ok();
+  await t.expect(singleToggleButton.exists).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="button"]', '[data-toggle="button"]', 'active.bs.button')).ok();
+  await t.expect(singleToggleButton.hasClass('active')).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('[data-toggle="button"]', '[data-toggle="button"]', 'inactive.bs.button')).ok();
+  await t.expect(singleToggleButton.hasClass('active')).notOk();
 });

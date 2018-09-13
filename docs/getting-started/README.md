@@ -10,9 +10,24 @@ All bs-components start enabled by default.
 
 You do not need to do anything extra to prevent memory leaks other than remove the component from the DOM.  All bs-components clean up any listeners they are using internally when they are removed from the DOM.
 
+## Attributes
+
+bs-components uses its own virtual DOM.  To communicate with bs-components you can choose to send properties in the form of attributes down and then receive updated state information about the form of events back.  So you could for example tell a button to toggle active and then listen for the change event to know that you should update your button active state back to close.  This way you keep the active state in sync with the bs-button component.  For example this pseudo-code should convey how the flow should work:
+```html
+<bs-button role="button" class="btn btn-primary" data-toggle="button"
+  bind:active="myAppActiveStateForThisButton"
+  on-event:change.bs.button="nameOfFunctionThatKeepsMyAppActiveStateForThisButtonUpdated"
+>
+  toggle
+</bs-button>
+```
+* In the above example when you set the value `myAppActiveStateForThisButton` to true the button will toggle active.
+* Whenever the button value changes an event named `change.bs.button` is fired that contains the value the active state was changed to.  Note the value is saved in the event in the detail key.  `event.detail.active` will hold the new active state value.
+
+
 ## Methods
 
-bs-components uses plain JavaScript instead of jQuery.  This creates a differences in how the bs-component methods are called.  You need to use the plain javascript DOM selectors.
+While attributes are desireable for many environments some environments might prefer to use the more traditional Boostrap methods.  bs-components uses plain JavaScript instead of jQuery.  This creates a differences in how the bs-component methods are called.  You need to use the plain javascript DOM selectors.
 ```js
 document.querySelector('#my-bs-component').modal('show');
 ```
