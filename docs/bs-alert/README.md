@@ -127,7 +127,7 @@ document.getElementById("my-alert").addEventListener('close-event-custom-name', 
 
 ## Virtual DOM example
 
-Note: This example uses Vue but the same thing is possible in React, Angular, and even plain JavaScript.
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
 
 <toggling-alert></toggling-alert>
 

@@ -249,7 +249,8 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       }
       const parentDupes = getDuplicatesInArray(parentArr);
       for (let j = 0, len = parentDupes.length; j < len; j += 1) {
-        console.warn(`You are trying to toggle multiple collapses that have the same parent accordion (${parentDupes[j]}).
+        console.warn(`Found multiple instances for selector ${parentDupes[j]}
+                      You are trying to toggle multiple collapses that have the same parent accordion (${parentDupes[j]}).
                       Normally only one item in an accordion is toggled at one time.`);
       }
     }

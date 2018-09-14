@@ -8,22 +8,22 @@
   "components": {
     "bs-alert": {
       "bundleIds": {
-        "$": "kx9hi7z9"
+        "$": "9vzaoi4i"
       }
     },
     "bs-button": {
       "bundleIds": {
-        "$": "giry92fd"
+        "$": "94nwp8r3"
       }
     },
     "bs-collapse": {
       "bundleIds": {
-        "$": "hsrfw2vx"
+        "$": "hnmfcwny"
       }
     },
     "bs-dropdown": {
       "bundleIds": {
-        "$": "zgfh6grm"
+        "$": "qcvtykjk"
       }
     },
     "bs-modal": {
@@ -33,7 +33,7 @@
     },
     "bs-tooltip": {
       "bundleIds": {
-        "$": "bvm58tqs"
+        "$": "rhgxyvk4"
       }
     }
   }

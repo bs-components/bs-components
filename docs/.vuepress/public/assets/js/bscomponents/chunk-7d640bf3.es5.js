@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+bscomponents.loadBundle("chunk-7d640bf3.js",["exports"],function(e){function t(e,t){return Element.prototype.msMatchesSelector?e.msMatchesSelector(t):e.matches(t)}window.bscomponents.h,e.closest=function(e,n){if(Element.prototype.closest)return e.closest(n);var o=e;if(!document.documentElement.contains(o))return null;do{if(t(o,n))return o;o=o.parentElement||o.parentNode}while(null!==o&&1===o.nodeType);return null},e.elementMatches=t});

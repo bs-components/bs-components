@@ -101,7 +101,7 @@ The other components such as collapses and modals use bs-button components to tr
 
 
 ## Attributes
-| Attribute | Type |Default | Description |
+| Attribute | Type | Default | Description |
 | --- | --- | --- | --- |
 | active | boolean | false | when set to true the button will set its state to true. |
 
@@ -168,7 +168,7 @@ document.getElementById("my-button").addEventListener('custom-button-inactive-ev
 
 ## Virtual DOM examples
 
-Note: These examples use Vue but the same thing is possible in React, Angular, and even plain JavaScript.
+Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
 
 ### Virtual DOM toggle button example
 <toggle-button></toggle-button>

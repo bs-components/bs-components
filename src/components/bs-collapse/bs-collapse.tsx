@@ -21,6 +21,7 @@ import customEvent from '../../utilities/custom-event';
 import reflow from '../../utilities/reflow';
 import elementMatches from '../../utilities/element-matches';
 import getTargetSelector from '../../utilities/get-target-selector';
+import closest from '../../utilities/closest';
 
 @Component({ tag: 'bs-collapse', styleUrl: 'bs-collapse.css', shadow: false })
 export class BsCollapse { // eslint-disable-line import/prefer-default-export
@@ -50,7 +51,8 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
       if (_isElement(config.parent)) {
         accordionParentEl = config.parent;
       } else {
-        accordionParentEl = document.querySelector(config.parent);
+        // accordionParentEl = document.querySelector(config.parent);
+        accordionParentEl = closest(this.collapseEl, config.parent);
         if (!accordionParentEl) {
           console.warn(`unable to find accordion parent by selector: "${config.parent}"`);
         }
@@ -178,22 +180,27 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   }
 
   handleToggle(config) {
+    // console.log('config: ', config);
     if (_has(config, 'parent') && config.ignoreAccordion !== true) {
       // if it has a parent then it is part of an accordion
       let accordionParentEl;
       if (_isElement(config.parent)) {
         accordionParentEl = config.parent;
       } else {
-        accordionParentEl = document.querySelector(config.parent);
+        // accordionParentEl = document.querySelector(config.parent);
+        accordionParentEl = closest(this.collapseEl, config.parent);
         if (!accordionParentEl) {
           console.warn(`unable to find accordion parent by selector: "${config.parent}"`);
         }
       }
+      // console.log('accordionParentEl: ', accordionParentEl);
       if (accordionParentEl) {
         const childCollapseArr = Array.prototype.slice.call(accordionParentEl.querySelectorAll('.collapse'));
+        // console.log('childCollapseArr: ', childCollapseArr);
         for (let j = 0, len = childCollapseArr.length; j < len; j += 1) {
           if (hasClass(childCollapseArr[j], 'show')) {
             const isAMemberOfThisAccordion = elementMatches(accordionParentEl, childCollapseArr[j].dataset.parent);
+            // console.log('isAMemberOfThisAccordion: ', isAMemberOfThisAccordion);
             if (isAMemberOfThisAccordion) {
               config.collapseElPlannedToBeClosed.push(childCollapseArr[j]);
             }
@@ -201,6 +208,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
         }
       }
     }
+    // console.log('config: ', config);
     if (config.toggle === 'show') {
       config.collapseElPlannedToBeOpened.push(this.collapseEl);
       this.show(this.collapseEl, config);
@@ -256,6 +264,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   }
 
   hideCollapse(targetEl, config) {
+    // console.log('config in hideCollapse: ', config);
     if (!hasClass(targetEl, 'show')) {
       return;
     }
@@ -291,11 +300,11 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
 
   @Watch('showCollapse')
   handlePresentWatch(newValue /* , oldValue */) {
-    if (newValue === true) {
+    if (newValue) {
       this.handleToggle(this.getConfig({ toggle: 'show' }));
-    } else if (newValue === false) {
-      this.handleToggle(this.getConfig({ toggle: 'hide' }));
+      return;
     }
+    this.handleToggle(this.getConfig({ toggle: 'hide' }));
   }
 
   @Method()

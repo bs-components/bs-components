@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+const{h:e}=window.bscomponents;function t(e,t){return Element.prototype.msMatchesSelector?e.msMatchesSelector(t):e.matches(t)}function n(e,n){if(Element.prototype.closest)return e.closest(n);let o=e;if(!document.documentElement.contains(o))return null;do{if(t(o,n))return o;o=o.parentElement||o.parentNode}while(null!==o&&1===o.nodeType);return null}export{n as a,t as b};
