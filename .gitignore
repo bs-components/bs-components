@@ -23,3 +23,5 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 .env
 
+/docs/.vuepress/public/assets/js/bscomponents.js
+/docs/.vuepress/public/assets/js/bscomponents/*
