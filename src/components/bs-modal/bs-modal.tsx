@@ -43,7 +43,6 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   componentWillLoad() {
     this.isShown = hasClass(this.modalEl, 'show');
     this.isTransitioning = false;
-    // TODO: open of close modal with no transition
     if (this.showModal && !this.isShown) {
       this.getConfig();
       if (!hasClass(this.modalEl, 'fade')) {
@@ -475,7 +474,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
 
   @Watch('showModal')
   handleActiveWatch(newValue /* , oldValue */) {
-    if (newValue === true) {
+    if (newValue) {
       this.getConfig();
       this.show();
       return;

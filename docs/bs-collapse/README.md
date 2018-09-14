@@ -327,9 +327,9 @@ document.getElementById("my-collapse").addEventListener('hiya-collapse', functio
 });
 ```
 
-## Virtual DOM examples
+## Virtual DOM example
 
-Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
 
 <collapse-example></collapse-example>
 

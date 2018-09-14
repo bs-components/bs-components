@@ -201,6 +201,17 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
 | focus | boolean | true | Puts the focus on the modal when initialized. |
 | show | boolean | true | Shows the modal. |
 
+
+## Attributes
+| Attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| show-modal | boolean | false | when set to true the modal will toggle open |
+
+Example js how to set an attribute true:
+```js
+document.querySelector('#my-modal').setAttribute('show-modal', true);
+```
+
 ## Methods
 
 ### .modal({ keyboard: false });
@@ -287,5 +298,54 @@ document.getElementById('my-modal').addEventListener('modalFinishedClosing', fun
   console.log('my modal is hidden');
 });
 ```
+## Virtual DOM examples
 
+Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
+
+<toggle-modal></toggle-modal>
+```html
+<template>
+  <div>
+    <a class="btn btn-link" href="#" role="button" v-on:click.stop.prevent="() => showModal = !showModal">
+      Click here to manually toggle modal <span v-if="!this.showModal">Open</span><span v-else>Closed</span>
+    </a>
+    <bs-modal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModalLabel" aria-hidden="true"
+      v-bind:show-modal="showModal"
+      shown-event-name="modal-shown" v-on:modal-shown="() => showModal = true"
+      hidden-event-name="modal-hidden" v-on:modal-hidden="() => showModal = false"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="basicModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <a class="btn btn-link" href="#" role="button" v-on:click.stop.prevent="() => showModal = !showModal">
+              Click here to manually toggle modal <span v-if="!this.showModal">Open</span><span v-else>Closed</span>
+            </a>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </bs-modal>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'toggle-modal',
+  data() {
+    return {
+      showModal: false,
+    };
+  },
+}
+</script>
+```
 

@@ -8,8 +8,8 @@ Status:
 - [x] tooltip - run tests using: `yarn test-bs-tooltip` (needs docs for vdom)
 - [x] popover - run tests using: `yarn test-bs-popover` (needs docs for vdom)
 - [x] button - run tests using: `yarn test-bs-button`
-- [x] modal - run tests using: `yarn test-bs-modal` (needs docs for vdom)
-- [x] dropdown - run tests using: `yarn test-bs-dropdown` (needs docs for vdom)
+- [x] modal - run tests using: `yarn test-bs-modal`
+- [x] dropdown - run tests using: `yarn test-bs-dropdown`
 - [x] collapse - run tests using: `yarn test-bs-collapse`
 - [x] alert - run tests using: `yarn test-bs-alert`
 - [ ] tab todo - (aka navs and list group) - many frameworks have spa router solutions for this

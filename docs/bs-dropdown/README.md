@@ -288,9 +288,9 @@ document.getElementById('my-dropdown').addEventListener('bye-bye-dropdown', func
 });
 ```
 
-## Virtual DOM examples
+## Virtual DOM example
 
-Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
 
 <toggle-dropdown></toggle-dropdown>
 ```html
@@ -328,4 +328,4 @@ export default {
 </script>
 ```
 
-Note: If you click on the dropdown button to open it and then click on the manual close link you will see the dropdown closes then opens really fast.  What is happening is that by clicking on the dropdown you are giving the dropdown `focus`.  when clicking away from the dropdown it loses focus and this closes the dropdown.  This happens before the click is processed.  If you prefer this not to happen you can listen for the `focusout.bs.dropdown` event and use `event.preventDefault()` on it.
+Note: If you click on the dropdown button to open it and then click on the manual close link you will see the dropdown closes then opens really fast.  What is happening is that by clicking on the dropdown you are giving the dropdown `focus`.  when clicking away from the dropdown it loses focus and this closes the dropdown.  This happens before the click is processed.  If you prefer this not to happen you can listen for the `focusout.bs.dropdown` event and use `event.preventDefault()` on it.  This will let the focus leave the dropdown without closing it.
