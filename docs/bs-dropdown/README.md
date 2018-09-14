@@ -209,6 +209,31 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
 | display | string | 'dynamic' | 	By default, we use Popper.js for dynamic positioning. Disable this with `static`. |
 
 
+## Attributes
+| Attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| show-dropdown | boolean | false | when set to true the dropdown will toggle open |
+| ignore-focus-out | boolean | false | when set to true the dropdown will not close when it loses focus |
+
+Example js how to set an attribute true:
+```js
+document.querySelector('#my-dropdown').setAttribute('show-dropdown', true);
+```
+Example HTML with an attribute set to true
+```html
+<bs-dropdown show-dropdown class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</bs-dropdown>
+```
+
+
 ## Methods
 
 ### .dropdown('toggle');
@@ -231,6 +256,7 @@ document.querySelector('#my-dropdown').dropdown('update');
 | shown.bs.dropdown | This event is fired when the dropdown has been made visible to the user (will wait for CSS transitions, to complete). |
 | hide.bs.dropdown | This event is fired immediately when the hide instance method has been called. |
 | hidden.bs.dropdown | This event is fired when the dropdown has finished being hidden from the user (will wait for CSS transitions, to complete). |
+| focusout.bs.dropdown | This event is fired with the dropdown loses focus.  If you want to keep the dropdown open when focus is lost you can use .preventDefault() on this event to keep the dropdown open |
 
 ## Event Renaming Attributes
 
@@ -240,6 +266,9 @@ document.querySelector('#my-dropdown').dropdown('update');
 | shown-event-name | shown.bs.dropdown |
 | hide-event-name | hide.bs.dropdown |
 | hidden-event-name | hidden.bs.dropdown |
+| focusout-event-name | focusout.bs.dropdown |
+
+Note: do not rename `focusout-event-name` to `focusout` because this will collide with the normal focusout event name.
 
 ```html
 <bs-dropdown class="dropdown" id="my-dropdown" hidden-event-name="bye-bye-dropdown">
@@ -258,3 +287,45 @@ document.getElementById('my-dropdown').addEventListener('bye-bye-dropdown', func
   console.log('my dropdown is hidden');
 });
 ```
+
+## Virtual DOM examples
+
+Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
+
+<toggle-dropdown></toggle-dropdown>
+```html
+<template>
+  <div>
+    <bs-dropdown class="dropdown"
+      v-bind:show-dropdown="this.showDropdown"
+      show-event-name="dropdown-show" v-on:dropdown-show="() => showDropdown = true"
+      hide-event-name="dropdown-hide" v-on:dropdown-hide="() => showDropdown = false"
+    >
+      <button tabindex="-1" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropdown button
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+      </div>
+    </bs-dropdown>
+    <a class="btn btn-link" href="#" role="button" v-on:click.stop.prevent="() => showDropdown = !showDropdown">
+      Click here to manually toggle dropdown <span v-if="!showDropdown">Open</span><span v-else>Close</span>
+    </a>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'toggle-button',
+  data() {
+    return {
+      showDropdown: false,
+    };
+  },
+}
+</script>
+```
+
+Note: If you click on the dropdown button to open it and then click on the manual close link you will see the dropdown closes then opens really fast.  What is happening is that by clicking on the dropdown you are giving the dropdown `focus`.  when clicking away from the dropdown it loses focus and this closes the dropdown.  This happens before the click is processed.  If you prefer this not to happen you can listen for the `focusout.bs.dropdown` event and use `event.preventDefault()` on it.

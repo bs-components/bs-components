@@ -23,7 +23,7 @@ import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
 import getConfigBoolean from '../../utilities/get-config-boolean';
 
-@Component({ tag: 'bs-dropdown', shadow: false })
+@Component({ tag: 'bs-dropdown', styleUrl: 'bs-dropdown.css', shadow: false })
 export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Element() dropdownEl: HTMLElement;
 
@@ -31,8 +31,9 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   @Prop() shownEventName: string = 'shown.bs.dropdown';
   @Prop() hideEventName: string = 'hide.bs.dropdown';
   @Prop() hiddenEventName: string = 'hidden.bs.dropdown';
+  @Prop() focusoutEventName: string = 'focusout.bs.dropdown';
 
-  @Prop({ mutable: true, reflectToAttr: true }) showDropdown: boolean = false;
+  @Prop({ mutable: true }) showDropdown: boolean = false;
 
   @Prop({ mutable: true }) show: boolean = false;
   @Prop({ mutable: true }) config: any = {};
@@ -110,10 +111,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   initPopper(dropdownMenuEl) {
     this.inNavbar = BsDropdown.detectNavbar(this.dropdownEl);
     if (!this.inNavbar) {
-      // console.log('this.config: ', this.config);
       const popperConfig: any = BsDropdown.getPopperDropdownConfig(this.dropdownEl, dropdownMenuEl, this.config);
-
-      // console.log('popperConfig: ', popperConfig);
 
       // If boundary is not `scrollParent`, then set position to `static`
       // to allow the menu to "escape" the scroll parent's boundaries
@@ -238,7 +236,11 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
     this.initPopper(dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.shownEventName, {}, this.relatedTarget);
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          customEvent(this.dropdownEl, this.shownEventName, {}, this.relatedTarget);
+        });
+      });
     }, dropdownMenuTransitionDuration);
   }
 
@@ -262,7 +264,11 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     }
     const dropdownMenuTransitionDuration = getTransitionDurationFromElement(dropdownMenuEl);
     setTimeout(() => {
-      customEvent(this.dropdownEl, this.hiddenEventName, {}, this.relatedTarget);
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          customEvent(this.dropdownEl, this.hiddenEventName, {}, this.relatedTarget);
+        });
+      });
       this.relatedTarget = null;
     }, dropdownMenuTransitionDuration);
   }
@@ -310,6 +316,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     } else if (hasClass(dropdownEl, ClassName.menuright)) {
       placement = AttachmentMap.bottomend;
     }
+    // console.log('placement: ', placement);
     return placement;
   }
 
@@ -339,24 +346,30 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   @Listen('focusout')
   handleFocusOut(event) {
+    // console.log('event: ', event);
+    if (!event.relatedTarget) {
+      return;
+    }
+    const customFocusoutEvent = customEvent(this.dropdownEl, this.focusoutEventName, { originalFocusoutEventTarget: event.target }, event.relatedTarget);
+    if (customFocusoutEvent.defaultPrevented) {
+      return;
+    }
     if (this.show && !this.dropdownEl.contains(event.relatedTarget)) {
-      this.handleHideDropdown();
+      window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
+        window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
+          setTimeout(() => {
+            this.handleHideDropdown();
+          }, 0);
+        });
+      });
     }
   }
 
   keydownIsADropdownCommand(event) {
-    // If input/textarea:
-    //  - If space key => not a dropdown command
-    //  - If key is other than escape
-    //    - If key is not up or down => not a dropdown command
-    //    - If trigger inside the menu => not a dropdown command
-    // If not input/textarea:
-    //  - And not a key in REGEXP_KEYDOWN => not a dropdown command
     const ESCAPE_KEYCODE = 27; // KeyboardEvent.which value for Escape (Esc) key
     const SPACE_KEYCODE = 32; // KeyboardEvent.which value for space key
     const ARROW_UP_KEYCODE = 38; // KeyboardEvent.which value for up arrow key
     const ARROW_DOWN_KEYCODE = 40; // KeyboardEvent.which value for down arrow key
-    // const REGEXP_KEYDOWN = new RegExp(`${ARROW_UP_KEYCODE}|${ARROW_DOWN_KEYCODE}|${ESCAPE_KEYCODE}`);
     if (_toLower(event.target.tagName) === 'input' || _toLower(event.target.tagName) === 'textarea') {
       if (event.which === SPACE_KEYCODE) {
         return false;
@@ -454,10 +467,6 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
       return;
     }
     let myIndex = dropdownMenuItems.indexOf(document.activeElement);
-
-    // console.log('dropdownMenuItems: ', dropdownMenuItems);
-    // console.log('myIndex: ', myIndex);
-
     if (event.which === ARROW_UP_KEYCODE && myIndex > 0) { // Up
       myIndex -= 1;
     }
@@ -467,15 +476,24 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     if (myIndex < 0) {
       myIndex = 0;
     }
-    // console.log('myIndex: ', myIndex);
     dropdownMenuItems[myIndex].focus();
   }
 
   @Watch('showDropdown')
   handlePresentWatch(newValue /* , oldValue */) {
-    if (newValue === true && this.show === false) {
+    // console.log('newValue: ', newValue);
+    // console.log('this.show: ', this.show);
+    if (newValue && this.show) {
+      return;
+    }
+    if (!newValue && !this.show) {
+      return;
+    }
+    if (newValue && !this.show) {
       this.handleShowDropdown();
-    } else if (newValue === false && this.show === true) {
+      return;
+    }
+    if (!newValue && this.show) {
       this.handleHideDropdown();
     }
   }

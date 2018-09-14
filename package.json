@@ -23,8 +23,8 @@
     "build": "stencil build",
     "build-es5": "stencil build --es5",
     "start": "stencil build --dev --watch --serve",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "docs:dev": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress dev docs",
+    "docs:build": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress build docs",
     "test-bs-tooltip": "stencil build && testcafe ie,chrome ./tests/bs-tooltip.test.ts",
     "test-bs-button": "stencil build && testcafe chrome ./tests/bs-button.test.ts",
     "test-bs-modal": "stencil build && testcafe ie,chrome ./tests/bs-modal.test.ts",
@@ -39,10 +39,12 @@
   },
   "devDependencies": {
     "@stencil/core": "^0.11.4",
+    "del": "^3.0.0",
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-typescript": "^0.12.0",
+    "ncp": "^2.0.0",
     "testcafe": "^0.21.1",
     "typescript-eslint-parser": "^18.0.0",
     "vuepress": "^0.14.2"

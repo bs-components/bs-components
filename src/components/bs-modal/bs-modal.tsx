@@ -21,7 +21,7 @@ import reflow from '../../utilities/reflow';
 import customEvent from '../../utilities/custom-event';
 import getConfigBoolean from '../../utilities/get-config-boolean';
 
-@Component({ tag: 'bs-modal', shadow: false })
+@Component({ tag: 'bs-modal', styleUrl: 'bs-modal.css', shadow: false })
 export class BsModal { // eslint-disable-line import/prefer-default-export
   @Element() modalEl: HTMLElement;
 

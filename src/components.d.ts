@@ -60,6 +60,7 @@ declare global {
       'config': any;
       'defaults': any;
       'dropdown': (dropdownOptions?: {}, relatedTarget?: any) => true | HTMLElement;
+      'focusoutEventName': string;
       'hiddenEventName': string;
       'hideEventName': string;
       'show': boolean;
@@ -193,6 +194,7 @@ declare global {
     export interface BsDropdownAttributes extends HTMLAttributes {
       'config'?: any;
       'defaults'?: any;
+      'focusoutEventName'?: string;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'show'?: boolean;
