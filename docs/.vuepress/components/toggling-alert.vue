@@ -1,6 +1,6 @@
 <template>
   <div>
-    <bs-alert v-pre class="alert alert-warning alert-dismissible fade show" role="alert"
+    <bs-alert class="alert alert-warning alert-dismissible fade show" role="alert"
       no-self-remove-from-dom
       v-bind:dismiss="this.alertDismissed"
       opened-event-name="alert-opened" v-on:alert-opened="handleAlertOpened"
