@@ -298,9 +298,9 @@ document.getElementById('my-modal').addEventListener('modalFinishedClosing', fun
   console.log('my modal is hidden');
 });
 ```
-## Virtual DOM examples
+## Virtual DOM example
 
-Note: These examples use Vue but the same thing is possible in React, Angular, and plain JavaScript.
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
 
 <toggle-modal></toggle-modal>
 ```html

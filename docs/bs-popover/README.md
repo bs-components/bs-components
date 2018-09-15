@@ -72,12 +72,33 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
 | html | boolean | false | Allow HTML in the popover.  If true, HTML tags in the popovers title will be rendered in the popover. If false, .innerText method will be used to insert content into the DOM.  Use text if you're worried about XSS attacks. |
 | placement | string \| function | 'right' | How to position the popover - auto \| top \| bottom \| left \| right.  When auto is specified, it will dynamically reorient the popover. When a function is used to determine the placement, it is called with the popover DOM node as its first argument and the triggering element DOM node as its second. The this context is set to the popover instance. |
 | selector | string \| false | not really needed for web components as web components can be created and destroyed dynamically |
-| template | string | `'<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'`. |
+| template | string | `'<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'` |
 | title | string \| element \| function | '' | Default title value if `title` attribute isn't present.  If a function is given, it will be called with its this reference set to the element that the popover is attached to. |
 | trigger | string | 'click' | How popover is triggered - click | hover | focus | manual. You may pass multiple triggers; separate them with a space.  `'manual'` indicates that the popover will be triggered programmatically via the `.popover('show')`, `.popover('hide')` and `.popover('toggle')` methods; this value cannot be combined with any other trigger.  `'hover'` on its own will result in popovers that cannot be triggered via the keyboard, and should only be used if alternative methods for conveying the same information for keyboard users is present. |
 | offset | number \| string | 0 | Offset of the popover relative to its target. For more information refer to Popper.js's [offset docs](https://popper.js.org/popper-documentation.html#modifiers..offset.offset). |
 | fallbackPlacement | string \| array | 'flip' | Allow to specify which position Popper will use on fallback. For more information refer to Popper.js's [behavior docs](https://popper.js.org/popper-documentation.html#modifiers..flip.behavior) |
 | boundary | string \| element | 'scrollParent' | Overflow constraint boundary of the popover. Accepts the values of `'viewport'`, `'window'`, `'scrollParent'`, or an HTMLElement reference (JavaScript only). For more information refer to Popper.js's [preventOverflow docs](https://popper.js.org/popper-documentation.html#modifiers..preventOverflow.boundariesElement). |
+
+
+
+## Attributes
+| Attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| show-popover | boolean | false | when set to true the popover will toggle open |
+| disabled | boolean | false | when set to true the popover will be disabled.  if `disabled` is set to true initially then the popover will not start enabled. |
+| bs-title | string | '' | will override any other title settings and use this for the popover title.  The value is watched so that it will update dynamically. |
+| bs-content | string | '' | will override any other content settings and use this for the popover content.  The value is watched so that it will update dynamically. |
+
+Example js how to set an attribute true:
+```js
+document.querySelector('#my-popover').setAttribute('show-popover', true);
+```
+Example HTML with an attribute set to true
+```html
+<bs-tooltip role="button" class="btn btn-secondary" data-toggle="popover" bs-title="this will change if updated dynamically" bs-content="this auto updates too">
+  My popover
+</bs-tooltip>
+```
 
 
 ## Methods
@@ -130,21 +151,6 @@ Updates the position of an element’s popover.
 document.querySelector('#my-popover').popover('update');
 ```
 
-## Watched Attributes
-
-sometimes a tooltip will need to be updated dynamically.  These attributes are watched and if they change the tooltip will update itself.  These are meant to be used as helpers for frameworks that can bind data to attributes.
-
-| Attribute | Description |
-| --- | --- |
-| bs-title | will override any other title settings and use this for the tooltips title |
-| bs-content | will override any other content settings and use this for the tooltips content |
-
-```html
-<bs-tooltip role="button" class="btn btn-secondary" data-toggle="popover" bs-title="this will change if updated dynamically" bs-content="this auto updates too">
-  My popover
-</bs-tooltip>
-```
-
 
 ## Events
 
@@ -155,6 +161,10 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 | hide.bs.popover | This event is fired immediately when the hide instance method has been called. |
 | hidden.bs.popover | This event is fired when the popover has finished being hidden from the user (will wait for CSS transitions, to complete). |
 | inserted.bs.popover | This event is fired after the `show.bs.popover` event when the popover template has been added to the DOM. |
+| enable.bs.popover | triggered when a popover is first enabled.  If `.defaultPrevented()` is used on the event then the popover will not be enabled. |
+| enabled.bs.popover | triggered when a popover has finished being enabled. |
+| disable.bs.popover | triggered when a popover is first disabled.  If `.defaultPrevented()` is used on the event then the popover will not be disabled. |
+| disabled.bs.popover | triggered when a popover has finished being disabled. |
 
 
 ## Event Renaming Attributes
@@ -165,7 +175,12 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 | shown-event-name | shown.bs.popover |
 | hide-event-name | hide.bs.popover |
 | hidden-event-name | hidden.bs.popover |
-| inserted-event-name | inserted.bs.tooltip |
+| inserted-event-name | inserted.bs.popover |
+| enable-event-name | enable.bs.popover |
+| enabled-event-name | enabled.bs.popover |
+| disable-event-name | disable.bs.popover |
+| disabled-event-name | disabled.bs.popover |
+
 
 ```html
 <bs-tooltip id="my-popover" inserted-event-name="popover-is-in" role="button" class="btn btn-secondary" data-toggle="popover" title="this is a what ya call a popover">
@@ -176,4 +191,58 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 document.getElementById('my-popover').addEventListener('popover-is-in', function(event) {
   console.log('my popover was inserted into the DOM');
 });
+```
+## Virtual DOM example
+
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
+
+<popover-example></popover-example>
+```html
+<template>
+  <div>
+    <div class="row">
+      <div class="col-sm-3">
+        <bs-tooltip role="button" class="btn btn-secondary" data-toggle="popover"
+          v-bind:show-popover="showPopover"
+          v-bind:bs-title="bsTitle"
+          v-bind:bs-content="bsContent"
+          shown-event-name="popover-shown" v-on:popover-shown="() => showPopover = true"
+          hidden-event-name="popover-hidden" v-on:popover-hidden="() => showPopover = false"
+        >
+          popover
+        </bs-tooltip>
+      </div>
+      <div class="col-sm-3">
+        <a class="btn btn-link" href="#" role="button" v-on:click.stop.prevent="() => showPopover = !showPopover">
+          Click here to manually toggle popover <span v-if="!this.showPopover">Open</span><span v-else>Closed</span>
+        </a>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="popover-title" class="col-sm-3 col-form-label">Popover Title</label>
+      <div class="col-sm-9">
+        <input v-model="bsTitle" type="text" class="form-control" id="popover-title" aria-describedby="popoverTitle" placeholder="Popover Title">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="popover-content" class="col-sm-3 col-form-label">Popover Content</label>
+      <div class="col-sm-9">
+        <input v-model="bsContent" type="text" class="form-control" id="popover-content" aria-describedby="popoverContent" placeholder="Popover Content">
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'popover-example',
+  data() {
+    return {
+      showPopover: false,
+      bsTitle: 'dynamic title',
+      bsContent: 'dynamic content',
+    };
+  },
+}
+</script>
 ```

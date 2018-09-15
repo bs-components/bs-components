@@ -6,7 +6,7 @@ Status:
 
 - [ ] Documentation w/examples - todo - When tests are complete this should be easier
 - [x] tooltip - run tests using: `yarn test-bs-tooltip` (needs docs for vdom)
-- [x] popover - run tests using: `yarn test-bs-popover` (needs docs for vdom)
+- [x] popover - run tests using: `yarn test-bs-popover`
 - [x] button - run tests using: `yarn test-bs-button`
 - [x] modal - run tests using: `yarn test-bs-modal`
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`

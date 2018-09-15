@@ -982,11 +982,19 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     if (!this.isEnabled) {
       return;
     }
-    if (newValue === true) {
-      this.enter();
+    if (newValue) {
+      if (_includes(this.config.trigger, 'click')) {
+        this.activeTrigger.click = true;
+      } else if (_includes(this.config.trigger, 'hover') && !_includes(this.config.trigger, 'manual')) {
+        this.activeTrigger.hover = true;
+        this.hoverState = 'show';
+      } else if (_includes(this.config.trigger, 'focus') && !_includes(this.config.trigger, 'manual')) {
+        this.activeTrigger.focus = true;
+      }
+      this.show();
       return;
     }
-    this.leave();
+    this.hide();
   }
 
   @Watch('showTooltip')
