@@ -192,6 +192,7 @@ document.getElementById('my-popover').addEventListener('popover-is-in', function
   console.log('my popover was inserted into the DOM');
 });
 ```
+
 ## Virtual DOM example
 
 Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.

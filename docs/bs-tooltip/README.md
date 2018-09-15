@@ -66,6 +66,28 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
 | fallbackPlacement | string \| array | 'flip' | Allow to specify which position Popper will use on fallback. For more information refer to Popper.js's [behavior docs](https://popper.js.org/popper-documentation.html#modifiers..flip.behavior) |
 | boundary | string \| element | 'scrollParent' | Overflow constraint boundary of the tooltip. Accepts the values of `'viewport'`, `'window'`, `'scrollParent'`, or an HTMLElement reference (JavaScript only). For more information refer to Popper.js's [preventOverflow docs](https://popper.js.org/popper-documentation.html#modifiers..preventOverflow.boundariesElement). |
 
+
+
+## Attributes
+| Attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| show-tooltip | boolean | false | when set to true the tooltip will toggle open |
+| disabled | boolean | false | when set to true the tooltip will be disabled.  if `disabled` is set to true initially then the tooltip will not start enabled. |
+| bs-title | string | '' | will override any other title settings and use this for the tooltip title.  The value is watched so that it will update dynamically. |
+
+
+Example js how to set an attribute true:
+```js
+document.querySelector('#my-tooltip').setAttribute('show-tooltip', true);
+```
+Example HTML with an attribute set to true
+```html
+<bs-tooltip role="button" class="btn btn-secondary" data-toggle="tooltip" bs-title="this will change if updated dynamically">
+  Tooltip
+</bs-tooltip>
+```
+
+
 ## Methods
 
 ### .tooltip(options);
@@ -116,19 +138,6 @@ Updates the position of an element’s tooltip.
 document.querySelector('#my-tooltip').tooltip('update');
 ```
 
-## Watched Attributes
-
-sometimes a tooltip will need to be updated dynamically.  These attributes are watched and if they change the tooltip will update itself.  This is meant to be used as a helper for frameworks that can bind data to attributes.
-
-| Attribute | Description |
-| --- | --- |
-| bs-title | will override any other title settings and use this for the tooltips title |
-
-```html
-<bs-tooltip role="button" class="btn btn-secondary" data-toggle="tooltip" bs-title="this will change if updated dynamically">
-  Tooltip
-</bs-tooltip>
-```
 
 
 ## Events
@@ -140,6 +149,10 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 | hide.bs.tooltip | This event is fired immediately when the hide instance method has been called. |
 | hidden.bs.tooltip | This event is fired when the tooltip has finished being hidden from the user (will wait for CSS transitions, to complete). |
 | inserted.bs.tooltip | This event is fired after the `show.bs.tooltip` event when the tooltip template has been added to the DOM. |
+| enable.bs.tooltip | triggered when a tooltip is first enabled.  If `.defaultPrevented()` is used on the event then the tooltip will not be enabled. |
+| enabled.bs.tooltip | triggered when a tooltip has finished being enabled. |
+| disable.bs.tooltip | triggered when a tooltip is first disabled.  If `.defaultPrevented()` is used on the event then the tooltip will not be disabled. |
+| disabled.bs.tooltip | triggered when a tooltip has finished being disabled. |
 
 
 ## Event Renaming Attributes
@@ -151,6 +164,10 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 | hide-event-name | hide.bs.tooltip |
 | hidden-event-name | hidden.bs.tooltip |
 | inserted-event-name | inserted.bs.tooltip |
+| enable-event-name | enable.bs.tooltip |
+| enabled-event-name | enabled.bs.tooltip |
+| disable-event-name | disable.bs.tooltip |
+| disabled-event-name | disabled.bs.tooltip |
 
 ```html
 <bs-tooltip id="my-tooltip" hidden-event-name="tooltip-is-in" role="button" class="btn btn-secondary" data-toggle="tooltip" title="this is a what ya call a tooltip">
@@ -161,4 +178,44 @@ sometimes a tooltip will need to be updated dynamically.  These attributes are w
 document.getElementById('my-tooltip').addEventListener('tooltip-is-in', function(event) {
   console.log('my tooltip was inserted into the DOM');
 });
+```
+
+## Virtual DOM example
+
+Note: This example uses Vue but the same thing is possible in React, Angular, and plain JavaScript.
+
+<tooltip-example></tooltip-example>
+```html
+<template>
+  <div>
+    <bs-tooltip role="button" class="btn btn-secondary" data-toggle="tooltip"
+      v-bind:show-tooltip="showTooltip"
+      v-bind:bs-title="bsTitle"
+      shown-event-name="tooltip-shown" v-on:tooltip-shown="() => showTooltip = true"
+      hidden-event-name="tooltip-hidden" v-on:tooltip-hidden="() => showTooltip = false"
+    >
+      tooltip
+    </bs-tooltip>
+    <a class="btn btn-link" href="#" role="button" v-on:click.stop.prevent="() => showTooltip = !showTooltip">
+      Click here to manually toggle tooltip <span v-if="!this.showTooltip">Open</span><span v-else>Closed</span>
+    </a>
+    <p>&nbsp;</p>
+    <div class="form-group">
+      <label for="tooltip-title" class="col-form-label">Tooltip Title</label>
+        <input v-model="bsTitle" type="text" class="form-control" id="tooltip-title" aria-describedby="tooltipTitle" placeholder="tooltip Title">
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'tooltip-example',
+  data() {
+    return {
+      showTooltip: false,
+      bsTitle: 'dynamic title',
+    };
+  },
+}
+</script>
 ```
