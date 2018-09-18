@@ -42,6 +42,7 @@ declare global {
       'button': (buttonOptions?: any) => true | HTMLElement;
       'dropdown': (dropdownOptions?: any) => any;
       'inactiveEventName': string;
+      'tab': (tabOptions?: any) => any;
       'tabindex': string|number;
     }
 
@@ -77,6 +78,15 @@ declare global {
       'showEventName': string;
       'showModal': boolean;
       'shownEventName': string;
+    }
+
+    interface BsTab {
+      'hiddenEventName': string;
+      'hideEventName': string;
+      'ignoreDataToggles': boolean;
+      'showEventName': string;
+      'shownEventName': string;
+      'tab': (tabOptions?: {}, triggeringButton?: any) => true | HTMLElement;
     }
 
     interface BsTooltip {
@@ -143,6 +153,14 @@ declare global {
     };
     
 
+    interface HTMLBsTabElement extends StencilComponents.BsTab, HTMLStencilElement {}
+
+    var HTMLBsTabElement: {
+      prototype: HTMLBsTabElement;
+      new (): HTMLBsTabElement;
+    };
+    
+
     interface HTMLBsTooltipElement extends StencilComponents.BsTooltip, HTMLStencilElement {}
 
     var HTMLBsTooltipElement: {
@@ -159,6 +177,7 @@ declare global {
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
     'bs-modal': JSXElements.BsModalAttributes;
+    'bs-tab': JSXElements.BsTabAttributes;
     'bs-tooltip': JSXElements.BsTooltipAttributes;
     }
   }
@@ -211,6 +230,14 @@ declare global {
       'shownEventName'?: string;
     }
 
+    export interface BsTabAttributes extends HTMLAttributes {
+      'hiddenEventName'?: string;
+      'hideEventName'?: string;
+      'ignoreDataToggles'?: boolean;
+      'showEventName'?: string;
+      'shownEventName'?: string;
+    }
+
     export interface BsTooltipAttributes extends HTMLAttributes {
       'bsContent'?: string;
       'bsTitle'?: string;
@@ -238,6 +265,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
     'bs-modal': HTMLBsModalElement
+    'bs-tab': HTMLBsTabElement
     'bs-tooltip': HTMLBsTooltipElement
   }
 
@@ -247,6 +275,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;
     'bs-modal': HTMLBsModalElement;
+    'bs-tab': HTMLBsTabElement;
     'bs-tooltip': HTMLBsTooltipElement;
   }
 }

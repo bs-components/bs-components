@@ -30,7 +30,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   @Prop() hideEventName: string = 'hide.bs.modal';
   @Prop() hiddenEventName: string = 'hidden.bs.modal';
 
-  @Prop({ mutable: true, reflectToAttr: true }) showModal: boolean = false;
+  @Prop({ mutable: true }) showModal: boolean = false;
 
   @State() isShown: boolean;
   @State() isTransitioning: boolean;
