@@ -96,6 +96,26 @@
   <div class="container">
     <p>&nbsp;</p>
 
+
+    <ul class="nav nav-tabs">
+      <li>
+        <bs-button tabindex="-1" id="home-toggle">
+          <a class="nav-item active" href="#home" data-toggle="tab" aria-selected="true" role="tab">Home</a>
+        </bs-button>
+      </li>
+      <li>
+        <bs-button tabindex="-1" id="profile-toggle">
+          <a class="nav-item" href="#profile" data-toggle="tab" aria-selected="false" role="tab">Profile</a>
+        </bs-button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+    </div>
+    <p>&nbsp;</p>
+
+
     <ul class="drop nav">
       <li class="dropdown"><a data-toggle="dropdown" href="#">1</a>
         <ul class="dropdown-menu nav">

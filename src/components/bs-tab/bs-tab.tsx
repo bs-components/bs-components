@@ -43,7 +43,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
     let relatedTarget;
     for (let j = 0, len = previousActiveTabs.length; j < len; j += 1) {
       relatedTarget = previousActiveTabs[j];
-      eventArr.push(customEvent(previousActiveTabs[j], this.hideEventName, {}, previousActiveTabs[j]));
+      eventArr.push(customEvent(previousActiveTabs[j], this.hideEventName, {}, this.tabEl));
     }
     eventArr.push(customEvent(this.tabEl, this.showEventName, {}, relatedTarget));
     if (eventArr.some(showOrHideEvent => showOrHideEvent.defaultPrevented)) {
@@ -55,7 +55,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
     }
     BsTab.activate(this.tabEl, previousActiveTabs, () => {
       for (let x = 0, len = previousActiveTabs.length; x < len; x += 1) {
-        customEvent(previousActiveTabs[x], this.hiddenEventName, {}, previousActiveTabs[x]);
+        customEvent(previousActiveTabs[x], this.hiddenEventName, {}, this.tabEl);
       }
       customEvent(this.tabEl, this.shownEventName, {}, relatedTarget);
     });

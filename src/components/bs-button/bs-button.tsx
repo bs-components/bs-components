@@ -148,11 +148,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       }
       // console.log('space event: ', event);
       if (event.target.dataset.toggle === 'collapse') {
-        BsButton.handleCollapseToggle(event.target); // TODO: toggle a prop
+        BsButton.handleCollapseToggle(event.target);
         return;
       }
       if (event.target.dataset.toggle === 'modal') {
-        BsButton.handleModalToggle(event.target); // TODO: toggle a prop
+        BsButton.handleModalToggle(event.target);
         return;
       }
       this.handleToggle(this.bsButtonEl);
@@ -179,11 +179,11 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
         event.preventDefault();
       }
       if (event.target.dataset.toggle === 'collapse') {
-        BsButton.handleCollapseToggle(event.target); // TODO: toggle a prop
+        BsButton.handleCollapseToggle(event.target);
         return;
       }
       if (event.target.dataset.toggle === 'modal') {
-        BsButton.handleModalToggle(event.target); // TODO: toggle a prop
+        BsButton.handleModalToggle(event.target);
         return;
       }
       this.handleToggle(this.bsButtonEl);
@@ -234,7 +234,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //   event.stopPropagation();
       //   event.preventDefault();
       // }
-      BsButton.handleTabToggle(closestTabToggleEl);
+      this.handleTabToggle(closestTabToggleEl);
     }
     const closestPillToggleEl = closest(event.target, '[data-toggle="pill"]');
     if (closestPillToggleEl && this.bsButtonEl.contains(closestPillToggleEl)) {
@@ -242,7 +242,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //   event.stopPropagation();
       //   event.preventDefault();
       // }
-      BsButton.handleTabToggle(closestPillToggleEl);
+      this.handleTabToggle(closestPillToggleEl);
     }
     const closestListToggleEl = closest(event.target, '[data-toggle="list"]');
     if (closestListToggleEl && this.bsButtonEl.contains(closestListToggleEl)) {
@@ -250,7 +250,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
       //   event.stopPropagation();
       //   event.preventDefault();
       // }
-      BsButton.handleTabToggle(closestListToggleEl);
+      this.handleTabToggle(closestListToggleEl);
     }
 
     this.handleToggle(event.target);
@@ -296,19 +296,41 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  static handleTabToggle(triggeringButton) {
-    const targetSelector = getTargetSelector(triggeringButton);
-    if (targetSelector) {
-      try {
-        const targetEl: any = document.querySelector(targetSelector);
-        if (targetEl.tab) {
-          targetEl.tab('show', triggeringButton);
-        }
-      } catch (err) {
-        console.log('bs-button tab toggle target must be a valid css selector string');
-        console.error(err.message);
-      }
+  handleTabToggle(triggeringButton) {
+    const tabToggler = this.getTabToggler(triggeringButton);
+    if (!tabToggler) {
+      throw new Error('tab method can only be run on a bs-button that contains [data-toggle="tab"], [data-toggle="pill"], or data-toggle="list"');
     }
+    const targetSelector = getTargetSelector(tabToggler);
+    if (!targetSelector) {
+      throw new Error(`invalid tab selector: "${targetSelector}"`);
+    }
+    try {
+      const targetEl: any = document.querySelector(targetSelector);
+      if (!targetEl) {
+        throw new Error(`unable to find tab target selector "${targetSelector}"`);
+      }
+      if (targetEl.tab) {
+        targetEl.tab('show', tabToggler);
+      }
+    } catch (err) {
+      console.log('bs-button modal toggle target must be a valid css selector string');
+      console.error(err.message);
+    }
+
+
+    // const targetSelector = getTargetSelector(triggeringButton);
+    // if (targetSelector) {
+    //   try {
+    //     const targetEl: any = document.querySelector(targetSelector);
+    //     if (targetEl.tab) {
+    //       targetEl.tab('show', triggeringButton);
+    //     }
+    //   } catch (err) {
+    //     console.log('bs-button tab toggle target must be a valid css selector string');
+    //     console.error(err.message);
+    //   }
+    // }
   }
 
 
@@ -472,9 +494,9 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     return bsDropdownEl.dropdown(dropdownOptions, this.bsButtonEl);
   }
 
-  getTabToggler() {
-    if (this.bsButtonEl.dataset.toggle === 'tab' || this.bsButtonEl.dataset.toggle === 'pill' || this.bsButtonEl.dataset.toggle === 'list') {
-      return this.bsButtonEl;
+  getTabToggler(element) {
+    if (element.dataset.toggle === 'tab' || element.dataset.toggle === 'pill' || element.dataset.toggle === 'list') {
+      return element;
     }
     const tabToggler = this.bsButtonEl.querySelector('[data-toggle="tab"]');
     if (tabToggler) {
@@ -494,7 +516,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   @Method()
   tab(tabOptions:any = {}) {
     // this is a proxy
-    const tabToggler = this.getTabToggler();
+    const tabToggler = this.getTabToggler(this.bsButtonEl);
     if (!tabToggler) {
       throw new Error('tab method can only be run on a bs-button that contains [data-toggle="tab"], [data-toggle="pill"], or data-toggle="list"');
     }

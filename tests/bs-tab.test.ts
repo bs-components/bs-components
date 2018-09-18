@@ -102,17 +102,17 @@ const callTabMethodBySelectorAndWaitForEventBySelector = ClientFunction((methodS
 // test('tab method is defined', async (t) => {
 //   const tabHtml = `
 //     <ul class="nav nav-tabs" id="myTab" role="tablist">
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
 //           </bs-button>
@@ -136,17 +136,17 @@ const callTabMethodBySelectorAndWaitForEventBySelector = ClientFunction((methodS
 // test('should throw explicit error on undefined method', async (t) => {
 //   const tabHtml = `
 //     <ul class="nav nav-tabs" id="myTab" role="tablist">
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
 //           </bs-button>
@@ -167,17 +167,17 @@ const callTabMethodBySelectorAndWaitForEventBySelector = ClientFunction((methodS
 // test('should return the element', async (t) => {
 //   const tabHtml = `
 //     <ul class="nav nav-tabs" id="myTab" role="tablist">
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
 //           </bs-button>
 //       </li>
-//       <li class="nav-item">
+//       <li class="nav-link">
 //           <bs-button tabindex="-1">
 //             <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
 //           </bs-button>
@@ -448,63 +448,304 @@ const callTabMethodBySelectorAndWaitForEventBySelector = ClientFunction((methodS
 //   await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#profile-toggle', 'show', '#profile', 'shown.bs.tab')).notOk();
 // });
 
-test('show and shown events should reference correct relatedTarget', async (t) => {
+// test('show and shown events should reference correct relatedTarget', async (t) => {
+//   const tabHtml = `
+//     <ul class="drop nav">
+//       <li class="dropdown"><a data-toggle="dropdown" href="#">1</a>
+//         <ul class="dropdown-menu nav">
+//           <li>
+//             <bs-button tabindex="-1" id="first-tab-toggle">
+//               <a href="#a1-1" data-toggle="tab">1-1</a>
+//             </bs-button>
+//           </li>
+//           <li>
+//             <bs-button tabindex="-1" id="last-tab-toggle">
+//               <a href="#a1-2" data-toggle="tab">1-2</a>
+//             </bs-button>
+//           </li>
+//         </ul>
+//       </li>
+//     </ul>
+//     <div class="tab-content">
+//       <bs-tab class="tab-pane" id="a1-1">a1-1</bs-tab>
+//       <bs-tab class="tab-pane" id="a1-2">a1-2</bs-tab>
+//     </div>`;
+//   const firstTabToggle = Selector('#first-tab-toggle');
+//   const lastTabToggle = Selector('#last-tab-toggle');
+//   await t.expect(await setHtml(_.trim(tabHtml))).ok();
+//   await t.expect(await firstTabToggle.exists).ok({ timeout: 5000 });
+//   await t.expect(await lastTabToggle.exists).ok({ timeout: 5000 });
+//   const showAndShownEventsShouldReferenceCorrectRelatedTarget = ClientFunction((methodSelector, methodOption, eventSelector) => new Promise((resolve) => {
+//     function showEventBySelector(myEventSelector) {
+//       return new Promise((resolveWait) => {
+//         const myTimeout = setTimeout(() => {
+//           // 6 seconds should be more than long enough for any reasonable real world transition
+//           // eslint-disable-next-line no-use-before-define
+//           document.querySelector(myEventSelector).removeEventListener('show.bs.tab', handleEventHappened);
+//           resolveWait({ show: false });
+//         }, 6000);
+//         const handleEventHappened = (event) => {
+//           clearTimeout(myTimeout);
+//           resolveWait({ show: event.relatedTarget.id });
+//         };
+//         document.querySelector(myEventSelector).addEventListener('show.bs.tab', handleEventHappened, { once: true });
+//       });
+//     }
+//     function shownEventBySelector(myEventSelector) {
+//       return new Promise((resolveWait) => {
+//         const myTimeout = setTimeout(() => {
+//           // 6 seconds should be more than long enough for any reasonable real world transition
+//           // eslint-disable-next-line no-use-before-define
+//           document.querySelector(myEventSelector).removeEventListener('shown.bs.tab', handleEventHappened);
+//           resolveWait({ shown: false });
+//         }, 6000);
+//         const handleEventHappened = (event) => {
+//           resolveWait({ shown: event.relatedTarget.id });
+//           clearTimeout(myTimeout);
+//           resolveWait(true);
+//         };
+//         document.querySelector(myEventSelector).addEventListener('shown.bs.tab', handleEventHappened, { once: true });
+//       });
+//     }
+//     function delayedMethodBySelector(myMethodSelector, myMethodOption, delay) {
+//       return new Promise((resolveMethod) => {
+//         setTimeout(() => {
+//           const el:any = document.querySelector(myMethodSelector);
+//           el.tab(myMethodOption);
+//           resolveMethod(true);
+//         }, delay);
+//       });
+//     }
+//     Promise.all([
+//       showEventBySelector(eventSelector),
+//       shownEventBySelector(eventSelector),
+//       delayedMethodBySelector(methodSelector, methodOption, 150),
+//     ]).then((resultArr) => {
+//       if (resultArr[2] !== true) {
+//         resolve(false);
+//       } else {
+//         resolve({
+//           show: (resultArr[0] as any).show,
+//           shown: (resultArr[1] as any).shown,
+//         });
+//       }
+//     });
+//   }));
+//   await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#first-tab-toggle', 'show', '#a1-1', 'shown.bs.tab')).ok();
+//   const results = await showAndShownEventsShouldReferenceCorrectRelatedTarget('#last-tab-toggle', 'show', '#a1-2');
+//   await t.expect(results.show).eql('a1-1', 'references correct element as relatedTarget');
+//   await t.expect(results.shown).eql('a1-1', 'references correct element as relatedTarget');
+// });
+
+
+// test('should fire hide and hidden events', async (t) => {
+//   const tabHtml = `
+//     <ul class="nav">
+//       <li>
+//         <bs-button tabindex="-1" id="home-toggle">
+//           <a class="nav-link" data-toggle="tab" href="#home" role="tab">Home</a>
+//         </bs-button>
+//       </li>
+//       <li>
+//         <bs-button tabindex="-1" id="profile-toggle">
+//           <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Profile</a>
+//         </bs-button>
+//       </li>
+//     </ul>
+//     <div class="tab-content">
+//       <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+//       <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+//     </div>`;
+//   const tabHome = Selector('#home');
+//   const tabProfile = Selector('#profile');
+//   await t.expect(await setHtml(_.trim(tabHtml))).ok();
+//   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
+//   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
+//   const shouldFireHideAndHiddenEvents = ClientFunction((methodSelector, methodOption, eventSelector) => new Promise((resolve) => {
+//     function waitForEventBySelector(myEventSelector, myEventName) {
+//       return new Promise((resolveWait) => {
+//         const myTimeout = setTimeout(() => {
+//           // 6 seconds should be more than long enough for any reasonable real world transition
+//           // eslint-disable-next-line no-use-before-define
+//           document.querySelector(eventSelector).removeEventListener(myEventName, handleEventHappened);
+//           resolveWait(false);
+//         }, 6000);
+//         const handleEventHappened = () => {
+//           clearTimeout(myTimeout);
+//           resolveWait(true);
+//         };
+//         document.querySelector(myEventSelector).addEventListener(myEventName, handleEventHappened, { once: true });
+//       });
+//     }
+//     function delayedMethodBySelector(myMethodSelector, myMethodOption, delay) {
+//       return new Promise((resolveMethod) => {
+//         setTimeout(() => {
+//           const el:any = document.querySelector(myMethodSelector);
+//           el.tab(myMethodOption);
+//           resolveMethod(true);
+//         }, delay);
+//       });
+//     }
+//     Promise.all([
+//       waitForEventBySelector(eventSelector, 'hide.bs.tab'),
+//       waitForEventBySelector(eventSelector, 'hidden.bs.tab'),
+//       delayedMethodBySelector(methodSelector, methodOption, 150),
+//     ]).then((resultArr) => {
+//       if (resultArr[2] !== true) {
+//         resolve(false);
+//       } else {
+//         resolve({
+//           hide: resultArr[0],
+//           hidden: resultArr[1],
+//         });
+//       }
+//     });
+//   }));
+//   await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+//   const results = await shouldFireHideAndHiddenEvents('#profile-toggle', 'show', '#home');
+//   await t.expect(results.hide).ok();
+//   await t.expect(results.hidden).ok();
+// });
+
+
+// test('should not fire hidden when hide is prevented', async (t) => {
+//   const tabHtml = `
+//     <ul class="nav">
+//     <li>
+//       <bs-button tabindex="-1" id="home-toggle">
+//         <a class="nav-link" data-toggle="tab" href="#home" role="tab">Home</a>
+//       </bs-button>
+//     </li>
+//     <li>
+//       <bs-button tabindex="-1" id="profile-toggle">
+//         <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Profile</a>
+//       </bs-button>
+//     </li>
+//     </ul>
+//     <div class="tab-content">
+//       <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+//       <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+//     </div>`;
+//   const tabHome = Selector('#home');
+//   const tabProfile = Selector('#profile');
+//   await t.expect(await setHtml(_.trim(tabHtml))).ok();
+//   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
+//   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
+
+
+//   const shouldNotFireHiddenWhenHideIsPrevented = ClientFunction((methodSelector, methodOption, eventSelector, eventName) => new Promise((resolve) => {
+//     function preventHideEventBySelector(myEventSelector) {
+//       return new Promise((resolveWait) => {
+//         const myTimeout = setTimeout(() => {
+//           // 6 seconds should be more than long enough for any reasonable real world transition
+//           // eslint-disable-next-line no-use-before-define
+//           document.querySelector(eventSelector).removeEventListener('hide.bs.tab', handleEventHappened);
+//           resolveWait(false);
+//         }, 6000);
+//         const handleEventHappened = (event) => {
+//           event.preventDefault();
+//           clearTimeout(myTimeout);
+//           resolveWait(true);
+//         };
+//         document.querySelector(myEventSelector).addEventListener('hide.bs.tab', handleEventHappened, { once: true });
+//       });
+//     }
+//     function waitForEventBySelector(myEventSelector, myEventName) {
+//       return new Promise((resolveWait) => {
+//         const myTimeout = setTimeout(() => {
+//           // 6 seconds should be more than long enough for any reasonable real world transition
+//           // eslint-disable-next-line no-use-before-define
+//           document.querySelector(eventSelector).removeEventListener(myEventName, handleEventHappened);
+//           resolveWait(false);
+//         }, 6000);
+//         const handleEventHappened = () => {
+//           clearTimeout(myTimeout);
+//           resolveWait(true);
+//         };
+//         document.querySelector(myEventSelector).addEventListener(myEventName, handleEventHappened, { once: true });
+//       });
+//     }
+//     function delayedMethodBySelector(myMethodSelector, myMethodOption, delay) {
+//       return new Promise((resolveMethod) => {
+//         setTimeout(() => {
+//           const el:any = document.querySelector(myMethodSelector);
+//           el.tab(myMethodOption);
+//           resolveMethod(true);
+//         }, delay);
+//       });
+//     }
+//     Promise.all([
+//       preventHideEventBySelector(eventSelector),
+//       waitForEventBySelector(eventSelector, eventName),
+//       delayedMethodBySelector(methodSelector, methodOption, 150),
+//     ]).then((resultArr) => {
+//       resolve(resultArr.every(result => result === true));
+//     });
+//   }));
+
+//   await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+//   await t.expect(await tabHome.hasClass('active')).ok({ timeout: 5000 });
+//   console.log('\t...waiting for timeout on hidden event (hide was prevented)...');
+//   await t.expect(await shouldNotFireHiddenWhenHideIsPrevented('#profile-toggle', 'show', '#home', 'hidden.bs.tab')).notOk('show event prevented shown event');
+//   await t.expect(await tabProfile.hasClass('active')).notOk({ timeout: 5000 });
+// });
+
+
+test('hide and hidden events contain correct relatedTarget', async (t) => {
   const tabHtml = `
-    <ul class="drop nav">
-      <li class="dropdown"><a data-toggle="dropdown" href="#">1</a>
-        <ul class="dropdown-menu nav">
-          <li>
-            <bs-button tabindex="-1" id="first-tab-toggle">
-              <a href="#a1-1" data-toggle="tab">1-1</a>
-            </bs-button>
-          </li>
-          <li>
-            <bs-button tabindex="-1" id="last-tab-toggle">
-              <a href="#a1-2" data-toggle="tab">1-2</a>
-            </bs-button>
-          </li>
-        </ul>
-      </li>
+    <ul class="nav">
+    <li>
+      <bs-button tabindex="-1" id="home-toggle">
+        <a class="nav-link" data-toggle="tab" href="#home" role="tab">Home</a>
+      </bs-button>
+    </li>
+    <li>
+      <bs-button tabindex="-1" id="profile-toggle">
+        <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Profile</a>
+      </bs-button>
+    </li>
     </ul>
     <div class="tab-content">
-      <bs-tab class="tab-pane" id="a1-1">a1-1</bs-tab>
-      <bs-tab class="tab-pane" id="a1-2">a1-2</bs-tab>
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
     </div>`;
-  const firstTabToggle = Selector('#first-tab-toggle');
-  const lastTabToggle = Selector('#last-tab-toggle');
+  const tabHome = Selector('#home');
+  const tabProfile = Selector('#profile');
   await t.expect(await setHtml(_.trim(tabHtml))).ok();
-  await t.expect(await firstTabToggle.exists).ok({ timeout: 5000 });
-  await t.expect(await lastTabToggle.exists).ok({ timeout: 5000 });
-  const showAndShownEventsShouldReferenceCorrectRelatedTarget = ClientFunction((methodSelector, methodOption, eventSelector) => new Promise((resolve) => {
-    function showEventBySelector(myEventSelector) {
+  await t.expect(await tabHome.exists).ok({ timeout: 5000 });
+  await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
+
+
+  const hideAndHiddenEventsContainCorrectRelatedTarget = ClientFunction((methodSelector, methodOption, eventSelector) => new Promise((resolve) => {
+    function hideEventBySelector(myEventSelector) {
       return new Promise((resolveWait) => {
         const myTimeout = setTimeout(() => {
           // 6 seconds should be more than long enough for any reasonable real world transition
           // eslint-disable-next-line no-use-before-define
-          document.querySelector(myEventSelector).removeEventListener('show.bs.tab', handleEventHappened);
-          resolveWait({ show: false });
+          document.querySelector(myEventSelector).removeEventListener('hide.bs.tab', handleEventHappened);
+          resolveWait({ hide: false });
         }, 6000);
         const handleEventHappened = (event) => {
           clearTimeout(myTimeout);
-          resolveWait({ show: event.relatedTarget.id });
+          resolveWait({ hide: event.relatedTarget.id });
         };
-        document.querySelector(myEventSelector).addEventListener('show.bs.tab', handleEventHappened, { once: true });
+        document.querySelector(myEventSelector).addEventListener('hide.bs.tab', handleEventHappened, { once: true });
       });
     }
-    function shownEventBySelector(myEventSelector) {
+    function hiddenEventBySelector(myEventSelector) {
       return new Promise((resolveWait) => {
         const myTimeout = setTimeout(() => {
           // 6 seconds should be more than long enough for any reasonable real world transition
           // eslint-disable-next-line no-use-before-define
-          document.querySelector(myEventSelector).removeEventListener('shown.bs.tab', handleEventHappened);
-          resolveWait({ shown: false });
+          document.querySelector(myEventSelector).removeEventListener('hidden.bs.tab', handleEventHappened);
+          resolveWait({ hidden: false });
         }, 6000);
         const handleEventHappened = (event) => {
-          resolveWait({ shown: event.relatedTarget.id });
+          resolveWait({ hidden: event.relatedTarget.id });
           clearTimeout(myTimeout);
           resolveWait(true);
         };
-        document.querySelector(myEventSelector).addEventListener('shown.bs.tab', handleEventHappened, { once: true });
+        document.querySelector(myEventSelector).addEventListener('hidden.bs.tab', handleEventHappened, { once: true });
       });
     }
     function delayedMethodBySelector(myMethodSelector, myMethodOption, delay) {
@@ -517,24 +758,145 @@ test('show and shown events should reference correct relatedTarget', async (t) =
       });
     }
     Promise.all([
-      showEventBySelector(eventSelector),
-      shownEventBySelector(eventSelector),
+      hideEventBySelector(eventSelector),
+      hiddenEventBySelector(eventSelector),
       delayedMethodBySelector(methodSelector, methodOption, 150),
     ]).then((resultArr) => {
       if (resultArr[2] !== true) {
         resolve(false);
       } else {
         resolve({
-          show: (resultArr[0] as any).show,
-          shown: (resultArr[1] as any).shown,
+          hide: (resultArr[0] as any).hide,
+          hidden: (resultArr[1] as any).hidden,
         });
       }
     });
   }));
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#first-tab-toggle', 'show', '#a1-1', 'shown.bs.tab')).ok();
-  const results = await showAndShownEventsShouldReferenceCorrectRelatedTarget('#last-tab-toggle', 'show', '#a1-2');
-  await t.expect(results.show).eql('a1-1', 'references correct element as relatedTarget');
-  await t.expect(results.shown).eql('a1-1', 'references correct element as relatedTarget');
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await tabHome.hasClass('active')).ok({ timeout: 5000 });
+  const results = await hideAndHiddenEventsContainCorrectRelatedTarget('#profile-toggle', 'show', '#home');
+  await t.expect(await tabProfile.hasClass('active')).ok({ timeout: 5000 });
+  await t.expect(results.hide).eql('profile', 'references correct element as relatedTarget');
+  await t.expect(results.hidden).eql('profile', 'references correct element as relatedTarget');
 });
 
-// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tab.js#L210
+
+test('selected tab should have aria-selected', async (t) => {
+  const tabHtml = `
+    <ul class="nav nav-tabs">
+      <li>
+        <bs-button tabindex="-1" id="home-toggle">
+          <a class="nav-link active" href="#home" data-toggle="tab" aria-selected="true" role="tab">Home</a>
+        </bs-button>
+      </li>
+      <li>
+        <bs-button tabindex="-1" id="profile-toggle">
+          <a class="nav-link" href="#profile" data-toggle="tab" aria-selected="false" role="tab">Profile</a>
+        </bs-button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+    </div>`;
+  const homeToggle = Selector('#home-toggle');
+  const profileToggle = Selector('#profile-toggle');
+  const tabButtons = Selector('[data-toggle="tab"]');
+  await t.expect(await setHtml(_.trim(tabHtml))).ok();
+  await t.expect(await homeToggle.exists).ok({ timeout: 5000 });
+  await t.expect(await profileToggle.exists).ok({ timeout: 5000 });
+
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
+  await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
+
+  await t.click(tabButtons.nth(1));
+  await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
+  await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
+
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
+  await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
+
+  await t.click(tabButtons.nth(0));
+  await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('true', 'after second show event, shown tab still has aria-selected = true');
+  await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('false', 'after second show event, hidden tab has aria-selected = false');
+});
+
+
+test('selected tab should deactivate previous selected tab', async (t) => {
+  const tabHtml = `
+    <ul class="nav nav-tabs">
+      <li>
+        <bs-button tabindex="-1" id="home-toggle">
+          <a class="nav-link active" href="#home" data-toggle="tab" aria-selected="true" role="tab">Home</a>
+        </bs-button>
+      </li>
+      <li>
+        <bs-button tabindex="-1" id="profile-toggle">
+          <a class="nav-link" href="#profile" data-toggle="tab" aria-selected="false" role="tab">Profile</a>
+        </bs-button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+    </div>`;
+  const homeToggle = Selector('#home-toggle');
+  const profileToggle = Selector('#profile-toggle');
+  const tabButtons = Selector('[data-toggle="tab"]');
+  await t.expect(await setHtml(_.trim(tabHtml))).ok();
+  await t.expect(await homeToggle.exists).ok({ timeout: 5000 });
+  await t.expect(await profileToggle.exists).ok({ timeout: 5000 });
+  await t.click(tabButtons.nth(1));
+  await t.expect(await tabButtons.nth(0).hasClass('active')).notOk();
+  await t.expect(await tabButtons.nth(1).hasClass('active')).ok();
+});
+
+
+test('selected tab should deactivate previous selected link in dropdown', async (t) => {
+  const tabHtml = `
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <bs-button tabindex="-1">
+          <a id="first-tab" class="nav-link" href="#home" data-toggle="tab">Home</a>
+        </bs-button>
+      </li>
+      <li class="nav-item">
+        <bs-button tabindex="-1">
+          <a class="nav-link" href="#profile" data-toggle="tab">Profile</a>
+        </bs-button>
+      </li>
+      <li class="nav-item dropdown">
+        <bs-button tabindex="-1">
+          <a id="last-tab" class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#">Dropdown</a>
+        </bs-button>
+        <div class="dropdown-menu">
+          <bs-button tabindex="-1">
+            <a id="first-dropdown-tab" class="dropdown-item active" href="#dropdown1" id="dropdown1-tab" data-toggle="tab">ace</a>
+          </bs-button>
+          <bs-button tabindex="-1">
+            <a class="dropdown-item" href="#dropdown2" id="dropdown2-tab" data-toggle="tab">backer</a>
+          </bs-button>
+        </div>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+      <bs-tab class="tab-pane" id="dropdown1-tab">dropdown1-tab</bs-tab>
+      <bs-tab class="tab-pane" id="dropdown2-tab">dropdown2-tab</bs-tab>
+    </div>`;
+  const firstTab = Selector('#first-tab');
+  const lastTab = Selector('#last-tab');
+  const firstDropdownTab = Selector('#first-dropdown-tab');
+  const tabButtons = Selector('[data-toggle="tab"]');
+  await t.expect(await setHtml(_.trim(tabHtml))).ok();
+  await t.expect(await tabButtons.nth(0).exists).ok({ timeout: 5000 });
+  await t.click(tabButtons.nth(0));
+  await t.expect(await firstTab.hasClass('active')).ok();
+  await t.expect(await lastTab.hasClass('active')).notOk();
+  await t.expect(await firstDropdownTab.hasClass('active')).notOk();
+});
+
+// https://github.com/twbs/bootstrap/blob/v4-dev/js/tests/unit/tab.js#L348
