@@ -3,7 +3,7 @@ import {
   Prop,
   Element,
   Method, // eslint-disable-line no-unused-vars
-  // Watch, // eslint-disable-line no-unused-vars
+  Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _size from 'lodash/size';
@@ -15,7 +15,8 @@ import reflow from '../../utilities/reflow';
 import customEvent from '../../utilities/custom-event';
 import removeClass from '../../utilities/remove-class';
 import closest from '../../utilities/closest';
-
+import elementMatches from '../../utilities/element-matches';
+import getTargetSelector from '../../utilities/get-target-selector';
 
 @Component({ tag: 'bs-tab', styleUrl: 'bs-tab.css', shadow: false })
 export class BsTab { // eslint-disable-line import/prefer-default-export
@@ -27,41 +28,118 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
   @Prop() hiddenEventName: string = 'hidden.bs.tab';
 
   @Prop({ mutable: true }) ignoreDataToggles: boolean = false;
+  @Prop({ mutable: true }) dispatchEventsOnTabs: boolean = false;
+  @Prop({ mutable: true }) showTab: boolean = false;
+
+  componentWillLoad() {
+    if (!this.showTab) {
+      return;
+    }
+    const hasTransition = hasClass(this.tabEl, 'fade');
+    if (!hasTransition) {
+      this.show();
+      return;
+    }
+    removeClass(this.tabEl, 'fade');
+    this.tabEl.addEventListener(this.shownEventName, () => {
+      addClass(this.tabEl, 'fade');
+    }, { once: true });
+    this.show();
+  }
 
   show(triggeringButton = null) {
     if (hasClass(this.tabEl, 'disabled')) {
       return;
     }
-    if (triggeringButton && hasClass(triggeringButton, 'disabled')) {
+    let toggler;
+    if (triggeringButton) {
+      toggler = triggeringButton;
+    } else if (!this.ignoreDataToggles && !triggeringButton) {
+      toggler = this.searchForTriggeringButton();
+    } else {
+      toggler = null;
+    }
+    if (!this.ignoreDataToggles && toggler && hasClass(toggler, 'disabled')) {
       return;
     }
     if (this.tabEl.parentNode && this.tabEl.parentNode.nodeType === Node.ELEMENT_NODE && hasClass(this.tabEl, 'active')) {
       return;
     }
     const previousActiveTabs = BsTab.getActiveElements(this.tabEl, this.tabEl.parentNode);
+    const previousActiveButtons = this.getActiveButtons(toggler);
     const eventArr = [];
     let relatedTarget;
-    for (let j = 0, len = previousActiveTabs.length; j < len; j += 1) {
-      relatedTarget = previousActiveTabs[j];
-      eventArr.push(customEvent(previousActiveTabs[j], this.hideEventName, {}, this.tabEl));
+    if (this.dispatchEventsOnTabs || this.ignoreDataToggles || !toggler) {
+      for (let j = 0, len = previousActiveTabs.length; j < len; j += 1) {
+        relatedTarget = previousActiveTabs[j];
+        eventArr.push(customEvent(previousActiveTabs[j], this.hideEventName, {}, this.tabEl));
+      }
+      eventArr.push(customEvent(this.tabEl, this.showEventName, {}, relatedTarget));
+    } else {
+      for (let j = 0, len = previousActiveButtons.length; j < len; j += 1) {
+        relatedTarget = previousActiveButtons[j];
+        eventArr.push(customEvent(previousActiveButtons[j], this.hideEventName, {}, toggler));
+      }
+      eventArr.push(customEvent(toggler, this.showEventName, {}, relatedTarget));
     }
-    eventArr.push(customEvent(this.tabEl, this.showEventName, {}, relatedTarget));
     if (eventArr.some(showOrHideEvent => showOrHideEvent.defaultPrevented)) {
       return;
     }
-    if (!this.ignoreDataToggles || !triggeringButton) {
-      const previousActiveButtons = BsTab.getActiveButtons(triggeringButton);
-      BsTab.activate(triggeringButton, previousActiveButtons);
+    if (!this.ignoreDataToggles && toggler) {
+      BsTab.activate(toggler, previousActiveButtons);
     }
     BsTab.activate(this.tabEl, previousActiveTabs, () => {
-      for (let x = 0, len = previousActiveTabs.length; x < len; x += 1) {
-        customEvent(previousActiveTabs[x], this.hiddenEventName, {}, this.tabEl);
+      if (this.dispatchEventsOnTabs || this.ignoreDataToggles || !toggler) {
+        for (let x = 0, len = previousActiveTabs.length; x < len; x += 1) {
+          customEvent(previousActiveTabs[x], this.hiddenEventName, {}, this.tabEl);
+        }
+        customEvent(this.tabEl, this.shownEventName, {}, relatedTarget);
+      } else {
+        for (let x = 0, len = previousActiveButtons.length; x < len; x += 1) {
+          customEvent(previousActiveButtons[x], this.hiddenEventName, {}, toggler);
+        }
+        customEvent(toggler, this.shownEventName, {}, relatedTarget);
       }
-      customEvent(this.tabEl, this.shownEventName, {}, relatedTarget);
     });
   }
 
-  static getActiveButtons(element) {
+  searchForTriggeringButton() {
+    const matchingTriggers = [];
+    const tabTriggerArr = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]'));
+    for (let j = 0, len = tabTriggerArr.length; j < len; j += 1) {
+      const targetSelector = getTargetSelector(tabTriggerArr[j]);
+      if (targetSelector && elementMatches(this.tabEl, targetSelector)) {
+        matchingTriggers.push(tabTriggerArr[j]);
+      }
+    }
+    // const pillTriggerArr = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="pill"]'));
+    // for (let j = 0, len = pillTriggerArr.length; j < len; j += 1) {
+    //   const targetSelector = getTargetSelector(pillTriggerArr[j]);
+    //   if (targetSelector && elementMatches(this.tabEl, targetSelector)) {
+    //     matchingTriggers.push(pillTriggerArr[j]);
+    //   }
+    // }
+    // const listTriggerArr = Array.prototype.slice.call(document.querySelectorAll('[data-toggle="list"]'));
+    // for (let j = 0, len = listTriggerArr.length; j < len; j += 1) {
+    //   const targetSelector = getTargetSelector(listTriggerArr[j]);
+    //   if (targetSelector && elementMatches(this.tabEl, targetSelector)) {
+    //     matchingTriggers.push(listTriggerArr[j]);
+    //   }
+    // }
+    if (matchingTriggers.length > 1) {
+      console.warn('Unable to find tab toggle because more than one data toggle target matches this tab');
+      return null;
+    }
+    if (matchingTriggers.length === 1) {
+      return matchingTriggers[0];
+    }
+    return null;
+  }
+
+  getActiveButtons(element) {
+    if (this.ignoreDataToggles || !element) {
+      return [];
+    }
     const listElement = closest(element, '.nav, .list-group');
     if (listElement) {
       if (listElement.nodeName !== 'UL') {
@@ -141,6 +219,14 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
       callback();
     }
   }
+
+  @Watch('showTab')
+  handleShowTabWatch(newValue /* , oldValue */) {
+    if (newValue) {
+      this.show();
+    }
+  }
+
 
   @Method()
   tab(tabOptions = {}, triggeringButton = null) {

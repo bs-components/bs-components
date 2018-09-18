@@ -81,10 +81,12 @@ declare global {
     }
 
     interface BsTab {
+      'dispatchEventsOnTabs': boolean;
       'hiddenEventName': string;
       'hideEventName': string;
       'ignoreDataToggles': boolean;
       'showEventName': string;
+      'showTab': boolean;
       'shownEventName': string;
       'tab': (tabOptions?: {}, triggeringButton?: any) => true | HTMLElement;
     }
@@ -231,10 +233,12 @@ declare global {
     }
 
     export interface BsTabAttributes extends HTMLAttributes {
+      'dispatchEventsOnTabs'?: boolean;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'ignoreDataToggles'?: boolean;
       'showEventName'?: string;
+      'showTab'?: boolean;
       'shownEventName'?: string;
     }
 

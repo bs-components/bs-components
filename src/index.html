@@ -11,7 +11,8 @@
 
 
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
 
 
   <script src="build/bscomponents.js"></script>
@@ -116,53 +117,6 @@
     <p>&nbsp;</p>
 
 
-    <ul class="drop nav">
-      <li class="dropdown"><a data-toggle="dropdown" href="#">1</a>
-        <ul class="dropdown-menu nav">
-          <li>
-            <bs-button tabindex="-1" id="first-tab-toggle">
-              <a href="#a1-1" data-toggle="tab">1-1</a>
-            </bs-button>
-          </li>
-          <li>
-            <bs-button tabindex="-1" id="last-tab-toggle">
-              <a href="#a1-2" data-toggle="tab">1-2</a>
-            </bs-button>
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <bs-tab class="tab-pane" id="a1-1">a1-1</bs-tab>
-      <bs-tab class="tab-pane" id="a1-2">a1-2</bs-tab>
-    </div>
-
-    <p>&nbsp;</p>
-
-
-    <ul class="nav">
-      <li>
-
-
-        <bs-button tabindex="-1" id="home-toggle">
-          <a href="#home" class="nav-link" data-toggle="tab">Home</a>
-        </bs-button>
-
-      </li>
-      <li>
-        <bs-button tabindex="-1" id="profile-toggle">
-          <a href="#profile" class="nav-link" data-toggle="tab">Profile</a>
-        </bs-button>
-
-
-      </li>
-    </ul>
-    <div class="tab-content">
-      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
-      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
-    </div>
-
-    <p>&nbsp;</p>
 
 
     <div class="row">
@@ -178,7 +132,7 @@
         <div class="tab-content" id="v-pills-tabContent">
           <bs-tab class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">tab1</bs-tab>
           <bs-tab class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">tab2</bs-tab>
-          <bs-tab class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">tab3</bs-tab>
+          <bs-tab show-tab class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">tab3</bs-tab>
           <bs-tab class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">tab4</bs-tab>
         </div>
       </div>
@@ -954,17 +908,17 @@
     document.getElementById("modal-test").addEventListener('hidden.bs.modal', handleModalHidden);
 
 
-    function handleTabShow(event) {
-      console.log('handleTabShow event: ', event);
-    }
+    // function handleTabShow(event) {
+    //   console.log('handleTabShow event: ', event);
+    // }
 
-    function handleTabShown(event) {
-      console.log('handleTabShown event: ', event);
-    }
+    // function handleTabShown(event) {
+    //   console.log('handleTabShown event: ', event);
+    // }
 
 
-    document.getElementById("a1-1").addEventListener('show.bs.tab', handleTabShow);
-    document.getElementById("a1-1").addEventListener('shown.bs.tab', handleTabShown);
+    // document.getElementById("a1-1").addEventListener('show.bs.tab', handleTabShow);
+    // document.getElementById("a1-1").addEventListener('shown.bs.tab', handleTabShown);
 
 
 
@@ -1095,6 +1049,17 @@
     // $(document).ready(function() {
     //   $('#exampleModal')[0].addEventListener('shown.bs.modal', handleModalShown);
     // });
+
+
+function handleTabShown(event) {
+  console.log('newly activated tab: ', event.target);
+  console.log('previous active tab: ', event.relatedTarget);
+}
+const allTabsOnThePage = document.querySelectorAll('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]');
+console.log('allTabsOnThePage: ', allTabsOnThePage);
+Array.prototype.forEach.call(allTabsOnThePage, function(el, i){
+  el.addEventListener('shown.bs.tab', handleTabShown);
+});
 
 
 

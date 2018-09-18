@@ -377,9 +377,10 @@ test('should not fire shown when show is prevented', async (t) => {
     });
   }));
   console.log('\t...waiting for timeout on shown event (show was prevented)...');
-  await t.expect(await shouldNotFireShownWhenShowIsPrevented('#home-toggle', 'show', '#home', 'shown.bs.tab')).notOk('show event prevented shown event');
+  await t.expect(await shouldNotFireShownWhenShowIsPrevented('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).notOk('show event prevented shown event');
   await t.expect(await tabHome.hasClass('active')).notOk({ timeout: 5000 });
 });
+
 
 test('should not fire shown when tab is already active', async (t) => {
   const tabHtml = `
@@ -401,7 +402,7 @@ test('should not fire shown when tab is already active', async (t) => {
   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
   console.log('\t...waiting for timeout on shown event (tab already active)...');
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).notOk();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).notOk();
 });
 
 test('should not fire shown when tab is disabled', async (t) => {
@@ -424,7 +425,7 @@ test('should not fire shown when tab is disabled', async (t) => {
   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
   console.log('\t...waiting for timeout on shown event (tab toggle is disabled)...');
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#profile-toggle', 'show', '#profile', 'shown.bs.tab')).notOk();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#profile-toggle', 'show', '#profile-toggle', 'shown.bs.tab')).notOk();
 });
 
 test('show and shown events should reference correct relatedTarget', async (t) => {
@@ -465,7 +466,7 @@ test('show and shown events should reference correct relatedTarget', async (t) =
         }, 6000);
         const handleEventHappened = (event) => {
           clearTimeout(myTimeout);
-          resolveWait({ show: event.relatedTarget.id });
+          resolveWait({ show: event.relatedTarget.getAttribute('href') });
         };
         document.querySelector(myEventSelector).addEventListener('show.bs.tab', handleEventHappened, { once: true });
       });
@@ -479,7 +480,7 @@ test('show and shown events should reference correct relatedTarget', async (t) =
           resolveWait({ shown: false });
         }, 6000);
         const handleEventHappened = (event) => {
-          resolveWait({ shown: event.relatedTarget.id });
+          resolveWait({ shown: event.relatedTarget.getAttribute('href') });
           clearTimeout(myTimeout);
           resolveWait(true);
         };
@@ -510,10 +511,10 @@ test('show and shown events should reference correct relatedTarget', async (t) =
       }
     });
   }));
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#first-tab-toggle', 'show', '#a1-1', 'shown.bs.tab')).ok();
-  const results = await showAndShownEventsShouldReferenceCorrectRelatedTarget('#last-tab-toggle', 'show', '#a1-2');
-  await t.expect(results.show).eql('a1-1', 'references correct element as relatedTarget');
-  await t.expect(results.shown).eql('a1-1', 'references correct element as relatedTarget');
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#first-tab-toggle', 'show', '#first-tab-toggle', 'shown.bs.tab')).ok();
+  const results = await showAndShownEventsShouldReferenceCorrectRelatedTarget('#last-tab-toggle', 'show', '#last-tab-toggle');
+  await t.expect(results.show).eql('#a1-1', 'references correct element as relatedTarget');
+  await t.expect(results.shown).eql('#a1-1', 'references correct element as relatedTarget');
 });
 
 
@@ -580,8 +581,8 @@ test('should fire hide and hidden events', async (t) => {
       }
     });
   }));
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
-  const results = await shouldFireHideAndHiddenEvents('#profile-toggle', 'show', '#home');
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).ok();
+  const results = await shouldFireHideAndHiddenEvents('#profile-toggle', 'show', '#home-toggle');
   await t.expect(results.hide).ok();
   await t.expect(results.hidden).ok();
 });
@@ -610,8 +611,6 @@ test('should not fire hidden when hide is prevented', async (t) => {
   await t.expect(await setHtml(_.trim(tabHtml))).ok();
   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
-
-
   const shouldNotFireHiddenWhenHideIsPrevented = ClientFunction((methodSelector, methodOption, eventSelector, eventName) => new Promise((resolve) => {
     function preventHideEventBySelector(myEventSelector) {
       return new Promise((resolveWait) => {
@@ -662,10 +661,10 @@ test('should not fire hidden when hide is prevented', async (t) => {
     });
   }));
 
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).ok();
   await t.expect(await tabHome.hasClass('active')).ok({ timeout: 5000 });
   console.log('\t...waiting for timeout on hidden event (hide was prevented)...');
-  await t.expect(await shouldNotFireHiddenWhenHideIsPrevented('#profile-toggle', 'show', '#home', 'hidden.bs.tab')).notOk('show event prevented shown event');
+  await t.expect(await shouldNotFireHiddenWhenHideIsPrevented('#profile-toggle', 'show', '#home-toggle', 'hidden.bs.tab')).notOk('show event prevented shown event');
   await t.expect(await tabProfile.hasClass('active')).notOk({ timeout: 5000 });
 });
 
@@ -693,8 +692,6 @@ test('hide and hidden events contain correct relatedTarget', async (t) => {
   await t.expect(await setHtml(_.trim(tabHtml))).ok();
   await t.expect(await tabHome.exists).ok({ timeout: 5000 });
   await t.expect(await tabProfile.exists).ok({ timeout: 5000 });
-
-
   const hideAndHiddenEventsContainCorrectRelatedTarget = ClientFunction((methodSelector, methodOption, eventSelector) => new Promise((resolve) => {
     function hideEventBySelector(myEventSelector) {
       return new Promise((resolveWait) => {
@@ -706,7 +703,7 @@ test('hide and hidden events contain correct relatedTarget', async (t) => {
         }, 6000);
         const handleEventHappened = (event) => {
           clearTimeout(myTimeout);
-          resolveWait({ hide: event.relatedTarget.id });
+          resolveWait({ hide: event.relatedTarget.getAttribute('href') });
         };
         document.querySelector(myEventSelector).addEventListener('hide.bs.tab', handleEventHappened, { once: true });
       });
@@ -720,7 +717,7 @@ test('hide and hidden events contain correct relatedTarget', async (t) => {
           resolveWait({ hidden: false });
         }, 6000);
         const handleEventHappened = (event) => {
-          resolveWait({ hidden: event.relatedTarget.id });
+          resolveWait({ hidden: event.relatedTarget.getAttribute('href') });
           clearTimeout(myTimeout);
           resolveWait(true);
         };
@@ -751,12 +748,12 @@ test('hide and hidden events contain correct relatedTarget', async (t) => {
       }
     });
   }));
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).ok();
   await t.expect(await tabHome.hasClass('active')).ok({ timeout: 5000 });
-  const results = await hideAndHiddenEventsContainCorrectRelatedTarget('#profile-toggle', 'show', '#home');
+  const results = await hideAndHiddenEventsContainCorrectRelatedTarget('#profile-toggle', 'show', '#home-toggle');
   await t.expect(await tabProfile.hasClass('active')).ok({ timeout: 5000 });
-  await t.expect(results.hide).eql('profile', 'references correct element as relatedTarget');
-  await t.expect(results.hidden).eql('profile', 'references correct element as relatedTarget');
+  await t.expect(results.hide).eql('#profile', 'references correct element as relatedTarget');
+  await t.expect(results.hidden).eql('#profile', 'references correct element as relatedTarget');
 });
 
 
@@ -785,7 +782,7 @@ test('selected tab should have aria-selected', async (t) => {
   await t.expect(await homeToggle.exists).ok({ timeout: 5000 });
   await t.expect(await profileToggle.exists).ok({ timeout: 5000 });
 
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).ok();
   await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
   await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
 
@@ -793,7 +790,7 @@ test('selected tab should have aria-selected', async (t) => {
   await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
   await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
 
-  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await callTabMethodBySelectorAndWaitForEventBySelector('#home-toggle', 'show', '#home-toggle', 'shown.bs.tab')).ok();
   await t.expect(await tabButtons.nth(0).getAttribute('aria-selected')).eql('true', 'shown tab has aria-selected = true');
   await t.expect(await tabButtons.nth(1).getAttribute('aria-selected')).eql('false', 'shown tab has aria-selected = false');
 
@@ -950,10 +947,10 @@ test('should not remove fade class if no active pane is present', async (t) => {
   await t.expect(await setHtml(_.trim(tabHtml))).ok();
   await t.expect(await homeToggle.exists).ok({ timeout: 5000 });
   await t.expect(await profileToggle.exists).ok({ timeout: 5000 });
-  await t.expect(await clickBySelectorAndWaitForEventBySelector('#tab-profile', '#profile', 'shown.bs.tab')).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('#tab-profile', '#tab-profile', 'shown.bs.tab')).ok();
   await t.expect(await profileTab.hasClass('fade')).ok();
   await t.expect(await profileTab.hasClass('show')).ok();
-  await t.expect(await clickBySelectorAndWaitForEventBySelector('#tab-home', '#home', 'shown.bs.tab')).ok();
+  await t.expect(await clickBySelectorAndWaitForEventBySelector('#tab-home', '#tab-home', 'shown.bs.tab')).ok();
   await t.expect(await profileTab.hasClass('fade')).ok();
   await t.expect(await profileTab.hasClass('show')).notOk();
   await t.expect(await homeTab.hasClass('fade')).ok();

@@ -40,13 +40,13 @@ module.exports = {
         children: [
           '/bs-alert/',
           '/bs-button/',
-          // '/bs-carousel/',
+          '/bs-carousel/',
           '/bs-collapse/',
           '/bs-dropdown/',
           '/bs-modal/',
           '/bs-popover/',
-          // '/bs-scrollspy/',
-          // '/bs-tab/',
+          '/bs-scrollspy/',
+          '/bs-tab/',
           '/bs-tooltip/',
         ]
       },

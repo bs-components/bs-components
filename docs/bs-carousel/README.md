@@ -1,2 +1,6 @@
-# TODO: bs-carousel
+# Carousel
+
+## Not Currently Planned
+
+Maybe later
 
