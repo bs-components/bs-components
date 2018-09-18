@@ -31,8 +31,8 @@
     "test-bs-popover": "stencil build && testcafe ie,chrome ./tests/bs-popover.test.ts",
     "test-bs-dropdown": "stencil build && testcafe ie,chrome ./tests/bs-dropdown.test.ts",
     "test-bs-collapse": "stencil build && testcafe ie,chrome ./tests/bs-collapse.test.ts",
-    "test-bs-alert": "stencil build && testcafe chrome ./tests/bs-alert.test.ts",
-    "test-bs-tab": "stencil build && testcafe chrome ./tests/bs-tab.test.ts"
+    "test-bs-alert": "stencil build && testcafe ie,chrome ./tests/bs-alert.test.ts",
+    "test-bs-tab": "stencil build && testcafe ie,chrome ./tests/bs-tab.test.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",

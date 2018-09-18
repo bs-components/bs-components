@@ -1055,9 +1055,9 @@ function handleTabShown(event) {
   console.log('newly activated tab: ', event.target);
   console.log('previous active tab: ', event.relatedTarget);
 }
-const allTabsOnThePage = document.querySelectorAll('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]');
-console.log('allTabsOnThePage: ', allTabsOnThePage);
-Array.prototype.forEach.call(allTabsOnThePage, function(el, i){
+const allTabTogglersOnThePage = document.querySelectorAll('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]');
+console.log('allTabTogglersOnThePage: ', allTabTogglersOnThePage);
+Array.prototype.forEach.call(allTabTogglersOnThePage, function(el, i) {
   el.addEventListener('shown.bs.tab', handleTabShown);
 });
 

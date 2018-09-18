@@ -13,7 +13,7 @@ Status:
 - [x] dropdown - run tests using: `yarn test-bs-dropdown`
 - [x] collapse - run tests using: `yarn test-bs-collapse`
 - [x] alert - run tests using: `yarn test-bs-alert`
-- [ ] tab - WIP - needs tests and docs
+- [x] tab - run tests using: `yarn test-bs-tab`
 - [ ] scrollspy - todo
 - [ ] carousel not planned currently but maybe later
 

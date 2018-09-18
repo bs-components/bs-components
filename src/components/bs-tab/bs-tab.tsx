@@ -28,7 +28,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
   @Prop() hiddenEventName: string = 'hidden.bs.tab';
 
   @Prop({ mutable: true }) ignoreDataToggles: boolean = false;
-  @Prop({ mutable: true }) dispatchEventsOnTabs: boolean = false;
+  @Prop({ mutable: true }) dispatchEventsOnTab: boolean = false;
   @Prop({ mutable: true }) showTab: boolean = false;
 
   componentWillLoad() {
@@ -69,7 +69,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
     const previousActiveButtons = this.getActiveButtons(toggler);
     const eventArr = [];
     let relatedTarget;
-    if (this.dispatchEventsOnTabs || this.ignoreDataToggles || !toggler) {
+    if (this.dispatchEventsOnTab || this.ignoreDataToggles || !toggler) {
       for (let j = 0, len = previousActiveTabs.length; j < len; j += 1) {
         relatedTarget = previousActiveTabs[j];
         eventArr.push(customEvent(previousActiveTabs[j], this.hideEventName, {}, this.tabEl));
@@ -89,7 +89,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
       BsTab.activate(toggler, previousActiveButtons);
     }
     BsTab.activate(this.tabEl, previousActiveTabs, () => {
-      if (this.dispatchEventsOnTabs || this.ignoreDataToggles || !toggler) {
+      if (this.dispatchEventsOnTab || this.ignoreDataToggles || !toggler) {
         for (let x = 0, len = previousActiveTabs.length; x < len; x += 1) {
           customEvent(previousActiveTabs[x], this.hiddenEventName, {}, this.tabEl);
         }

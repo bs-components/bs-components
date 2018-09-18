@@ -81,7 +81,7 @@ declare global {
     }
 
     interface BsTab {
-      'dispatchEventsOnTabs': boolean;
+      'dispatchEventsOnTab': boolean;
       'hiddenEventName': string;
       'hideEventName': string;
       'ignoreDataToggles': boolean;
@@ -233,7 +233,7 @@ declare global {
     }
 
     export interface BsTabAttributes extends HTMLAttributes {
-      'dispatchEventsOnTabs'?: boolean;
+      'dispatchEventsOnTab'?: boolean;
       'hiddenEventName'?: string;
       'hideEventName'?: string;
       'ignoreDataToggles'?: boolean;
