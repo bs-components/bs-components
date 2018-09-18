@@ -61,19 +61,6 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
     });
   }
 
-  // static elementIsTabToggler(element) {
-  //   if (element.dataset.toggle === 'tab') {
-  //     return true;
-  //   }
-  //   if (element.dataset.toggle === 'pill') {
-  //     return true;
-  //   }
-  //   if (element.dataset.toggle === 'list') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
   static getActiveButtons(element) {
     const listElement = closest(element, '.nav, .list-group');
     if (listElement) {
