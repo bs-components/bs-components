@@ -203,6 +203,10 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.hoverState = '';
     clearTimeout(this.disposeTimeout);
     this.removeTooltipFromDom();
+    if (this.popperHandle && this.popperHandle.destroy) {
+      this.popperHandle.destroy();
+      this.popperHandle = null;
+    }
     window.requestAnimationFrame(() => { // trick to ensure all page updates are completed before running code
       window.requestAnimationFrame(() => { // discussed here:  https://www.youtube.com/watch?v=aCMbSyngXB4&t=11m
         setTimeout(() => {

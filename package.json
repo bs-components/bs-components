@@ -24,7 +24,7 @@
     "build-es5": "stencil build --es5",
     "start": "stencil build --dev --watch --serve",
     "docs:dev": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress dev docs",
-    "docs:build": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress build docs",
+    "docs:build": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress build docs && node ./docs/.vuepress/docs-project-update.js",
     "test-bs-tooltip": "stencil build && testcafe ie,chrome ./tests/bs-tooltip.test.ts",
     "test-bs-button": "stencil build && testcafe chrome ./tests/bs-button.test.ts",
     "test-bs-modal": "stencil build && testcafe ie,chrome ./tests/bs-modal.test.ts",

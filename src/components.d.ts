@@ -80,6 +80,13 @@ declare global {
       'shownEventName': string;
     }
 
+    interface BsScrollspy {
+      'defaults': any;
+      'scrollspy': (scrollspyOptions?: {}) => any;
+      'showEventName': string;
+      'useBodyForScrollElement': boolean;
+    }
+
     interface BsTab {
       'dispatchEventsOnTab': boolean;
       'hiddenEventName': string;
@@ -155,6 +162,14 @@ declare global {
     };
     
 
+    interface HTMLBsScrollspyElement extends StencilComponents.BsScrollspy, HTMLStencilElement {}
+
+    var HTMLBsScrollspyElement: {
+      prototype: HTMLBsScrollspyElement;
+      new (): HTMLBsScrollspyElement;
+    };
+    
+
     interface HTMLBsTabElement extends StencilComponents.BsTab, HTMLStencilElement {}
 
     var HTMLBsTabElement: {
@@ -179,6 +194,7 @@ declare global {
     'bs-collapse': JSXElements.BsCollapseAttributes;
     'bs-dropdown': JSXElements.BsDropdownAttributes;
     'bs-modal': JSXElements.BsModalAttributes;
+    'bs-scrollspy': JSXElements.BsScrollspyAttributes;
     'bs-tab': JSXElements.BsTabAttributes;
     'bs-tooltip': JSXElements.BsTooltipAttributes;
     }
@@ -232,6 +248,12 @@ declare global {
       'shownEventName'?: string;
     }
 
+    export interface BsScrollspyAttributes extends HTMLAttributes {
+      'defaults'?: any;
+      'showEventName'?: string;
+      'useBodyForScrollElement'?: boolean;
+    }
+
     export interface BsTabAttributes extends HTMLAttributes {
       'dispatchEventsOnTab'?: boolean;
       'hiddenEventName'?: string;
@@ -269,6 +291,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement
     'bs-dropdown': HTMLBsDropdownElement
     'bs-modal': HTMLBsModalElement
+    'bs-scrollspy': HTMLBsScrollspyElement
     'bs-tab': HTMLBsTabElement
     'bs-tooltip': HTMLBsTooltipElement
   }
@@ -279,6 +302,7 @@ declare global {
     'bs-collapse': HTMLBsCollapseElement;
     'bs-dropdown': HTMLBsDropdownElement;
     'bs-modal': HTMLBsModalElement;
+    'bs-scrollspy': HTMLBsScrollspyElement;
     'bs-tab': HTMLBsTabElement;
     'bs-tooltip': HTMLBsTooltipElement;
   }

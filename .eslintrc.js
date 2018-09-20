@@ -20,7 +20,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'lines-between-class-members': ["error", "always", { exceptAfterSingleLine: true }],
     'no-undef': 'off',
-    'class-methods-use-this': ['error', { exceptMethods: ['render'] }],
+    'class-methods-use-this': ['warn', { exceptMethods: ['render'] }],
 
   },
 };

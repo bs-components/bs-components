@@ -19,6 +19,7 @@
     "linebreak",
     "nowrap",
     "scrollbar",
+    "scrollspy",
     "tabindex",
     "testcafe",
     "tooltips",
