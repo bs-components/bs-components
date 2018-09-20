@@ -81,9 +81,9 @@ declare global {
     }
 
     interface BsScrollspy {
+      'activateEventName': string;
       'defaults': any;
       'scrollspy': (scrollspyOptions?: {}) => any;
-      'showEventName': string;
       'useBodyForScrollElement': boolean;
     }
 
@@ -249,8 +249,8 @@ declare global {
     }
 
     export interface BsScrollspyAttributes extends HTMLAttributes {
+      'activateEventName'?: string;
       'defaults'?: any;
-      'showEventName'?: string;
       'useBodyForScrollElement'?: boolean;
     }
 
