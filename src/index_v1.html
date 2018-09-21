@@ -1,0 +1,1287 @@
+<!DOCTYPE html> <!-- eslint-disable-line -->
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>bs-components</title>
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+
+
+  <script src="build/bscomponents.js"></script>
+
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+
+
+<style>
+  /*
+.dropdown .dropdown-menu {
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+
+    max-height: 0;
+    display: block;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.dropdown.show .dropdown-menu {
+    max-height: 300px;
+    opacity: 1;
+}
+*/
+
+/* https://stackoverflow.com/questions/49351611/bootstrap-4-dropdown-fade-in-transition */
+/*
+.dropdown-menu.fade {
+   display: block;
+   opacity: 0;
+   pointer-events: none;
+}
+
+.show > .dropdown-menu.fade {
+   pointer-events: auto;
+   opacity: 1;
+}
+*/
+
+.bd-example {
+  position: relative;
+  padding: 1rem;
+  margin: 1rem -15px 0;
+  margin-right: -15px;
+  margin-left: -15px;
+  border: solid #f8f9fa;
+  border-top-width: medium;
+  border-right-width: medium;
+  border-bottom-width: medium;
+  border-left-width: medium;
+  border-width: .2rem 0 0;
+}
+
+.scrollspy-example {
+    position: relative;
+    height: 200px;
+    margin-top: .5rem;
+    overflow: auto;
+}
+
+.scrollspy-example-2 {
+    position: relative;
+    height: 350px;
+    overflow: auto;
+}
+
+
+
+</style>
+
+</head>
+<body>
+
+    <header>
+      <bs-collapse class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h4 class="text-white">About</h4>
+              <p class="text-muted">Add some information about the album below, the author, or any other background context. Make it a few sentences long so folks can pick up some informative tidbits. Then, link them off to some social networking sites or contact information.</p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-4">
+              <h4 class="text-white">Contact</h4>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-white">Follow on Twitter</a></li>
+                <li><a href="#" class="text-white">Like on Facebook</a></li>
+                <li><a href="#" class="text-white">Email me</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </bs-collapse>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> -->
+            <strong>bs-components</strong>
+          </a>
+          <bs-button role="button" class="btn navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </bs-button>
+        </div>
+      </div>
+    </header>
+
+
+  <div class="container">
+    <p>&nbsp;</p>
+
+<!-- document.getElementById('abc-scrollspy-example-abc').scrollspy({ target: document.getElementById('ss-target') }); -->
+    <div id="root" class="active">
+        <div class="topbar">
+          <div class="topbar-inner">
+            <div class="container" id="ss-target">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link" href="#masthead">Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="#detail">Detail</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <bs-scrollspy id="abc-scrollspy-example-abc" style="height: 100px; overflow: auto;">
+          <div style="height: 200px;">
+            <h4 id="masthead">Overview</h4>
+            <p style="height: 200px">
+              Ad leggings keytar, brunch id art party dolor labore.
+            </p>
+          </div>
+          <div style="height: 200px;">
+            <h4 id="detail">Detail</h4>
+            <p style="height: 200px">
+              Veniam marfa mustache skateboard, adipisicing fugiat velit pitchfork beard.
+            </p>
+          </div>
+        </bs-scrollspy>
+      </div>
+
+      <p>&nbsp;</p>
+
+
+    <nav id="navbar-example2" class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="#fat">@fat</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#mdo">@mdo</a>
+        </li>
+        <li class="nav-item">
+          <bs-dropdown class="dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#one">one</a>
+              <a class="dropdown-item" href="#two">two</a>
+              <div role="separator" class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#three">three</a>
+            </div>
+          </bs-dropdown>
+        </li>
+      </ul>
+    </nav>
+    <bs-scrollspy class="scrollspy-example" data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+      <h4 id="fat">@fat</h4>
+      <p>
+        Ad leggings keytar, brunch id art party dolor labore. Pitchfork yr enim lo-fi before they sold out qui. Tumblr farm-to-table bicycle rights whatever. Anim keffiyeh carles cardigan. Velit seitan mcsweeney's photo booth 3 wolf moon irure. Cosby sweater lomo jean shorts, williamsburg hoodie minim qui you probably haven't heard of them et cardigan trust fund culpa biodiesel wes anderson aesthetic. Nihil tattooed accusamus, cred irony biodiesel keffiyeh artisan ullamco consequat.
+      </p>
+      <h4 id="mdo">@mdo</h4>
+      <p>
+        Veniam marfa mustache skateboard, adipisicing fugiat velit pitchfork beard. Freegan beard aliqua cupidatat mcsweeney's vero. Cupidatat four loko nisi, ea helvetica nulla carles. Tattooed cosby sweater food truck, mcsweeney's quis non freegan vinyl. Lo-fi wes anderson +1 sartorial. Carles non aesthetic exercitation quis gentrify. Brooklyn adipisicing craft beer vice keytar deserunt.
+      </p>
+      <h4 id="one">one</h4>
+      <p>
+        Occaecat commodo aliqua delectus. Fap craft beer deserunt skateboard ea. Lomo bicycle rights adipisicing banh mi, velit ea sunt next level locavore single-origin coffee in magna veniam. High life id vinyl, echo park consequat quis aliquip banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi DIY minim messenger bag. Cred ex in, sustainable delectus consectetur fanny pack iphone.
+      </p>
+      <h4 id="two">two</h4>
+      <p>
+        In incididunt echo park, officia deserunt mcsweeney's proident master cleanse thundercats sapiente veniam. Excepteur VHS elit, proident shoreditch +1 biodiesel laborum craft beer. Single-origin coffee wayfarers irure four loko, cupidatat terry richardson master cleanse. Assumenda you probably haven't heard of them art party fanny pack, tattooed nulla cardigan tempor ad. Proident wolf nesciunt sartorial keffiyeh eu banh mi sustainable. Elit wolf voluptate, lo-fi ea portland before they sold out four loko. Locavore enim nostrud mlkshk brooklyn nesciunt.
+      </p>
+      <h4 id="three">three</h4>
+      <p>
+        Ad leggings keytar, brunch id art party dolor labore. Pitchfork yr enim lo-fi before they sold out qui. Tumblr farm-to-table bicycle rights whatever. Anim keffiyeh carles cardigan. Velit seitan mcsweeney's photo booth 3 wolf moon irure. Cosby sweater lomo jean shorts, williamsburg hoodie minim qui you probably haven't heard of them et cardigan trust fund culpa biodiesel wes anderson aesthetic. Nihil tattooed accusamus, cred irony biodiesel keffiyeh artisan ullamco consequat.
+      </p>
+      <p>
+        Keytar twee blog, culpa messenger bag marfa whatever delectus food truck. Sapiente synth id assumenda. Locavore sed helvetica cliche irony, thundercats you probably haven't heard of them consequat hoodie gluten-free lo-fi fap aliquip. Labore elit placeat before they sold out, terry richardson proident brunch nesciunt quis cosby sweater pariatur keffiyeh ut helvetica artisan. Cardigan craft beer seitan readymade velit. VHS chambray laboris tempor veniam. Anim mollit minim commodo ullamco thundercats.
+      </p>
+    </bs-scrollspy>
+
+    <p>&nbsp;</p>
+
+    <div class="row">
+      <div class="col-4">
+        <nav id="navbar-example3" class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="#item-1">Item 1</a>
+              <nav class="nav nav-pills flex-column">
+                <a class="nav-link ml-3 my-1" href="#item-1-1">Item 1-1</a>
+                <a class="nav-link ml-3 my-1" href="#item-1-2">Item 1-2</a>
+              </nav>
+              <a class="nav-link" href="#item-2">Item 2</a>
+              <a class="nav-link" href="#item-3">Item 3</a>
+              <nav class="nav nav-pills flex-column">
+                <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
+                <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+              </nav>
+            </nav>
+          </nav>
+      </div>
+      <div class="col-8">
+        <bs-scrollspy class="scrollspy-example-2" data-spy="scroll" data-target="#navbar-example3" data-offset="0">
+            <h4 id="item-1">Item 1</h4>
+            <p>
+              Ex consequat commodo adipisicing exercitation aute excepteur occaecat ullamco duis aliqua id magna ullamco eu. Do aute ipsum ipsum ullamco cillum consectetur ut et aute consectetur labore. Fugiat laborum incididunt tempor eu consequat enim dolore proident. Qui laborum do non excepteur nulla magna eiusmod consectetur in. Aliqua et aliqua officia quis et incididunt voluptate non anim reprehenderit adipisicing dolore ut consequat deserunt mollit dolore. Aliquip nulla enim veniam non fugiat id cupidatat nulla elit cupidatat commodo velit ut eiusmod cupidatat elit dolore.
+            </p>
+            <h5 id="item-1-1">Item 1-1</h5>
+            <p>
+              Amet tempor mollit aliquip pariatur excepteur commodo do ea cillum commodo Lorem et occaecat elit qui et. Aliquip labore ex ex esse voluptate occaecat Lorem ullamco deserunt. Aliqua cillum excepteur irure consequat id quis ea. Sit proident ullamco aute magna pariatur nostrud labore. Reprehenderit aliqua commodo eiusmod aliquip est do duis amet proident magna consectetur consequat eu commodo fugiat non quis. Enim aliquip exercitation ullamco adipisicing voluptate excepteur minim exercitation minim minim commodo adipisicing exercitation officia nisi adipisicing. Anim id duis qui consequat labore adipisicing sint dolor elit cillum anim et fugiat.
+            </p>
+            <h5 id="item-1-2">Item 2-2</h5>
+            <p>
+              Cillum nisi deserunt magna eiusmod qui eiusmod velit voluptate pariatur laborum sunt enim. Irure laboris mollit consequat incididunt sint et culpa culpa incididunt adipisicing magna magna occaecat. Nulla ipsum cillum eiusmod sint elit excepteur ea labore enim consectetur in labore anim. Proident ullamco ipsum esse elit ut Lorem eiusmod dolor et eiusmod. Anim occaecat nulla in non consequat eiusmod velit incididunt.
+            </p>
+            <h4 id="item-2">Item 2</h4>
+            <p>
+              Quis magna Lorem anim amet ipsum do mollit sit cillum voluptate ex nulla tempor. Laborum consequat non elit enim exercitation cillum aliqua consequat id aliqua. Esse ex consectetur mollit voluptate est in duis laboris ad sit ipsum anim Lorem. Incididunt veniam velit elit elit veniam Lorem aliqua quis ullamco deserunt sit enim elit aliqua esse irure. Laborum nisi sit est tempor laborum mollit labore officia laborum excepteur commodo non commodo dolor excepteur commodo. Ipsum fugiat ex est consectetur ipsum commodo tempor sunt in proident.
+            </p>
+            <h4 id="item-3">Item 3</h4>
+            <p>
+              Quis anim sit do amet fugiat dolor velit sit ea ea do reprehenderit culpa duis. Nostrud aliqua ipsum fugiat minim proident occaecat excepteur aliquip culpa aute tempor reprehenderit. Deserunt tempor mollit elit ex pariatur dolore velit fugiat mollit culpa irure ullamco est ex ullamco excepteur.
+            </p>
+            <h5 id="item-3-1">Item 3-1</h5>
+            <p>
+              Deserunt quis elit Lorem eiusmod amet enim enim amet minim Lorem proident nostrud. Ea id dolore anim exercitation aute fugiat labore voluptate cillum do laboris labore. Ex velit exercitation nisi enim labore reprehenderit labore nostrud ut ut. Esse officia sunt duis aliquip ullamco tempor eiusmod deserunt irure nostrud irure. Ullamco proident veniam laboris ea consectetur magna sunt ex exercitation aliquip minim enim culpa occaecat exercitation. Est tempor excepteur aliquip laborum consequat do deserunt laborum esse eiusmod irure proident ipsum esse qui.
+            </p>
+            <h5 id="item-3-2">Item 3-2</h5>
+            <p>
+              Labore sit culpa commodo elit adipisicing sit aliquip elit proident voluptate minim mollit nostrud aute reprehenderit do. Mollit excepteur eu Lorem ipsum anim commodo sint labore Lorem in exercitation velit incididunt. Occaecat consectetur nisi in occaecat proident minim enim sunt reprehenderit exercitation cupidatat et do officia. Aliquip consequat ad labore labore mollit ut amet. Sit pariatur tempor proident in veniam culpa aliqua excepteur elit magna fugiat eiusmod amet officia.
+            </p>
+          </bs-scrollspy>
+      </div>
+    </div>
+
+
+
+    <p>&nbsp;</p>
+
+
+    <div class="row bd-example">
+      <div class="col-4">
+        <div id="list-example" class="list-group">
+          <a class="list-group-item list-group-item-action" href="#list-item-1">Item 1</a>
+          <a class="list-group-item list-group-item-action" href="#list-item-2">Item 2</a>
+          <a class="list-group-item list-group-item-action" href="#list-item-3">Item 3</a>
+          <a class="list-group-item list-group-item-action" href="#list-item-4">Item 4</a>
+        </div>
+      </div>
+      <div class="col-8">
+        <bs-scrollspy data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+          <h4 id="list-item-1">Item 1</h4>
+          <p>
+            Ex consequat commodo adipisicing exercitation aute excepteur occaecat ullamco duis aliqua id magna ullamco eu. Do aute ipsum ipsum ullamco cillum consectetur ut et aute consectetur labore. Fugiat laborum incididunt tempor eu consequat enim dolore proident. Qui laborum do non excepteur nulla magna eiusmod consectetur in. Aliqua et aliqua officia quis et incididunt voluptate non anim reprehenderit adipisicing dolore ut consequat deserunt mollit dolore. Aliquip nulla enim veniam non fugiat id cupidatat nulla elit cupidatat commodo velit ut eiusmod cupidatat elit dolore.
+          </p>
+          <h4 id="list-item-2">Item 2</h4>
+          <p>
+            Quis magna Lorem anim amet ipsum do mollit sit cillum voluptate ex nulla tempor. Laborum consequat non elit enim exercitation cillum aliqua consequat id aliqua. Esse ex consectetur mollit voluptate est in duis laboris ad sit ipsum anim Lorem. Incididunt veniam velit elit elit veniam Lorem aliqua quis ullamco deserunt sit enim elit aliqua esse irure. Laborum nisi sit est tempor laborum mollit labore officia laborum excepteur commodo non commodo dolor excepteur commodo. Ipsum fugiat ex est consectetur ipsum commodo tempor sunt in proident.
+          </p>
+          <h4 id="list-item-3">Item 3</h4>
+          <p>
+            Quis anim sit do amet fugiat dolor velit sit ea ea do reprehenderit culpa duis. Nostrud aliqua ipsum fugiat minim proident occaecat excepteur aliquip culpa aute tempor reprehenderit. Deserunt tempor mollit elit ex pariatur dolore velit fugiat mollit culpa irure ullamco est ex ullamco excepteur.
+          </p>
+          <h4 id="list-item-4">Item 4</h4>
+          <p>
+            Quis anim sit do amet fugiat dolor velit sit ea ea do reprehenderit culpa duis. Nostrud aliqua ipsum fugiat minim proident occaecat excepteur aliquip culpa aute tempor reprehenderit. Deserunt tempor mollit elit ex pariatur dolore velit fugiat mollit culpa irure ullamco est ex ullamco excepteur.
+          </p>
+        </bs-scrollspy>
+      </div>
+    </div>
+
+
+    <p>&nbsp;</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <ul class="nav nav-tabs">
+      <li>
+        <bs-button tabindex="-1" id="home-toggle">
+          <a class="nav-item active" href="#home" data-toggle="tab" aria-selected="true" role="tab">Home</a>
+        </bs-button>
+      </li>
+      <li>
+        <bs-button tabindex="-1" id="profile-toggle">
+          <a class="nav-item" href="#profile" data-toggle="tab" aria-selected="false" role="tab">Profile</a>
+        </bs-button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <bs-tab class="tab-pane" id="home">home tab</bs-tab>
+      <bs-tab class="tab-pane" id="profile">profile tab</bs-tab>
+    </div>
+    <p>&nbsp;</p>
+
+
+
+
+    <div class="row">
+      <div class="col-3">
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+          <bs-button tabindex="-1"><a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a></bs-button>
+          <bs-button tabindex="-1"><a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a></bs-button>
+          <bs-button tabindex="-1"><a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a></bs-button>
+          <bs-button tabindex="-1"><a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a></bs-button>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="tab-content" id="v-pills-tabContent">
+          <bs-tab class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">tab1</bs-tab>
+          <bs-tab class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">tab2</bs-tab>
+          <bs-tab show-tab class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">tab3</bs-tab>
+          <bs-tab class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">tab4</bs-tab>
+        </div>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Home</a></bs-button>
+      </li>
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</a></bs-button>
+      </li>
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a></bs-button>
+      </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+      <bs-tab class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">pill 1</bs-tab>
+      <bs-tab class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">pill 2</bs-tab>
+      <bs-tab class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">pill 3</bs-tab>
+    </div>
+
+    <p>&nbsp;</p>
+
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a></bs-button>
+      </li>
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a></bs-button>
+      </li>
+      <li class="nav-item">
+          <bs-button tabindex="-1"><a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a></bs-button>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <bs-tab class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">tab1</bs-tab>
+      <bs-tab class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">tab2</bs-tab>
+      <bs-tab class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">tab3</bs-tab>
+    </div>
+    <p>&nbsp;</p>
+
+
+      <p>&nbsp;</p>
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <bs-button tabindex="-1"><a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a></bs-button>
+          <bs-button tabindex="-1"><a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a></bs-button>
+          <bs-button tabindex="-1"><a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a></bs-button>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <bs-tab class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+      </bs-tab>
+      <bs-tab class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+          Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna consequat voluptate minim amet aliquip ipsum aute laboris nisi. Labore labore veniam irure irure ipsum pariatur mollit magna in cupidatat dolore magna irure esse tempor ad mollit. Dolore commodo nulla minim amet ipsum officia consectetur amet ullamco voluptate nisi commodo ea sit eu.
+      </bs-tab>
+      <bs-tab class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+          Sint sit mollit irure quis est nostrud cillum consequat Lorem esse do quis dolor esse fugiat sunt do. Eu ex commodo veniam Lorem aliquip laborum occaecat qui Lorem esse mollit dolore anim cupidatat. Deserunt officia id Lorem nostrud aute id commodo elit eiusmod enim irure amet eiusmod qui reprehenderit nostrud tempor. Fugiat ipsum excepteur in aliqua non et quis aliquip ad irure in labore cillum elit enim. Consequat aliquip incididunt ipsum et minim laborum laborum laborum et cillum labore. Deserunt adipisicing cillum id nulla minim nostrud labore eiusmod et amet. Laboris consequat consequat commodo non ut non aliquip reprehenderit nulla anim occaecat. Sunt sit ullamco reprehenderit irure ea ullamco Lorem aute nostrud magna.
+      </bs-tab>
+    </div>
+
+    <p>&nbsp;</p>
+
+
+    <bs-alert id="my-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </bs-alert>
+
+
+
+
+
+      <p>
+        <bs-button tabindex="-1">
+          <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              bs-button wrapped Link with href
+          </a>
+        </bs-button>
+
+        <bs-button tabindex="-1">
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            bs-button wrapped Button with data-target
+          </button>
+        </bs-button>
+
+        <bs-button role="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          bs-Button with data-target
+        </bs-button>
+      </p>
+      <bs-collapse class="collapse" id="collapseExample">
+        <div class="card card-body">
+          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+        </div>
+      </bs-collapse>
+      <p>&nbsp;</p>
+
+      <p>
+
+          <bs-button tabindex="-1">
+            <a href="#exampleModal" class="btn btn-primary" data-toggle="modal">
+                Launch demo modal a
+            </a>
+          </bs-button>
+
+          <bs-button tabindex="-1">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Launch demo modal button
+            </button>
+          </bs-button>
+
+          <bs-button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Launch demo modal bs-button
+          </bs-button>
+      </p>
+
+        <p>&nbsp;</p>
+
+
+      <div class="tabs">
+        <bs-dropdown class="dropdown" id="testing-dropdown-toggle">
+          <!-- <a href="#" class="dropdown-toggle" id="dropdown-menu-button" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </a> -->
+          <input type="text" id="input" data-toggle="dropdown">
+          <div class="dropdown-menu" aria-labelledby="dropdown">
+            <a class="dropdown-item" href="#">Secondary link</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+            <div class="divider"></div>
+            <a class="dropdown-item" href="#">Another link</a>
+            <input type="text" id="input" />
+            <textarea id="textarea"></textarea>
+          </div>
+        </bs-dropdown>
+      </div>
+
+      <bs-dropdown class="btn-group">
+        <button class="btn">Actions</button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+        <bs-dropdown-menu>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action 1</a>
+        </div>
+      </bs-dropdown-menu>
+      </bs-dropdown>
+
+
+
+      <p>Popovers</p>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" bs-title="" bs-content="" data-placement="top" data-title="abc123" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on top
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on right
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+      sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on bottom
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on left
+      </bs-tooltip>
+
+      <bs-tooltip class="btn btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</bs-tooltip>
+
+      <bs-tooltip class="d-inline-block" data-toggle="popover" data-content="Disabled popover">
+        <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+      </bs-tooltip>
+
+
+    <p>&nbsp;</p>
+    <p>Tooltips</p>
+
+
+      <!-- <p>
+          should not reload the tooltip on subsequent mouseenter events
+          <bs-tooltip id="tt-outer" no-enable-on-load data-trigger="hover" data-placement="top">
+            some text
+          </bs-tooltip>
+        </p> -->
+
+
+    <bs-tooltip id="top-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" data-title="override" title="Tooltip on top">
+      Tooltip on top
+    </bs-tooltip>
+
+    <!-- <bs-tooltip id="another-tooltip" title="Another tooltip"></bs-tooltip> -->
+
+    <bs-tooltip id="right-tooltip-button" class="btn btn-secondary" data-dispose-time-to-wait="0" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+      Tooltip on right
+    </bs-tooltip>
+    <bs-tooltip id="bottom-tooltip-button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
+      Tooltip on bottom
+    </bs-tooltip>
+    <bs-tooltip class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
+      Tooltip on left
+    </bs-tooltip>
+    <bs-tooltip id="tooltip-with-html" class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
+      Tooltip with HTML
+    </bs-tooltip>
+    <bs-tooltip class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
+      <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+    </bs-tooltip>
+    <p>&nbsp;</p>
+
+    <button id="click-top-tooltip-button" type="button" class="btn btn-default">focus top tooltip</button>
+    <button id="show-right-tooltip-button" type="button" class="btn btn-default">show right tooltip</button>
+    <button id="toggle-bottom-tooltip-button" type="button" class="btn btn-default">toggle bottom tooltip</button>
+
+    <hr>
+    <p>Modal</p>
+
+
+
+
+  <!-- Button trigger modal -->
+  <bs-button role="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      Launch demo modal
+  </bs-button>
+
+  <button id="open-modal" type="button" class="btn btn-default">JavaScript Open Modal</button>
+
+  <bs-modal id="modal-test"></bs-modal>
+
+  <!-- Modal -->
+  <bs-modal class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+          <!-- <bs-tooltip id="tooltip-inside-a-modal" class="btn btn-secondary" data-trigger="manual" title="Tooltip on right">
+            manual triggered tooltip
+          </bs-tooltip> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </bs-modal>
+
+  <p>&nbsp;</p>
+  <p>Buttons</p>
+
+
+  <div class="btn-group disabled" data-toggle="buttons" aria-disabled="true" disabled>
+    <bs-button role="button" id="my-button" class="btn btn-danger disabled" aria-disabled="true" disabled>
+      <input id="my-button-input" type="checkbox" aria-disabled="true" autocomplete="off" disabled class="disabled"/>
+    </bs-button>
+  </div>
+
+
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button role="button" id="btn1" class="btn btn-secondary">One</bs-button>
+    <bs-button role="button" class="btn btn-secondary">Two</bs-button>
+  </div>
+
+
+  <div class="btn-group" data-toggle="buttons">
+    <bs-button class="btn btn-primary active">
+      <input type="radio" name="options" id="option1" checked="true"> Option 1
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option2"> Option 2
+    </bs-button>
+    <bs-button class="btn btn-primary">
+      <input type="radio" name="options" id="option3"> Option 3
+    </bs-button>
+  </div>
+
+
+  <bs-button role="button" class="btn btn-info">
+    Just a bs-button
+  </bs-button>
+
+    <!-- <bs-button id="single-toggle-button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      Single toggle
+    </bs-button> -->
+    <bs-button role="button" id="single-toggle-button" class="btn" data-toggle="button">
+      <i id="inner-italc">Single toggle</i>
+    </bs-button>
+
+
+    <button id="toggle-single-toggle-button" type="button" class="btn btn-default">toggle single toggle</button>
+    <p>&nbsp;</p>
+
+
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <bs-button role="button" class="btn btn-secondary active">
+        <input type="checkbox" checked autocomplete="off"> Checked
+      </bs-button>
+    </div>
+
+    <p>&nbsp;</p>
+
+
+    <div id="bs-button-radio-buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <bs-button class="btn btn-secondary active">
+        <input type="radio" name="optionsv" id="option1" autocomplete="off" checked> Active
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option2" autocomplete="off"> Radio
+      </bs-button>
+      <bs-button class="btn btn-secondary">
+        <input type="radio" name="optionsv" id="option3" autocomplete="off"> Radio
+      </bs-button>
+    </div>
+
+    <button id="toggle-second-radio-button" type="button" class="btn btn-default">press Second Radio Button</button>
+
+    <p>&nbsp;</p>
+
+    <p>Collapse</p>
+
+
+    <p>
+      <!-- <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
+
+      <bs-button class="btn btn-primary"  data-toggle="collapse" data-target="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+        Toggle first element
+      </bs-button>
+
+      <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</button> -->
+
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+        Toggle second element
+      </bs-button>
+
+      <bs-button class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+        Toggle both elements
+      </bs-button>
+
+
+    </p>
+    <div class="row">
+      <div class="col">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample1">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="col">
+        <bs-collapse class="collapse multi-collapse" id="multiCollapseExample2">
+          <div class="card card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </bs-collapse>
+      </div>
+    </div>
+
+    <button id="toggle-second-collapse" type="button" class="btn btn-default">Toggle Second Collapse</button>
+
+
+
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Collapsible Group Item #1
+            </bs-button>
+          </h5>
+        </div>
+
+        <bs-collapse id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Collapsible Group Item #2
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <bs-button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Collapsible Group Item #3
+            </bs-button>
+          </h5>
+        </div>
+        <bs-collapse id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </bs-collapse>
+      </div>
+    </div>
+
+
+
+    <p>Dropdowns</p>
+
+
+
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+      <bs-dropdown class="btn-group mr-2">
+        <bs-button data-toggle="button" class="btn btn-danger">Action</bs-button>
+        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+
+
+      <bs-dropdown id="my-dropdown" class="dropdown mr-2">
+        <bs-button class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+          </bs-button>
+          <div class="dropdown-menu fade" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </bs-dropdown>
+
+
+      <bs-dropdown class="btn-group mr-2">
+        <!-- <button type="button" class="btn btn-danger">Action</button> -->
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+          Toggle Dropdown
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+
+
+      <!-- <div class="btn-group dropleft"> -->
+      <bs-dropdown class="btn-group dropleft ">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</button>
+        <div class="dropdown-menu" x-placement="left-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-196px, 0px, 0px);">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </bs-dropdown>
+      <!-- </div> -->
+
+
+    </div>
+
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <button id="toggle-my-dropdown-button" type="button" class="btn btn-primary">Toggle Dropdown</button>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <div id="app"></div>
+
+  </div>
+
+
+  <script type="x/template" id="dropdown-vue-test">
+    <div>
+
+      <bs-button class="btn btn-primary" data-toggle="modal" data-target="#vue-exampleModal">
+          Launch vue demo modal
+      </bs-button>
+      <!-- Modal -->
+      <bs-modal class="modal fade" id="vue-exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p>modalTitle: <input v-model="modalTitle"> {{ modalTitle }}</p>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </bs-modal>
+
+      <bs-dropdown ref="bsDropdownInVueExample" class="dropdown"
+        show-event-name="vue_shown" v-on:vue_shown='handleShownBsDropdown'
+        hidden-event-name="vue_hidden" v-on:vue_hidden='handleHiddenBsDropdown'
+      >
+        <bs-button class="btn btn-secondary dropdown-toggle" ref="bsDropdownButtonInVueExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Vue Dropdown button
+          </bs-button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+      </bs-dropdown>
+
+      <bs-tooltip id="vue-test-tooltip" class="btn btn-secondary" data-toggle="popover"
+      v-bind:bs-title="tooltipTitle" title="fallback default title"
+      v-bind:bs-content="tooltipContent" data-content="fallback default content"      >
+        Vue Tooltip
+      </bs-tooltip>
+      <p>tooltipTitle: <input v-model="tooltipTitle"> {{ tooltipTitle }}</p>
+      <p>tooltipContent: <input v-model="tooltipContent"> {{ tooltipContent }}</p>
+      <p>&nbsp;</p>
+      <button type="button" class="btn btn-primary" @click="handleUserClickedToggleDropdownButton">Vue Toggle Dropdown</button>
+    </div>
+  </script>
+
+
+  <script>
+    "use strict";
+
+    function handleShownBsDropdown() {
+      console.log('vue Shown');
+    }
+
+    function handleHiddenBsDropdown() {
+      console.log('vue Hidden');
+    }
+
+    function handleUserClickedToggleDropdownButton() {
+      // method 1
+      // this.$refs.bsDropdownInVueExample.setDropdownVisibility(!this.$refs.bsDropdownInVueExample.show);
+
+      this.$refs.bsDropdownButtonInVueExample.dropdown('toggle');
+
+      // // method 2
+      // this.$refs.bsDropdownInVueExample.toggle();
+
+      // // method 3
+      // const isVisisble = this.$refs.bsDropdownInVueExample.show;
+      // console.log('isVisisble: ', isVisisble);
+      // if (isVisisble) {
+      //   this.$refs.bsDropdownInVueExample.hideDropdown();
+      // } else {
+      //   this.$refs.bsDropdownInVueExample.showDropdown();
+      // }
+    }
+
+    Vue.config.ignoredElements = ['dtna-bs-modal'];
+    new Vue({
+      template: '#dropdown-vue-test',
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+        showDropdown: 'false',
+        tooltipTitle: 'vue tooltip title',
+        tooltipContent: 'vue tooltip content',
+        modalTitle: 'Modal Title',
+      },
+      methods: {
+        handleShownBsDropdown: handleShownBsDropdown,
+        handleHiddenBsDropdown: handleHiddenBsDropdown,
+        handleUserClickedToggleDropdownButton: handleUserClickedToggleDropdownButton,
+      }
+    });
+
+
+    // -- everything below here is not in the vue scope --
+
+    function toggleDropdown() {
+      const el = document.getElementById("dropdownMenuButton");
+      el.dropdown('toggle');
+    }
+
+    function handleMyComponentShow(event) {
+      console.log('handleMyComponentShow event: ', event);
+      // console.log('handleMyComponentShow');
+    }
+
+    function handleMyComponentShown(event) {
+      console.log('handleMyComponentShown event: ', event);
+      // console.log('handleMyComponentShown');
+    }
+
+    function handleMyComponentHide(event) {
+      console.log('handleMyComponentHide event: ', event);
+      // console.log('handleMyComponentHide');
+    }
+
+    function handleMyComponentHidden(event) {
+      console.log('handleMyComponentHidden event: ', event);
+      // console.log('handleMyComponentHidden');
+    }
+
+
+
+    document.getElementById("my-dropdown").addEventListener('show.bs.dropdown', handleMyComponentShow);
+    document.getElementById("my-dropdown").addEventListener('shown.bs.dropdown', handleMyComponentShown);
+    document.getElementById("my-dropdown").addEventListener('hide.bs.dropdown', handleMyComponentHide);
+    document.getElementById("my-dropdown").addEventListener('hidden.bs.dropdown', handleMyComponentHidden);
+
+    function handleMyCollapseShow(event) {
+      console.log('handleMyCollapseShow event: ', event);
+      // console.log('handleMyCollapseShow');
+    }
+    function handleMyCollapseShown(event) {
+      console.log('handleMyCollapseShown event: ', event);
+      // console.log('handleMyCollapseShown');
+    }
+    function handleMyCollapseHide(event) {
+      console.log('handleMyCollapseHide event: ', event);
+      // console.log('handleMyCollapseHide');
+    }
+    function handleMyCollapseHidden(event) {
+      console.log('handleMyCollapseHidden event: ', event);
+      // console.log('handleMyCollapseHidden');
+    }
+
+    document.getElementById("multiCollapseExample2").addEventListener('show.bs.collapse', handleMyCollapseShow);
+    document.getElementById("multiCollapseExample2").addEventListener('shown.bs.collapse', handleMyCollapseShown);
+    document.getElementById("multiCollapseExample2").addEventListener('hide.bs.collapse', handleMyCollapseHide);
+    document.getElementById("multiCollapseExample2").addEventListener('hidden.bs.collapse', handleMyCollapseHidden);
+
+    function toggleSecondCollapse() {
+      const el = document.getElementById("collapseTwo");
+
+    // .collapse('toggle|show|hide')
+    // .collapse({ toggle: 'toggle|show|hide', target: '.selector', parent: '.selector' })
+
+      el.collapse('toggle');
+      // el.collapse('toggle');
+      // el.collapse('show'); // will show this collapse
+      // el.collapse('hide'); // will hide this collapse
+      // el.collapse({ toggle: 'toggle', target: '', parent:'' }); // will do nothing
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'body' }); // toggle all accordions
+      // el.collapse({ toggle: 'show', target: '.collapse', parent:'' }); // will open everything ignoring accordion rules
+      // el.collapse({ toggle: 'show', parent:'body' }); // will show this collapse and close every other collapse on the page
+    }
+
+    function toggleSingleToggleButton() {
+      const el = document.getElementById("single-toggle-button");
+      el.button('toggle');
+      // el.click();
+    }
+
+    function toggleSecondRadioButton() {
+      const el = document.getElementById("bs-button-radio-buttons");
+      // // el.button('toggle', '.btn:nth-child(2)');
+      el.querySelector('.btn:nth-child(2)').button('toggle');
+
+      // $('#bs-button-radio-buttons').find('.btn:nth-child(2)').button('toggle');
+    }
+
+    function handleModalShow(event) {
+      // event.preventDefault();
+      console.log('handleModalShow event: ', event);
+      event.preventDefault();
+    }
+
+    function handleModalHide(event) {
+      // event.preventDefault();
+    }
+
+    function handleModalShown(event) {
+      console.log('handleModalShown event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleModalHidden(event) {
+      console.log('handleModalHidden event:', event);
+      // console.log('time: ', new Date(event.detail.sentAtTime));
+    }
+
+    function handleOpenModalWithJavaScript() {
+      // const el = document.getElementById("exampleModal");
+      const el = document.getElementById("modal-test");
+      el.modal('show');
+      // el.modal('toggle');
+
+      // setTimeout(() => {
+      //   el.modal('hide');
+      // }, 5 * 1000);
+
+      // el.modal('show');
+      // el.modal('hide');
+      // el.modal('handleUpdate');
+      // el.modal({ backdrop: true, keyboard: true, focus: true, show: true });
+    }
+
+    // function handleFocusIn(event) {
+    //   console.log('handleFocusIn event: ', event);
+    // }
+
+    function handleClickOnTopTooltipButton() {
+      const el = document.getElementById("top-tooltip-button");
+      el.focus()
+    }
+
+    function handleShowRightTooltip() {
+      const el = document.getElementById("right-tooltip-button");
+      el.tooltip('show');
+    }
+
+    function handleToggleBottomTooltip() {
+      const el = document.getElementById("bottom-tooltip-button");
+      el.tooltip('toggle');
+    }
+
+    function handleTooltipWithHtmlShown(event) {
+      console.log('handleTooltipWithHtmlShown event: ', event);
+      // event.preventDefault();
+    }
+
+
+    document.getElementById("toggle-my-dropdown-button").addEventListener('click', toggleDropdown);
+
+    document.getElementById("toggle-second-collapse").addEventListener('click', toggleSecondCollapse);
+
+    document.getElementById("toggle-single-toggle-button").addEventListener('click', toggleSingleToggleButton);
+
+    document.getElementById("toggle-second-radio-button").addEventListener('click', toggleSecondRadioButton);
+
+
+    document.getElementById("exampleModal").addEventListener('show.bs.modal', handleModalShow);
+    document.getElementById("exampleModal").addEventListener('hide.bs.modal', handleModalHide);
+
+    document.getElementById("modal-test").addEventListener('shown.bs.modal', handleModalShown);
+
+    document.getElementById("modal-test").addEventListener('hidden.bs.modal', handleModalHidden);
+
+
+    // function handleTabShow(event) {
+    //   console.log('handleTabShow event: ', event);
+    // }
+
+    // function handleTabShown(event) {
+    //   console.log('handleTabShown event: ', event);
+    // }
+
+
+    // document.getElementById("a1-1").addEventListener('show.bs.tab', handleTabShow);
+    // document.getElementById("a1-1").addEventListener('shown.bs.tab', handleTabShown);
+
+
+
+
+
+
+
+    document.getElementById("open-modal").addEventListener('click', handleOpenModalWithJavaScript);
+
+
+    document.getElementById("click-top-tooltip-button").addEventListener('click', handleClickOnTopTooltipButton);
+    document.getElementById("show-right-tooltip-button").addEventListener('click', handleShowRightTooltip);
+    document.getElementById("toggle-bottom-tooltip-button").addEventListener('click', handleToggleBottomTooltip);
+
+    // function setupPopover() {
+    //   const myPopoverConfig = {
+    //     html: true,
+    //     trigger: 'manual',
+    //     container: 'body',
+    //     animation: false,
+    //     content: () => document.querySelector('.content-with-handler'),
+    //   };
+    //   const el = document.getElementById('popover-test');
+    //   el.popover(myPopoverConfig);
+
+    //   el.popover('show');
+
+    //   // const template = document.createElement('div');
+    //   // template.innerHTML = '<div>loves writing tests （╯°□°）╯︵ ┻━┻</div>';
+    //   // const contentEl = template.firstChild;
+    //   // popoverEl.popover({ html: true, content: contentEl });
+    //   // console.log('popoverEl.config: ', popoverEl.config);
+    //   // popoverEl.popover('show');
+    //   // console.log('show fired!');
+    // }
+    // setTimeout(() => {
+    //   setupPopover();
+
+    // }, 1000);
+
+
+
+
+
+    // function handleInsertedTopTooltip(event) {
+    //   console.log('handleInsertedTopTooltip event: ', event);
+    // }
+    // document.getElementById("top-tooltip-button").addEventListener('inserted.bs.tooltip', handleInsertedTopTooltip);
+    // setTimeout(() => {
+    //   document.getElementById("top-tooltip-button").tooltip('show');
+    // }, 4000)
+
+
+    // document.getElementById("tooltip-with-html").addEventListener('show.bs.tooltip', handleTooltipWithHtmlShown);
+
+
+    // const addStylesToHead = () => {
+    //   const template = document.createElement('template');
+    //   template.innerHTML = '<style>' +
+    //   '.bs-tooltip-right { white-space: nowrap; }' +
+    //   '.bs-tooltip-right .tooltip-inner { max-width: none; }' +
+    //   '</style>';
+    //   const styles = template.content.firstChild;
+    //   if (document.head.appendChild(styles)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // };
+
+    // setTimeout(() => {
+    //   addStylesToHead();
+    //   const setupReturn = document.getElementById('very-very-long-tooltip').tooltip({ placement: 'right', trigger: 'manual' });
+    //   console.log('setupReturn: ', setupReturn);
+    //   const showReturn = document.getElementById('very-very-long-tooltip').tooltip('show');
+    //   console.log('showReturn: ', showReturn);
+    // }, 2000)
+
+
+      // <div id="my-collapse">
+      //   <div class="item">
+      //     <bs-button tabindex="-1">
+      //       <a data-toggle="collapse" href="#">Toggle item</a>
+      //     </bs-button>
+      //     <bs-collapse id="dom-collapse-test" class="collapse">Lorem ipsum</bs-collapse>
+      //   </div>
+      // </div>
+
+    //   function shouldAllowDomObjectInParentConfig(selector, parentSelector) {
+    //     const collapseEl = document.querySelector(selector);
+    //     const parentEl = document.querySelector(parentSelector);
+    //     const sentConfig = { parent: parentEl, toggle: true };
+    //     console.log('sentConfig: ', sentConfig);
+    //     collapseEl.collapse(sentConfig);
+    //   }
+
+
+    // setTimeout(() => {
+    //   shouldAllowDomObjectInParentConfig('#dom-collapse-test', '.my-collapse');
+    // }, 1000)
+
+
+    // document.getElementById("testing-focus").addEventListener('focusin', handleFocusIn);
+
+
+// const titleHtml = () => {
+//   var uid = btoa(Math.random().toString()).substring(5, 10);
+//   return '<p id="tt-content">' + uid + '</p><p>' + uid + '</p><p>' + uid + '</p>';
+// }
+
+// function setupTooltip() {
+//   console.log('setupTooltip');
+
+//   const mySetupResults = document.getElementById("tt-outer").tooltip({
+//     html: true,
+//     animation: false,
+//     trigger: 'hover',
+//     delay: {
+//       show: 0,
+//       hide: 500
+//     },
+//     title: titleHtml
+//   });
+// }
+
+
+
+    // $(document).ready(function() {
+    //   $('#exampleModal')[0].addEventListener('shown.bs.modal', handleModalShown);
+    // });
+
+
+// function handleTabShown(event) {
+//   console.log('newly activated tab: ', event.target);
+//   console.log('previous active tab: ', event.relatedTarget);
+// }
+// const allTabTogglersOnThePage = document.querySelectorAll('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]');
+// console.log('allTabTogglersOnThePage: ', allTabTogglersOnThePage);
+// Array.prototype.forEach.call(allTabTogglersOnThePage, function(el, i) {
+//   el.addEventListener('shown.bs.tab', handleTabShown);
+// });
+
+
+
+
+  </script>
+
+
+
+
+
+</body>
+</html>

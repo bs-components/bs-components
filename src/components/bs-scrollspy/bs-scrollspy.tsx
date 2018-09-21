@@ -6,6 +6,8 @@ import {
   Method, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
+import mezr from 'mezr';
+
 import _size from 'lodash/size';
 import _has from 'lodash/has';
 import _toNumber from 'lodash/toNumber';
@@ -43,16 +45,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   @State() scrollHeight: any;
 
   componentWillLoad() {
-    this.enableScrollspy();
-  }
-
-  componentDidUnload() {
-    this.disableScrollspy();
-  }
-
-  enableScrollspy(configOverride:any = {}) {
     this.scrollElement = this.useBodyForScrollElement === true ? window : this.scrollspyEl;
-    this.config = this.getConfig(configOverride);
+    this.config = this.getConfig();
     this.selector = `${this.config.target} .nav-link,${this.config.target} .list-group-item,${this.config.target} .dropdown-item`;
     this.offsets = [];
     this.targets = [];
@@ -63,7 +57,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     this.process();
   }
 
-  disableScrollspy() {
+  componentDidUnload() {
     if (this.scrollElement) {
       this.scrollElement.removeEventListener('scroll', this.handleScrollElement);
     }
@@ -88,7 +82,6 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       config.target = this.defaults.target;
     }
     if (_isElement(config.target)) {
-      console.log('config.target: ', config.target);
       let id = config.target.getAttribute('id');
       if (!id) {
         id = getUniqueId('scrollspy');
@@ -116,15 +109,64 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     return config;
   }
 
+  static getCalculatedStyle(elem, key) {
+    return window.getComputedStyle(elem)[key];
+  }
+
+  // static calculatedPosition(elem) {
+  //   const offset = elem.offset();
+  //   // Account for the *real* offset parent, which can be the document or its root element
+  //   // when a statically positioned element is identified
+  //   const doc = elem.ownerDocument;
+  //   let offsetParent = elem.offsetParent || doc.documentElement;
+  //   while (offsetParent && (offsetParent === doc.body || offsetParent === doc.documentElement) && BsScrollspy.getCalculatedStyle(offsetParent, 'position') === 'static') {
+  //     offsetParent = offsetParent.parentNode;
+  //   }
+  //   if (offsetParent && offsetParent !== elem && offsetParent.nodeType === 1) {
+
+  //     // Incorporate borders into its offset, since they are outside its content origin
+  //     const parentOffset = offsetParent.offset(); // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L74
+
+  //     parentOffset.top += BsScrollspy.getCalculatedStyle(offsetParent, 'borderTopWidth');
+  //     parentOffset.left += BsScrollspy.getCalculatedStyle(offsetParent, 'borderLeftWidth');
+  //   }
+  // }
+
+  // static findPos(obj) {
+  //   let curleft = 0;
+  //   let curtop = 0;
+  //   if (obj.offsetParent) {
+  //     do {
+  //       curleft += obj.offsetLeft;
+  //       curtop += obj.offsetTop;
+  //     } while (obj = obj.offsetParent);
+  //   }
+  //   return [curleft, curtop];
+  // }
+
+
+  static offset(el) {
+    const rect = el.getBoundingClientRect();
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
+  }
+
+
   refresh() {
+    if (!this.config.target || _size(this.config.target) === 0) {
+      return;
+    }
     const autoMethod = this.scrollElement === this.scrollElement.window ? 'offset' : 'position';
     const offsetMethod = this.config.method === 'auto' ? autoMethod : this.config.method;
     const offsetBase = offsetMethod === 'position' ? this.getScrollTop() : 0;
     this.offsets = [];
     this.targets = [];
     this.scrollHeight = this.getScrollHeight();
-    const scrollspyBCR = this.scrollspyEl.getBoundingClientRect();
-    const targets = Array.prototype.slice.call(document.querySelectorAll(this.selector));
+    // const scrollspyBCR = this.scrollspyEl.getBoundingClientRect();
+    const container = document.querySelector(this.config.target);
+    const targets = Array.prototype.slice.call(container.querySelectorAll(this.selector));
+    const scrollspyCalculatedPosition = BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position');
     targets.map((element) => {
       let target;
       const targetSelector = getTargetSelector(element);
@@ -134,7 +176,72 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       if (target) {
         const targetBCR = target.getBoundingClientRect();
         if (targetBCR.width || targetBCR.height) {
-          const returnVal = [targetBCR.top - scrollspyBCR.top + offsetBase, targetSelector];
+          // const returnVal = [targetBCR.top - scrollspyBCR.top + offsetBase, targetSelector];
+
+          // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L20
+
+          // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L110
+
+          // const returnVal = [targetBCR.top + offsetBase, targetSelector];
+
+          let myOffsets;
+          if (scrollspyCalculatedPosition === 'relative') {
+            myOffsets = mezr.offset(target, this.scrollspyEl);
+          } else if (scrollspyCalculatedPosition === 'static') {
+            myOffsets = targetBCR;
+          } else {
+            // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L122
+            myOffsets = targetBCR;
+          }
+
+
+          const returnVal = [myOffsets.top + offsetBase, targetSelector];
+
+
+          console.log('target: ', target);
+
+
+          console.log("BsScrollspy.getCalculatedStyle(target, 'position'): ", BsScrollspy.getCalculatedStyle(target, 'position'));
+          console.log("BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position'): ", BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position'));
+
+
+          // console.log('target.offsetParent: ', target.offsetParent);
+          // // console.log('target.getOffsetParent(): ', target.getOffsetParent());
+
+          // console.log('BsScrollspy.offset(target): ', BsScrollspy.offset(target));
+
+          // console.log('targetBCR: ', targetBCR);
+
+
+          // // console.log("mezr.offset(target, 'content'): ", mezr.offset(target, 'content'));
+          // // console.log("mezr.offset(target, 'padding'): ", mezr.offset(target, 'padding'));
+          // // console.log("mezr.offset(target, 'scroll'): ", mezr.offset(target, 'scroll'));
+          // // console.log("mezr.offset(target, 'border'): ", mezr.offset(target, 'border'));
+          // // console.log('mezr.offset(target, this.scrollspyEl): ', mezr.offset(target, this.scrollspyEl));
+
+          // console.log('mezr.offset(target, this.scrollspyEl): ', mezr.offset(target, this.scrollspyEl));
+
+          // // console.log('mezr.offset(target, mezr.containingBlock(this.scrollspyEl)): ', mezr.offset(target, mezr.containingBlock(this.scrollspyEl)));
+
+          // console.log('mezr.offset(target, mezr.containingBlock(this.scrollspyEl, "absolute")): ', mezr.offset(target, mezr.containingBlock(this.scrollspyEl, 'absolute')));
+
+
+          // // console.log('mezr.offset(target, mezr.containingBlock(target, "fixed")): ', mezr.offset(target, mezr.containingBlock(target, 'fixed')));
+
+
+          // console.log('target.offsetTop: ', target.offsetTop);
+          // // console.log('target.position(): ', target.position());
+          // console.log('window.getComputedStyle(target).top: ', window.getComputedStyle(target).top);
+          // console.log('window.getComputedStyle(target).position: ', window.getComputedStyle(target).position);
+          // // console.log('window.getComputedStyle(target).offset: ', (window.getComputedStyle(target) as any).offset);
+
+
+          // console.log('targetBCR.top - scrollspyBCR.top: ', targetBCR.top - scrollspyBCR.top);
+          // console.log('offsetMethod: ', offsetMethod);
+          // console.log('offsetBase: ', offsetBase);
+
+
+          console.log('returnVal: ', returnVal);
           return returnVal;
         }
       }
@@ -177,9 +284,13 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   process() {
+    if (!this.config.target || _size(this.config.target) === 0) {
+      return;
+    }
     const scrollTop = this.getScrollTop() + this.config.offset;
     const scrollHeight = this.getScrollHeight();
     const maxScroll = this.config.offset + scrollHeight - this.getOffsetHeight();
+    const container = document.querySelector(this.config.target);
     if (this.scrollHeight !== scrollHeight) {
       this.refresh();
     }
@@ -192,7 +303,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     }
     if (this.activeTarget && scrollTop < this.offsets[0] && this.offsets[0] > 0) {
       this.activeTarget = null;
-      this.clear();
+      this.clear(container);
       return;
     }
     for (let i = _size(this.offsets) - 1; i >= 0; i -= 1) {
@@ -202,8 +313,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     }
   }
 
-  clear() {
-    const nodeArr = Array.prototype.slice.call(document.querySelectorAll(this.selector));
+  clear(container) {
+    const nodeArr = Array.prototype.slice.call(container.querySelectorAll(this.selector));
     for (let j = 0; j < nodeArr.length; j += 1) {
       if (hasClass(nodeArr[j], 'active')) {
         removeClass(nodeArr[j], 'active');
@@ -246,10 +357,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       return;
     }
     this.activeTarget = target;
-    console.log('this.activeTarget: ', this.activeTarget);
-    console.log('this.scrollspyEl: ', this.scrollspyEl);
-    this.clear();
     const container = document.querySelector(this.config.target);
+    this.clear(container);
     const linkArr = BsScrollspy.getLinkArr(target, container);
     for (let j = 0; j < linkArr.length; j += 1) {
       if (hasClass(linkArr[j], 'dropdown-item')) {
@@ -302,9 +411,6 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       return this.activeTarget;
     }
     if (typeof scrollspyOptions === 'object') {
-      // debugger;
-      // this.enableScrollspy(scrollspyOptions);
-      // this.disableScrollspy();
       this.config = this.getConfig(scrollspyOptions);
       this.refresh();
       this.process();

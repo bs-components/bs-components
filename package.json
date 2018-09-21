@@ -33,10 +33,11 @@
     "test-bs-collapse": "stencil build && testcafe ie,chrome ./tests/bs-collapse.test.ts",
     "test-bs-alert": "stencil build && testcafe ie,chrome ./tests/bs-alert.test.ts",
     "test-bs-tab": "stencil build && testcafe ie,chrome ./tests/bs-tab.test.ts",
-    "test-bs-scrollspy": "stencil build && testcafe chrome ./tests/bs-scrollspy.test.ts --hostname CTNAL0042043380.us164.corpintra.net --proxy webproxy.us164.corpintra.net:8080"
+    "test-bs-scrollspy": "stencil build && testcafe chrome ./tests/bs-scrollspy.test.ts"
   },
   "dependencies": {
     "lodash": "^4.17.10",
+    "mezr": "^0.6.2",
     "popper.js": "^1.14.4"
   },
   "devDependencies": {
