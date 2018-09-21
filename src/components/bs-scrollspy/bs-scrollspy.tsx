@@ -10,6 +10,7 @@ import _size from 'lodash/size';
 import _has from 'lodash/has';
 import _toNumber from 'lodash/toNumber';
 import _isNaN from 'lodash/isNaN';
+import _isElement from 'lodash/isElement';
 
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
@@ -42,8 +43,16 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   @State() scrollHeight: any;
 
   componentWillLoad() {
+    this.enableScrollspy();
+  }
+
+  componentDidUnload() {
+    this.disableScrollspy();
+  }
+
+  enableScrollspy(configOverride:any = {}) {
     this.scrollElement = this.useBodyForScrollElement === true ? window : this.scrollspyEl;
-    this.config = this.getConfig();
+    this.config = this.getConfig(configOverride);
     this.selector = `${this.config.target} .nav-link,${this.config.target} .list-group-item,${this.config.target} .dropdown-item`;
     this.offsets = [];
     this.targets = [];
@@ -54,7 +63,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     this.process();
   }
 
-  componentDidUnload() {
+  disableScrollspy() {
     if (this.scrollElement) {
       this.scrollElement.removeEventListener('scroll', this.handleScrollElement);
     }
@@ -69,23 +78,27 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
 
   handleScrollElement = () => this.process();
 
-  getConfig() {
+  getConfig(overrideConfig:any = {}) {
     const config: any = {};
-    if (_has(this.scrollspyEl.dataset, 'target')) {
-      if (typeof this.scrollspyEl.dataset.target !== 'string') {
-        let id = (this.scrollspyEl.dataset.target as any).getAttribute('id');
-        if (!id) {
-          id = getUniqueId('scrollspy');
-          (this.scrollspyEl.dataset.target as any).setAttribute('id', id);
-        }
-        config.target = `#${id}`;
-      } else {
-        config.target = this.scrollspyEl.dataset.target;
-      }
+    if (_has(overrideConfig, 'target')) {
+      config.target = overrideConfig.target;
+    } else if (_has(this.scrollspyEl.dataset, 'target')) {
+      config.target = this.scrollspyEl.dataset.target;
     } else {
       config.target = this.defaults.target;
     }
-    if (_has(this.scrollspyEl.dataset, 'offset')) {
+    if (_isElement(config.target)) {
+      console.log('config.target: ', config.target);
+      let id = config.target.getAttribute('id');
+      if (!id) {
+        id = getUniqueId('scrollspy');
+        config.target.setAttribute('id', id);
+      }
+      config.target = `#${id}`;
+    }
+    if (_has(overrideConfig, 'offset')) {
+      config.offset = _toNumber(overrideConfig.offset);
+    } else if (_has(this.scrollspyEl.dataset, 'offset')) {
       config.offset = _toNumber(this.scrollspyEl.dataset.offset);
     } else {
       config.offset = this.defaults.offset;
@@ -93,7 +106,9 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     if (_isNaN(config.offset)) {
       config.offset = this.defaults.offset;
     }
-    if (_has(this.scrollspyEl.dataset, 'method')) {
+    if (_has(overrideConfig, 'method')) {
+      config.method = _toNumber(overrideConfig.method);
+    } else if (_has(this.scrollspyEl.dataset, 'method')) {
       config.method = this.scrollspyEl.dataset.method;
     } else {
       config.method = this.defaults.method;
@@ -227,7 +242,12 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   activate(target) {
+    if (!this.config.target || _size(this.config.target) === 0) {
+      return;
+    }
     this.activeTarget = target;
+    console.log('this.activeTarget: ', this.activeTarget);
+    console.log('this.scrollspyEl: ', this.scrollspyEl);
     this.clear();
     const container = document.querySelector(this.config.target);
     const linkArr = BsScrollspy.getLinkArr(target, container);
@@ -280,6 +300,15 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     }
     if (scrollspyOptions === 'getActiveTarget') {
       return this.activeTarget;
+    }
+    if (typeof scrollspyOptions === 'object') {
+      // debugger;
+      // this.enableScrollspy(scrollspyOptions);
+      // this.disableScrollspy();
+      this.config = this.getConfig(scrollspyOptions);
+      this.refresh();
+      this.process();
+      return true;
     }
     if (typeof scrollspyOptions === 'string') {
       throw new Error(`No method named "${scrollspyOptions}"`);

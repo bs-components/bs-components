@@ -125,6 +125,37 @@
   <div class="container">
     <p>&nbsp;</p>
 
+<!-- document.getElementById('abc-scrollspy-example-abc').scrollspy({ target: document.getElementById('ss-target') }); -->
+    <div id="root" class="active">
+        <div class="topbar">
+          <div class="topbar-inner">
+            <div class="container" id="ss-target">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link" href="#masthead">Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="#detail">Detail</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <bs-scrollspy id="abc-scrollspy-example-abc" style="height: 100px; overflow: auto;">
+          <div style="height: 200px;">
+            <h4 id="masthead">Overview</h4>
+            <p style="height: 200px">
+              Ad leggings keytar, brunch id art party dolor labore.
+            </p>
+          </div>
+          <div style="height: 200px;">
+            <h4 id="detail">Detail</h4>
+            <p style="height: 200px">
+              Veniam marfa mustache skateboard, adipisicing fugiat velit pitchfork beard.
+            </p>
+          </div>
+        </bs-scrollspy>
+      </div>
+
+      <p>&nbsp;</p>
+
+
     <nav id="navbar-example2" class="navbar navbar-light bg-light">
       <a class="navbar-brand" href="#">Navbar</a>
       <ul class="nav nav-pills">
