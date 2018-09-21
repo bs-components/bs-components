@@ -157,9 +157,9 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     if (!this.config.target || _size(this.config.target) === 0) {
       return;
     }
-    const autoMethod = this.scrollElement === this.scrollElement.window ? 'offset' : 'position';
-    const offsetMethod = this.config.method === 'auto' ? autoMethod : this.config.method;
-    const offsetBase = offsetMethod === 'position' ? this.getScrollTop() : 0;
+    // const autoMethod = this.scrollElement === this.scrollElement.window ? 'offset' : 'position';
+    // const offsetMethod = this.config.method === 'auto' ? autoMethod : this.config.method;
+    // const offsetBase = offsetMethod === 'position' ? this.getScrollTop() : 0;
 
     // console.log('offsetBase: ', offsetBase);
     // console.log('offsetMethod: ', offsetMethod);
@@ -299,7 +299,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
           // console.log('offsetBase: ', offsetBase);
 
 
-          console.log('returnVal: ', returnVal);
+          // console.log('returnVal: ', returnVal);
           return returnVal;
         }
       }

@@ -40,7 +40,23 @@
 <body>
   <div class="container mt-5">
 
-    <nav class="navbar">
+
+    <nav id="navigation" class="navbar">
+      <ul class="nav">
+        <li class="nav-item"><a id="a-1" class="nav-link" href="#div-1">div 1</a>
+          <ul class="nav">
+            <li class="nav-item"><a id="a-2" class="nav-link" href="#div-2">div 2</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <bs-scrollspy data-target="#navigation" data-offset="0" class="content" style="position: absolute; top: 0px; overflow: auto; height: 50px">
+      <div id="div-1" style="padding: 0; margin: 0">
+        <div id="div-2" style="height: 200px; padding: 0; margin: 0">div 2</div>
+      </div>
+    </bs-scrollspy>
+
+    <!-- <nav class="navbar">
       <ul class="nav nav-pills">
         <li class="nav-item"><a class="nav-link" id="a-1" href="#div-1">div 1</a></li>
         <li class="nav-item"><a class="nav-link" id="a-2" href="#div-2">div 2</a></li>
@@ -49,7 +65,7 @@
     <bs-scrollspy id="test-scrollspy" class="content" style="overflow: auto; height: 50px">
       <div id="div-1" style="height: 100px; padding: 0; margin: 0">div 1</div>
       <div id="div-2" style="height: 200px; padding: 0; margin: 0">div 2</div>
-    </bs-scrollspy>
+    </bs-scrollspy> -->
 
 
     <!-- <div id="header" style="height: 500px;"></div>
@@ -67,8 +83,7 @@
     </bs-scrollspy> -->
 
 
-<!--
-    <nav id="navbar-example2" class="navbar navbar-light bg-light">
+    <!-- <nav id="navbar-example2" class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
         <ul class="nav nav-pills">
           <li class="nav-item">
@@ -145,8 +160,8 @@ ready(() => {
     // contentEl.scroll({ top: 550, left: 0, behavior: 'smooth' });
 
 
-    const contentEl = document.querySelector('.content');
-    contentEl.scrollspy({ offset: 0, target: '.navbar' });
+    // const contentEl = document.querySelector('.content');
+    // contentEl.scrollspy({ offset: 0, target: '.navbar' });
 
 
   }, 500);
