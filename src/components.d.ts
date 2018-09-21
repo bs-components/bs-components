@@ -85,6 +85,7 @@ declare global {
       'defaults': any;
       'scrollspy': (scrollspyOptions?: {}) => any;
       'useBodyForScrollElement': boolean;
+      'verboseLogging': boolean;
     }
 
     interface BsTab {
@@ -252,6 +253,7 @@ declare global {
       'activateEventName'?: string;
       'defaults'?: any;
       'useBodyForScrollElement'?: boolean;
+      'verboseLogging'?: boolean;
     }
 
     export interface BsTabAttributes extends HTMLAttributes {

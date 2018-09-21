@@ -40,8 +40,19 @@
 <body>
   <div class="container mt-5">
 
+    <nav class="navbar">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a class="nav-link" id="a-1" href="#div-1">div 1</a></li>
+        <li class="nav-item"><a class="nav-link" id="a-2" href="#div-2">div 2</a></li>
+      </ul>
+    </nav>
+    <bs-scrollspy id="test-scrollspy" class="content" style="overflow: auto; height: 50px">
+      <div id="div-1" style="height: 100px; padding: 0; margin: 0">div 1</div>
+      <div id="div-2" style="height: 200px; padding: 0; margin: 0">div 2</div>
+    </bs-scrollspy>
 
-    <div id="header" style="height: 500px;"></div>
+
+    <!-- <div id="header" style="height: 500px;"></div>
     <nav id="navigation" class="navbar">
       <ul class="navbar-nav nav-pills">
         <li class="nav-item active"><a class="nav-link" id="one-link" href="#one">One</a></li>
@@ -53,11 +64,11 @@
       <div id="one" style="height: 500px;"></div>
       <div id="two" style="height: 300px;"></div>
       <div id="three" style="height: 10px;"></div>
-    </bs-scrollspy>
+    </bs-scrollspy> -->
 
 
-
-    <!-- <nav id="navbar-example2" class="navbar navbar-light bg-light">
+<!--
+    <nav id="navbar-example2" class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
         <ul class="nav nav-pills">
           <li class="nav-item">
@@ -127,16 +138,24 @@ function ready(fn) {
 ready(() => {
   // console.log('ready');
   setTimeout(() => {
-    const contentEl = document.querySelector('#content');
-    contentEl.scrollspy({ target: '#navigation', offset: contentEl.offsetTop });
-    contentEl.scroll({ top: 550, left: 0, behavior: 'smooth' });
-    // contentEl.scrollTo({ top: 550, left: 0, behavior: 'smooth' });
+    // const contentEl = document.querySelector('#content');
+    // // contentEl.scrollspy({ target: '#navigation', offset: contentEl.offsetTop });
+    // contentEl.scrollspy({ target: '#navigation', offset: 250 });
+    // // contentEl.scrollspy({ target: '#navigation' });
+    // contentEl.scroll({ top: 550, left: 0, behavior: 'smooth' });
 
+
+    const contentEl = document.querySelector('.content');
+    contentEl.scrollspy({ offset: 0, target: '.navbar' });
 
 
   }, 500);
 });
 
+    document.querySelector('#overlay').addEventListener('click', function() {
+      document.getElementById("mySidenavOverlayOpacity").style.left = "-250px";
+      document.getElementById("overlay").style.display = "none";
+    });
 
 
 
