@@ -109,49 +109,16 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     return config;
   }
 
-  static getCalculatedStyle(elem, key) {
-    return window.getComputedStyle(elem)[key];
-  }
-
-  // static calculatedPosition(elem) {
-  //   const offset = elem.offset();
-  //   // Account for the *real* offset parent, which can be the document or its root element
-  //   // when a statically positioned element is identified
-  //   const doc = elem.ownerDocument;
-  //   let offsetParent = elem.offsetParent || doc.documentElement;
-  //   while (offsetParent && (offsetParent === doc.body || offsetParent === doc.documentElement) && BsScrollspy.getCalculatedStyle(offsetParent, 'position') === 'static') {
-  //     offsetParent = offsetParent.parentNode;
-  //   }
-  //   if (offsetParent && offsetParent !== elem && offsetParent.nodeType === 1) {
-
-  //     // Incorporate borders into its offset, since they are outside its content origin
-  //     const parentOffset = offsetParent.offset(); // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L74
-
-  //     parentOffset.top += BsScrollspy.getCalculatedStyle(offsetParent, 'borderTopWidth');
-  //     parentOffset.left += BsScrollspy.getCalculatedStyle(offsetParent, 'borderLeftWidth');
-  //   }
+  // static getCalculatedStyle(elem, key) {
+  //   return window.getComputedStyle(elem)[key];
   // }
 
-  // static findPos(obj) {
-  //   let curleft = 0;
-  //   let curtop = 0;
-  //   if (obj.offsetParent) {
-  //     do {
-  //       curleft += obj.offsetLeft;
-  //       curtop += obj.offsetTop;
-  //     } while (obj = obj.offsetParent);
-  //   }
-  //   return [curleft, curtop];
+  // static offset(el) {
+  //   const rect = el.getBoundingClientRect();
+  //   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  //   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  //   return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
   // }
-
-
-  static offset(el) {
-    const rect = el.getBoundingClientRect();
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
-  }
-
 
   refresh() {
     if (!this.config.target || _size(this.config.target) === 0) {
@@ -160,23 +127,12 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     // const autoMethod = this.scrollElement === this.scrollElement.window ? 'offset' : 'position';
     // const offsetMethod = this.config.method === 'auto' ? autoMethod : this.config.method;
     // const offsetBase = offsetMethod === 'position' ? this.getScrollTop() : 0;
-
-    // console.log('offsetBase: ', offsetBase);
-    // console.log('offsetMethod: ', offsetMethod);
-    // console.log('this.scrollElement: ', this.scrollElement);
-    // console.log('this.scrollElement.window: ', this.scrollElement.window);
-
-
     this.offsets = [];
     this.targets = [];
     this.scrollHeight = this.getScrollHeight();
-    // console.log('this.scrollHeight: ', this.scrollHeight);
     const scrollspyBCR = this.scrollElement.getBoundingClientRect();
     const container = document.querySelector(this.config.target);
     const targets = Array.prototype.slice.call(container.querySelectorAll(this.selector));
-    // const scrollspyCalculatedPosition = BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position');
-
-
     targets.map((element) => {
       let target;
       const targetSelector = getTargetSelector(element);
@@ -184,123 +140,9 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
         target = document.querySelector(targetSelector);
       }
       if (target) {
-        // console.log('target: ', target);
         const targetBCR = target.getBoundingClientRect();
         if (targetBCR.width || targetBCR.height) {
-          // const returnVal = [targetBCR.top - scrollspyBCR.top + offsetBase, targetSelector];
-
-          // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L20
-
-          // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L110
-
-          // const returnVal = [targetBCR.top + offsetBase, targetSelector];
-
-          // const targetCalculatedPosition = BsScrollspy.getCalculatedStyle(target, 'position');
-
-          // console.log('targetCalculatedPosition: ', targetCalculatedPosition);
-          // console.log('targetBCR.top: ', targetBCR.top);
-          // console.log('scrollspyBCR.top: ', scrollspyBCR.top);
-          // console.log('target.offsetTop: ', target.offsetTop);
-          // console.log('this.scrollspyEl.offsetTop: ', this.scrollspyEl.offsetTop);
-
-
-          // let myOffsetTop;
-
-
-          // if (scrollTop > 0) {
-          //   myOffsetTop = targetBCR.top - scrollTop;
-          // } else {
-
-          // }
-          const myOffsetTop = targetBCR.top - scrollspyBCR.top;
-          // console.log('*** myOffsetTop: ', myOffsetTop);
-
-
-          // console.log('scrollspyCalculatedPosition: ', scrollspyCalculatedPosition);
-
-
-          // console.log('this.getScrollTop(): ', this.getScrollTop());
-
-
-          // if (scrollspyCalculatedPosition === 'relative') {
-
-
-          //   // console.log('targetBCR.top: ', targetBCR.top);
-          //   // console.log('target.offsetTop: ', target.offsetTop);
-
-          //   // console.log('scrollspyBCR.top: ', scrollspyBCR.top);
-          //   // console.log('this.getScrollTop(): ', this.getScrollTop());
-
-
-          //   // myOffsetTop = target.offsetTop - this.scrollspyEl.offsetTop;
-
-          //   // myOffsetTop = targetBCR.top - scrollspyBCR.top;
-
-          //   myOffsetTop = targetBCR.top - this.getScrollTop();
-
-          //   // myOffsetTop = mezr.offset(target, this.scrollspyEl).top;
-          //   // console.log('mezr myOffsetTop: ', myOffsetTop);
-          // } else if (scrollspyCalculatedPosition === 'static') {
-          //   // myOffsetTop = targetBCR.top;
-
-          //   myOffsetTop = targetBCR.top - this.getScrollTop();
-
-          //   // myOffsetTop = targetBCR.top - scrollspyBCR.top;
-          // } else {
-          //   // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/offset.js#L122
-          //   myOffsetTop = targetBCR.top;
-          // }
-
-
-          // const returnVal = [myOffsetTop + offsetBase, targetSelector];
-          const returnVal = [myOffsetTop, targetSelector];
-
-
-          // console.log('target: ', target);
-
-
-          // console.log("BsScrollspy.getCalculatedStyle(target, 'position'): ", BsScrollspy.getCalculatedStyle(target, 'position'));
-          // console.log("BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position'): ", BsScrollspy.getCalculatedStyle(this.scrollspyEl, 'position'));
-
-
-          // console.log('target.offsetParent: ', target.offsetParent);
-          // // console.log('target.getOffsetParent(): ', target.getOffsetParent());
-
-          // console.log('BsScrollspy.offset(target): ', BsScrollspy.offset(target));
-
-          // console.log('targetBCR: ', targetBCR);
-
-
-          // // console.log("mezr.offset(target, 'content'): ", mezr.offset(target, 'content'));
-          // // console.log("mezr.offset(target, 'padding'): ", mezr.offset(target, 'padding'));
-          // // console.log("mezr.offset(target, 'scroll'): ", mezr.offset(target, 'scroll'));
-          // // console.log("mezr.offset(target, 'border'): ", mezr.offset(target, 'border'));
-          // // console.log('mezr.offset(target, this.scrollspyEl): ', mezr.offset(target, this.scrollspyEl));
-
-          // console.log('mezr.offset(target, this.scrollspyEl): ', mezr.offset(target, this.scrollspyEl));
-
-          // // console.log('mezr.offset(target, mezr.containingBlock(this.scrollspyEl)): ', mezr.offset(target, mezr.containingBlock(this.scrollspyEl)));
-
-          // console.log('mezr.offset(target, mezr.containingBlock(this.scrollspyEl, "absolute")): ', mezr.offset(target, mezr.containingBlock(this.scrollspyEl, 'absolute')));
-
-
-          // // console.log('mezr.offset(target, mezr.containingBlock(target, "fixed")): ', mezr.offset(target, mezr.containingBlock(target, 'fixed')));
-
-
-          // console.log('target.offsetTop: ', target.offsetTop);
-          // // console.log('target.position(): ', target.position());
-          // console.log('window.getComputedStyle(target).top: ', window.getComputedStyle(target).top);
-          // console.log('window.getComputedStyle(target).position: ', window.getComputedStyle(target).position);
-          // // console.log('window.getComputedStyle(target).offset: ', (window.getComputedStyle(target) as any).offset);
-
-
-          // console.log('targetBCR.top - scrollspyBCR.top: ', targetBCR.top - scrollspyBCR.top);
-          // console.log('offsetMethod: ', offsetMethod);
-          // console.log('offsetBase: ', offsetBase);
-
-
-          // console.log('returnVal: ', returnVal);
-          return returnVal;
+          return [targetBCR.top - scrollspyBCR.top, targetSelector];
         }
       }
       return null;
@@ -314,7 +156,6 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   getScrollTop() {
-    // return this.scrollElement === window ? this.scrollElement.pageYOffset : this.scrollElement.scrollTop;
     if (this.scrollElement === window) {
       return this.scrollElement.pageYOffset;
     }
@@ -326,11 +167,10 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   getOffsetHeight() {
-    // if (this.useBodyForScrollElement) {
-    //   return window.innerHeight;
-    // }
-    // return this.scrollElement.getBoundingClientRect().height;
-    return this.scrollElement === window ? window.innerHeight : this.scrollElement.getBoundingClientRect().height;
+    if (this.scrollElement === window) {
+      return window.innerHeight;
+    }
+    return this.scrollElement.getBoundingClientRect().height;
   }
 
   isActiveTarget(index, scrollTop) {
