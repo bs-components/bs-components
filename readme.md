@@ -14,7 +14,7 @@ Status:
 - [x] collapse - run tests using: `yarn test-bs-collapse`
 - [x] alert - run tests using: `yarn test-bs-alert`
 - [x] tab - run tests using: `yarn test-bs-tab`
-- [x] scrollspy - run tests using: `yarn test-bs-scrollspy` (needs docs)
+- [x] scrollspy - run tests using: `yarn test-bs-scrollspy`
 - [ ] carousel not planned currently but maybe later
 
 For all of the other bootstrap components a web component solution is not needed because they can be done with just css. Use the bootstrap webpage component documents.

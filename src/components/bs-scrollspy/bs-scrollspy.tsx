@@ -132,6 +132,10 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     this.scrollHeight = this.getScrollHeight();
     const scrollspyBCR = this.scrollElement.getBoundingClientRect();
     const container = document.querySelector(this.config.target);
+    if (!container) {
+      console.warn(`unable to locate target selector "${this.config.target}"`);
+      return;
+    }
     const targets = Array.prototype.slice.call(container.querySelectorAll(this.selector));
     targets.map((element) => {
       let target;
@@ -207,6 +211,9 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     const scrollHeight = this.getScrollHeight();
     const maxScroll = this.config.offset + scrollHeight - this.getOffsetHeight();
     const container = document.querySelector(this.config.target);
+    if (!container) {
+      return;
+    }
     if (this.scrollHeight !== scrollHeight) {
       this.refresh();
     }
@@ -272,6 +279,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     if (!this.config.target || _size(this.config.target) === 0) {
       return;
     }
+    let relatedTarget
     this.activeTarget = target;
     const container = document.querySelector(this.config.target);
     this.clear(container);
@@ -286,8 +294,10 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
           }
         }
         addClass(linkArr[j], 'active');
+        relatedTarget = linkArr[j];
       } else {
         addClass(linkArr[j], 'active');
+        relatedTarget = linkArr[j];
         const parentSelector = '.nav, .list-group';
         let currentEl = linkArr[j];
         do {
@@ -311,7 +321,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
         } while (currentEl && container.contains(currentEl));
       }
     }
-    customEvent(this.scrollElement, this.activateEventName, {}, target);
+    customEvent(this.scrollElement, this.activateEventName, { target }, relatedTarget);
   }
 
   @Method()
