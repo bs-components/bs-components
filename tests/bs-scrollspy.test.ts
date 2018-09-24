@@ -20,8 +20,7 @@ const setHtml = ClientFunction((innerHtml: string) => {
 const callScrollspyBySelector = ClientFunction((selector, passedOption) => {
   const el:any = document.querySelector(selector);
   try {
-    el.scrollspy(passedOption);
-    return true;
+    return el.scrollspy(passedOption);
   } catch (err) {
     return err;
   }
