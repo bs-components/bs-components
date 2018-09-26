@@ -34,7 +34,7 @@
             <p>
               Amet tempor mollit aliquip pariatur excepteur commodo do ea cillum commodo Lorem et occaecat elit qui et. Aliquip labore ex ex esse voluptate occaecat Lorem ullamco deserunt. Aliqua cillum excepteur irure consequat id quis ea. Sit proident ullamco aute magna pariatur nostrud labore. Reprehenderit aliqua commodo eiusmod aliquip est do duis amet proident magna consectetur consequat eu commodo fugiat non quis. Enim aliquip exercitation ullamco adipisicing voluptate excepteur minim exercitation minim minim commodo adipisicing exercitation officia nisi adipisicing. Anim id duis qui consequat labore adipisicing sint dolor elit cillum anim et fugiat.
             </p>
-            <h5 id="item-1-2">Item 2-2</h5>
+            <h5 id="item-1-2">Item 1-2</h5>
             <p>
               Cillum nisi deserunt magna eiusmod qui eiusmod velit voluptate pariatur laborum sunt enim. Irure laboris mollit consequat incididunt sint et culpa culpa incididunt adipisicing magna magna occaecat. Nulla ipsum cillum eiusmod sint elit excepteur ea labore enim consectetur in labore anim. Proident ullamco ipsum esse elit ut Lorem eiusmod dolor et eiusmod. Anim occaecat nulla in non consequat eiusmod velit incididunt.
             </p>
@@ -83,7 +83,7 @@
   <p>...</p>
   <h5 id="item-1-1">Item 1-1</h5>
   <p>...</p>
-  <h5 id="item-1-2">Item 2-2</h5>
+  <h5 id="item-1-2">Item 1-2</h5>
   <p>...</p>
   <h4 id="item-2">Item 2</h4>
   <p>...</p>
@@ -202,7 +202,7 @@ document.querySelector('[data-spy="scroll"]').addEventListener('activate.bs.scro
   <p>...</p>
   <h5 id="item-1-1">Item 1-1</h5>
   <p>...</p>
-  <h5 id="item-1-2">Item 2-2</h5>
+  <h5 id="item-1-2">Item 1-2</h5>
   <p>...</p>
   <h4 id="item-2">Item 2</h4>
   <p>...</p>
