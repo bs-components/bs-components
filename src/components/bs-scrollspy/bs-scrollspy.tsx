@@ -109,16 +109,29 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     return config;
   }
 
-  // static getCalculatedStyle(elem, key) {
-  //   return window.getComputedStyle(elem)[key];
-  // }
 
-  // static offset(el) {
-  //   const rect = el.getBoundingClientRect();
-  //   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-  //   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  //   return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
-  // }
+  /**
+   * Get an element's distance from the top of the Document.
+   * @private
+   * @param  {Node} elem The element
+   * @return {Number}    Distance from the top in pixels
+   */
+  getOffsetTop(element) {
+    // original: https://github.com/cferdinandi/gumshoe/blob/master/src/js/gumshoe.js#L138
+    let location = 0;
+    let currentEl = element;
+    if (currentEl.offsetParent) {
+      do {
+        location += currentEl.offsetTop;
+        currentEl = currentEl.offsetParent;
+      } while (currentEl);
+    } else {
+      location = currentEl.offsetTop;
+    }
+    // location = location - headerHeight - this.offset;
+    location -= this.config.offset;
+    return location >= 0 ? location : 0;
+  }
 
   refresh() {
     if (!this.config.target || _size(this.config.target) === 0) {
@@ -130,7 +143,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     this.offsets = [];
     this.targets = [];
     this.scrollHeight = this.getScrollHeight();
-    const scrollspyBCR = this.scrollElement.getBoundingClientRect();
+    // const scrollspyBCR = this.scrollElement.getBoundingClientRect();
+    const scrollElementTop = this.getOffsetTop(this.scrollElement);
     const container = document.querySelector(this.config.target);
     if (!container) {
       console.warn(`unable to locate target selector "${this.config.target}"`);
@@ -146,7 +160,15 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       if (target) {
         const targetBCR = target.getBoundingClientRect();
         if (targetBCR.width || targetBCR.height) {
-          return [targetBCR.top - scrollspyBCR.top, targetSelector];
+          const targetTop = this.getOffsetTop(target);
+          // const returnVal = [targetBCR.top - scrollspyBCR.top, targetSelector];
+          const returnVal = [targetTop - scrollElementTop, targetSelector];
+          // if (this.verboseLogging) {
+          //   console.log('returnVal: ', returnVal);
+          //   // console.log('this.getOffsetTop(this.scrollElement): ', this.getOffsetTop(this.scrollElement));
+          //   // console.log('this.getOffsetTop(target): ', this.getOffsetTop(target));
+          // }
+          return returnVal;
         }
       }
       return null;
@@ -229,6 +251,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       this.clear(container);
       return;
     }
+    console.log('this.offsets: ', this.offsets);
+    console.log('this.targets: ', this.targets);
     for (let i = _size(this.offsets) - 1; i >= 0; i -= 1) {
       if (this.isActiveTarget(i, scrollTop)) {
         this.activate(this.targets[i]);
@@ -279,7 +303,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     if (!this.config.target || _size(this.config.target) === 0) {
       return;
     }
-    let relatedTarget
+    let relatedTarget;
     this.activeTarget = target;
     const container = document.querySelector(this.config.target);
     this.clear(container);

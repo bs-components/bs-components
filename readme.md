@@ -40,7 +40,7 @@ First make sure to include the bootstrap.css resource
 
 Then:
 - for plain html and js:
-  - Put a script tag similar to this `<script src='https://unpkg.com/bs-components@0.0.3/dist/bscomponents.js'></script>` in the head of your index.html
+  - Put a script tag similar to this `<script src='https://unpkg.com/bs-components@0.0.8/dist/bscomponents.js'></script>` in the head of your index.html
   - you do **not** need to include jQuery, Popper.js or the bootstrap.js resource
 - for one of the other frameworks: [Stenciljs Framework Integration](https://stenciljs.com/docs/framework-integration)
 
