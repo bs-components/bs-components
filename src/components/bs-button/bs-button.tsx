@@ -335,6 +335,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
 
   handleToggle(element) {
+    // debugger;
     const isDisabled = hasClass(this.bsButtonEl, 'disabled');
     if (isDisabled) {
       return;
@@ -360,6 +361,9 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
           } else {
             const activeBsButton:any = buttonsToggler.querySelector('.active');
             if (activeBsButton) {
+              // activeBsButton.setAttribute('active', false);
+              removeClass(activeBsButton, 'active');
+              customEvent(activeBsButton, this.inactiveEventName, {}, this.bsButtonEl);
               activeBsButton.removeAttribute('active');
             }
           }
