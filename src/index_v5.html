@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- eslint-disable-line -->
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>bs-components</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="build/bscomponents.js"></script>
+
+</head>
+<body>
+
+  <header>
+    <bs-collapse class="collapse bg-dark" id="navbarHeader">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 col-md-7 py-4">
+            <h4 class="text-white">Plain JavaScript</h4>
+            <p class="text-muted">
+              This is a pain JavaScript example project using bs-components.  BS-Components is a web component library version of the
+              bootstrap jQuery plugins except that it does not use jQuery.
+            </p>
+          </div>
+          <div class="col-sm-4 offset-md-1 py-4">
+            <h4 class="text-white">Resources</h4>
+            <ul class="list-unstyled">
+                <li><a href="https://bs-components.github.io/example-projects/no-framework/" class="text-white">Documentation</a></li>
+              <li><a href="https://github.com/bs-components/bs-components" class="text-white">bs-components Github</a></li>
+              <li><a href="https://github.com/jasoncubic" class="text-white">Author</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </bs-collapse>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <strong>bs-components</strong>
+        </a>
+        <bs-button role="button" class="btn navbar-toggler" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </bs-button>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="container my-5">
+
+
+    <div id="mySidenavPushDrawer" class="sidenav" style="margin-top: 70px;">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNavPushDrawer()">&times;</a>
+      <a class="nav-link" href="#"><i class="fas fa-inbox"></i> About</a>
+      <a class="nav-link" href="#"><i class="fas fa-paper-plane"></i> Services</a>
+      <a class="nav-link" href="#"><i class="fas fa-users"></i> Clients</a>
+      <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+
+      <div class="item">
+          <bs-button tabindex="-1">
+            <a class="nav-link parent" id="linkTrigger" data-toggle="collapse" href="#collapseOneB" aria-expanded="false" aria-controls="collapseOneB"><i class="far fa-hand-paper"></i> Parent 1</a>
+          </bs-button>
+          <bs-collapse id="collapseOneB" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div id="nestedAccordion">
+              <div class="item">
+                <bs-button tabindex="-1">
+                  <a class="nav-link parent" id="nestedLinkTrigger" data-toggle="collapse" href="#nestedCollapseOne" aria-expanded="false" aria-controls="nestedCollapseOne"> <i class="far fa-hand-paper"></i> Child 1</a>
+                </bs-button>
+                <bs-collapse class="nav-link collapse" id="nestedCollapseOne" role="tabpanel" aria-labelledby="headingThree"><i class="far fa-hand-paper"></i> Grandkid 1</bs-collapse>
+              </div>
+            </div>
+          </bs-collapse>
+        </div>
+
+        <div class="item">
+            <bs-button tabindex="-1">
+              <a class="nav-link parent" id="linkTrigger2" data-toggle="collapse" href="#collapseOneC" aria-expanded="false" aria-controls="collapseOneC"><i class="far fa-hand-paper"></i> Parent 2</a>
+            </bs-button>
+            <bs-collapse id="collapseOneC" data-parent="#accordion" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+              <div id="nestedAccordion2">
+                <div class="item">
+                  <bs-button tabindex="-1">
+                    <a class="nav-link parent" id="nestedLinkTrigger2" data-toggle="collapse" href="#nestedCollapseTwo" aria-expanded="false" aria-controls="nestedCollapseTwo"><i class="far fa-hand-paper"></i> Child 2</a>
+                  </bs-button>
+                  <bs-collapse class="nav-link" id="nestedCollapseTwo" data-parent="#nestedAccordion2" class="collapse" role="tabpanel" aria-labelledby="headingThree"><i class="far fa-hand-paper"></i> Grandkid 2</bs-collapse>
+                </div>
+              </div>
+            </bs-collapse>
+          </div>
+    </div>
+
+
+
+
+  </div>
+
+
+</body>
+</html>
