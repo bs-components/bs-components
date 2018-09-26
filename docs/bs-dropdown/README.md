@@ -18,7 +18,7 @@
 </vue-html-wrapper>
 
 ```html
-<bs-dropdown v-pre class="dropdown">
+<bs-dropdown class="dropdown">
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Dropdown button
   </button>
@@ -48,7 +48,7 @@ With anchor element:
 </vue-html-wrapper>
 
 ```html
-<bs-dropdown v-pre class="dropdown">
+<bs-dropdown class="dropdown">
   <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Dropdown link
   </a>
