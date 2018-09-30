@@ -1,16 +1,16 @@
 {
   "name": "bs-components",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bootstrap Stenciljs Components",
   "author": "Jason Cubic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JasonCubic/bs-components"
+    "url": "https://github.com/bs-components/bs-components"
   },
-  "homepage": "https://github.com/JasonCubic/bs-components",
+  "homepage": "https://github.com/bs-components/bs-components",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasonCubic/bs-components.git"
+    "url": "git+https://github.com/bs-components/bs-components.git"
   },
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
