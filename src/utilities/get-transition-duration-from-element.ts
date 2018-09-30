@@ -4,14 +4,6 @@
 // import _trimEnd from 'lodash/trimEnd';
 // import _toLower from 'lodash/toLower';
 
-
-// const toNumber = require('lodash/toNumber');
-// const max = require('lodash/max');
-// const isNaN = require('lodash/isNaN');
-// const trimEnd = require('lodash/trimEnd');
-// const toLower = require('lodash/toLower');
-// const split = require('lodash/split');
-
 import _ from 'lodash';
 
 function transformTransitionDuration(stringDuration) {

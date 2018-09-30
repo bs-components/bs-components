@@ -1,10 +1,10 @@
-import _toLower from 'lodash/toLower';
+import _ from 'lodash';
 
 export default function getConfigBoolean(configValue: any) {
   if (configValue === true) {
     return true;
   }
-  if (_toLower(configValue) === 'true') {
+  if (_.toLower(configValue) === 'true') {
     return true;
   }
   if (configValue === 1) {
