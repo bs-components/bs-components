@@ -9,9 +9,10 @@ import {
 } from '@stencil/core';
 
 import Popper from 'popper.js';
-import _size from 'lodash/size';
-import _has from 'lodash/has';
-import _toLower from 'lodash/toLower';
+import _ from 'lodash';
+// import _.size from 'lodash/size';
+// import _.has from 'lodash/has';
+// import _.toLower from 'lodash/toLower';
 
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
@@ -154,7 +155,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
         // so keep the dropdown open
         return;
       }
-      if (_toLower(event.target.tagName) === 'input' || _toLower(event.target.tagName) === 'textarea') {
+      if (_.toLower(event.target.tagName) === 'input' || _.toLower(event.target.tagName) === 'textarea') {
         return;
       }
     }
@@ -166,27 +167,27 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
   setConfig(relatedTarget) {
     this.config = {};
     const config: any = {};
-    if (_has(relatedTarget.dataset, 'offset')) {
+    if (_.has(relatedTarget.dataset, 'offset')) {
       config.offset = relatedTarget.dataset.offset;
     } else {
       config.offset = this.defaults.offset;
     }
-    if (_has(relatedTarget.dataset, 'relatedTarget')) {
+    if (_.has(relatedTarget.dataset, 'relatedTarget')) {
       config.flip = getConfigBoolean(relatedTarget.dataset.flip);
     } else {
       config.flip = this.defaults.flip;
     }
-    if (_has(relatedTarget.dataset, 'boundary')) {
+    if (_.has(relatedTarget.dataset, 'boundary')) {
       config.boundary = relatedTarget.dataset.boundary;
     } else {
       config.boundary = this.defaults.boundary;
     }
-    if (_has(relatedTarget.dataset, 'reference')) {
+    if (_.has(relatedTarget.dataset, 'reference')) {
       config.reference = relatedTarget.dataset.reference;
     } else {
       config.reference = this.defaults.reference;
     }
-    if (_has(relatedTarget.dataset, 'display')) {
+    if (_.has(relatedTarget.dataset, 'display')) {
       config.display = relatedTarget.dataset.display;
     } else {
       config.display = this.defaults.display;
@@ -370,7 +371,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     const SPACE_KEYCODE = 32; // KeyboardEvent.which value for space key
     const ARROW_UP_KEYCODE = 38; // KeyboardEvent.which value for up arrow key
     const ARROW_DOWN_KEYCODE = 40; // KeyboardEvent.which value for down arrow key
-    if (_toLower(event.target.tagName) === 'input' || _toLower(event.target.tagName) === 'textarea') {
+    if (_.toLower(event.target.tagName) === 'input' || _.toLower(event.target.tagName) === 'textarea') {
       if (event.which === SPACE_KEYCODE) {
         return false;
       }
@@ -501,7 +502,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
   @Method()
   dropdown(dropdownOptions = {}, relatedTarget = null) {
-    if (_size(dropdownOptions) === 0) {
+    if (_.size(dropdownOptions) === 0) {
       return this.dropdownEl;
     }
     if (dropdownOptions === 'toggle') {

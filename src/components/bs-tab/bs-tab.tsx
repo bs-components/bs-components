@@ -6,7 +6,7 @@ import {
   Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-import _size from 'lodash/size';
+import _ from 'lodash';
 
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import hasClass from '../../utilities/has-class';
@@ -230,7 +230,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
 
   @Method()
   tab(tabOptions = {}, triggeringButton = null) {
-    if (_size(tabOptions) === 0) {
+    if (_.size(tabOptions) === 0) {
       return this.tabEl;
     }
     if (tabOptions === 'show') {

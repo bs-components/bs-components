@@ -6,12 +6,13 @@ import {
   Method, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-import _size from 'lodash/size';
-import _has from 'lodash/has';
-import _toNumber from 'lodash/toNumber';
-import _isNaN from 'lodash/isNaN';
-import _isElement from 'lodash/isElement';
+// import _.size from 'lodash/size';
+// import _.has from 'lodash/has';
+// import _.toNumber from 'lodash/toNumber';
+// import _.isNaN from 'lodash/isNaN';
+// import _.isElement from 'lodash/isElement';
 
+import _ from 'lodash';
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
 import hasClass from '../../utilities/has-class';
@@ -74,14 +75,14 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
 
   getConfig(overrideConfig:any = {}) {
     const config: any = {};
-    if (_has(overrideConfig, 'target')) {
+    if (_.has(overrideConfig, 'target')) {
       config.target = overrideConfig.target;
-    } else if (_has(this.scrollspyEl.dataset, 'target')) {
+    } else if (_.has(this.scrollspyEl.dataset, 'target')) {
       config.target = this.scrollspyEl.dataset.target;
     } else {
       config.target = this.defaults.target;
     }
-    if (_isElement(config.target)) {
+    if (_.isElement(config.target)) {
       let id = config.target.getAttribute('id');
       if (!id) {
         id = getUniqueId('scrollspy');
@@ -89,19 +90,19 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       }
       config.target = `#${id}`;
     }
-    if (_has(overrideConfig, 'offset')) {
-      config.offset = _toNumber(overrideConfig.offset);
-    } else if (_has(this.scrollspyEl.dataset, 'offset')) {
-      config.offset = _toNumber(this.scrollspyEl.dataset.offset);
+    if (_.has(overrideConfig, 'offset')) {
+      config.offset = _.toNumber(overrideConfig.offset);
+    } else if (_.has(this.scrollspyEl.dataset, 'offset')) {
+      config.offset = _.toNumber(this.scrollspyEl.dataset.offset);
     } else {
       config.offset = this.defaults.offset;
     }
-    if (_isNaN(config.offset)) {
+    if (_.isNaN(config.offset)) {
       config.offset = this.defaults.offset;
     }
-    if (_has(overrideConfig, 'method')) {
-      config.method = _toNumber(overrideConfig.method);
-    } else if (_has(this.scrollspyEl.dataset, 'method')) {
+    if (_.has(overrideConfig, 'method')) {
+      config.method = _.toNumber(overrideConfig.method);
+    } else if (_.has(this.scrollspyEl.dataset, 'method')) {
       config.method = this.scrollspyEl.dataset.method;
     } else {
       config.method = this.defaults.method;
@@ -134,7 +135,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   refresh() {
-    if (!this.config.target || _size(this.config.target) === 0) {
+    if (!this.config.target || _.size(this.config.target) === 0) {
       return;
     }
     // const autoMethod = this.scrollElement === this.scrollElement.window ? 'offset' : 'position';
@@ -223,7 +224,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   process() {
-    if (!this.config.target || _size(this.config.target) === 0) {
+    if (!this.config.target || _.size(this.config.target) === 0) {
       return;
     }
     const scrollTop = this.getScrollTop() + this.config.offset;
@@ -253,7 +254,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
     }
     // console.log('this.offsets: ', this.offsets);
     // console.log('this.targets: ', this.targets);
-    for (let i = _size(this.offsets) - 1; i >= 0; i -= 1) {
+    for (let i = _.size(this.offsets) - 1; i >= 0; i -= 1) {
       if (this.isActiveTarget(i, scrollTop)) {
         this.activate(this.targets[i]);
       }
@@ -300,7 +301,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   activate(target) {
-    if (!this.config.target || _size(this.config.target) === 0) {
+    if (!this.config.target || _.size(this.config.target) === 0) {
       return;
     }
     let relatedTarget;
@@ -350,7 +351,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
 
   @Method()
   scrollspy(scrollspyOptions = {}) {
-    if (_size(scrollspyOptions) === 0) {
+    if (_.size(scrollspyOptions) === 0) {
       return this.scrollspyEl;
     }
     if (scrollspyOptions === 'refresh') {

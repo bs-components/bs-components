@@ -9,22 +9,23 @@ import {
 
 import Popper from 'popper.js';
 
-import _size from 'lodash/size';
-import _get from 'lodash/get';
-import _split from 'lodash/split';
-import _toLower from 'lodash/toLower';
-import _has from 'lodash/has';
-import _toInteger from 'lodash/toInteger';
-import _isNaN from 'lodash/isNaN';
-import _toString from 'lodash/toString';
-import _isNumber from 'lodash/isNumber';
-import _includes from 'lodash/includes';
-import _intersection from 'lodash/intersection';
-import _trim from 'lodash/trim';
-import _isInteger from 'lodash/isInteger';
-import _isObject from 'lodash/isObject';
-import _isString from 'lodash/isString';
+// import _.size from 'lodash/size';
+// import _.get from 'lodash/get';
+// import _.split from 'lodash/split';
+// import _.toLower from 'lodash/toLower';
+// import _.has from 'lodash/has';
+// import _.toInteger from 'lodash/toInteger';
+// import _.isNaN from 'lodash/isNaN';
+// import _.toString from 'lodash/toString';
+// import _.isNumber from 'lodash/isNumber';
+// import _.includes from 'lodash/includes';
+// import _.intersection from 'lodash/intersection';
+// import _.trim from 'lodash/trim';
+// import _.isInteger from 'lodash/isInteger';
+// import _.isObject from 'lodash/isObject';
+// import _.isString from 'lodash/isString';
 
+import _ from 'lodash';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
@@ -112,12 +113,12 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
         this.setConfig({ animation: false });
       }
       this.tooltipEl.addEventListener(this.shownEventName, () => {
-        if (_includes(this.config.trigger, 'click')) {
+        if (_.includes(this.config.trigger, 'click')) {
           this.activeTrigger.click = true;
-        } else if (_includes(this.config.trigger, 'hover') && !_includes(this.config.trigger, 'manual')) {
+        } else if (_.includes(this.config.trigger, 'hover') && !_.includes(this.config.trigger, 'manual')) {
           this.activeTrigger.hover = true;
           this.hoverState = 'show';
-        } else if (_includes(this.config.trigger, 'focus') && !_includes(this.config.trigger, 'manual')) {
+        } else if (_.includes(this.config.trigger, 'focus') && !_.includes(this.config.trigger, 'manual')) {
           this.activeTrigger.focus = true;
         }
         if (hasAnimation) {
@@ -143,7 +144,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       bottom: 'bottom',
       left: 'left',
     };
-    return AttachmentMap[_toLower(placement)];
+    return AttachmentMap[_.toLower(placement)];
   }
 
   enableTooltip() {
@@ -160,7 +161,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.tooltipId = getUniqueId('tooltip');
     this.tooltipEl.dataset.bsId = this.tooltipId;
     this.tip = null;
-    if (_size(this.config) === 0) {
+    if (_.size(this.config) === 0) {
       this.setConfig();
     }
     this.setListeners();
@@ -189,7 +190,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.bsRemoveEventListener('focusin', this.handleFocusIn);
     this.bsRemoveEventListener('focusout', this.handleFocusOut);
     const { originalTitle } = this.tooltipEl.dataset;
-    if (_size(originalTitle) > 0) {
+    if (_.size(originalTitle) > 0) {
       this.tooltipEl.title = originalTitle;
     }
     const closestModal = closest(this.tooltipEl, '.modal');
@@ -223,7 +224,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     }
     const container = !this.config.container ? document.body : document.querySelector(this.config.container);
     const template = document.createElement('div');
-    template.innerHTML = _trim(this.config.template);
+    template.innerHTML = _.trim(this.config.template);
     const innerTemplateTooltip = template.firstChild;
     const newTip = container.appendChild(innerTemplateTooltip);
     newTip.setAttribute('id', this.tooltipId);
@@ -526,7 +527,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       'bs-popover-bottom',
       'bs-popover-left',
     ];
-    const classesToRemove = _intersection(bsTooltipPositionClasses, tip.classList);
+    const classesToRemove = _.intersection(bsTooltipPositionClasses, tip.classList);
     for (let j = 0, len = classesToRemove.length; j < len; j += 1) {
       removeClass(tip, classesToRemove[j]);
     }
@@ -685,7 +686,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   bsRemoveEventListener(eventName, listenerFunction, callback = () => {}) {
     if (this.config.selector) {
       const elements = Array.prototype.slice.call(document.querySelectorAll(this.config.selector));
-      if (elements && _size(elements) > 0) {
+      if (elements && _.size(elements) > 0) {
         for (let j = 0; j < elements.length; j += 1) {
           elements[j].removeEventListener(eventName, listenerFunction);
         }
@@ -699,7 +700,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.bsRemoveEventListener(eventName, listenerFunction, () => {
       if (this.config.selector) {
         const elements = Array.prototype.slice.call(this.tooltipEl.querySelectorAll(this.config.selector));
-        if (elements && _size(elements) > 0) {
+        if (elements && _.size(elements) > 0) {
           for (let j = 0; j < elements.length; j += 1) {
             elements[j].addEventListener(eventName, listenerFunction);
           }
@@ -723,26 +724,26 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
 
     this.fixTitle();
 
-    const triggers = _split(_toLower(this.config.trigger), ' ');
-    if (_includes(triggers, 'click')) {
+    const triggers = _.split(_.toLower(this.config.trigger), ' ');
+    if (_.includes(triggers, 'click')) {
       this.bsAddEventListener('click', this.handleClickTrigger);
     }
-    if (_includes(triggers, 'manual')) {
+    if (_.includes(triggers, 'manual')) {
       // hover and focus events are ignored if manual is included.
       return;
     }
-    if (_includes(triggers, 'hover')) {
+    if (_.includes(triggers, 'hover')) {
       this.bsAddEventListener('mouseenter', this.handleMouseEnter);
       this.bsAddEventListener('mouseleave', this.handleMouseLeave);
     }
-    if (_includes(triggers, 'focus')) {
+    if (_.includes(triggers, 'focus')) {
       this.bsAddEventListener('focusin', this.handleFocusIn);
       this.bsAddEventListener('focusout', this.handleFocusOut);
     }
   }
 
   fixTitle() {
-    if (_size(this.tooltipEl.title) > 0) {
+    if (_.size(this.tooltipEl.title) > 0) {
       this.tooltipEl.dataset.originalTitle = this.tooltipEl.title || '';
       this.tooltipEl.title = '';
     }
@@ -752,23 +753,23 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.config = {};
     const config: any = {};
 
-    if (_has(this.tooltipEl.dataset, 'toggle')) {
+    if (_.has(this.tooltipEl.dataset, 'toggle')) {
       config.toggle = this.tooltipEl.dataset.toggle;
     } else {
       config.toggle = this.defaults.toggle;
     }
 
-    if (_has(overrideConfig, 'animation')) {
+    if (_.has(overrideConfig, 'animation')) {
       config.animation = getConfigBoolean(overrideConfig.animation);
-    } else if (_has(this.tooltipEl.dataset, 'animation')) {
+    } else if (_.has(this.tooltipEl.dataset, 'animation')) {
       config.animation = getConfigBoolean(this.tooltipEl.dataset.animation);
     } else {
       config.animation = this.defaults.animation;
     }
 
-    if (_has(overrideConfig, 'trigger')) {
+    if (_.has(overrideConfig, 'trigger')) {
       config.trigger = overrideConfig.trigger;
-    } else if (_has(this.tooltipEl.dataset, 'trigger')) {
+    } else if (_.has(this.tooltipEl.dataset, 'trigger')) {
       config.trigger = this.tooltipEl.dataset.trigger;
     } else if (config.toggle === 'popover') {
       config.trigger = this.defaults.popoverTrigger;
@@ -777,30 +778,30 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     }
 
     const titleAttribute = this.tooltipEl.getAttribute('title');
-    if (_size(this.bsTitle) > 0) {
+    if (_.size(this.bsTitle) > 0) {
       config.title = this.bsTitle;
     } else if (titleAttribute) {
       config.title = titleAttribute;
-    } else if (_has(overrideConfig, 'title')) {
+    } else if (_.has(overrideConfig, 'title')) {
       if (typeof overrideConfig.title === 'object' && overrideConfig.title.nodeValue) {
         config.title = overrideConfig.title.nodeValue;
       } else {
         config.title = overrideConfig.title;
       }
-    } else if (_has(this.tooltipEl.dataset, 'title')) {
+    } else if (_.has(this.tooltipEl.dataset, 'title')) {
       config.title = this.tooltipEl.dataset.title;
     } else {
       config.title = this.defaults.title;
     }
-    if (_isNumber(config.title)) {
-      config.title = _toString(config.title);
+    if (_.isNumber(config.title)) {
+      config.title = _.toString(config.title);
     }
 
-    if (_size(this.bsContent) > 0) {
+    if (_.size(this.bsContent) > 0) {
       config.content = this.bsContent;
-    } else if (_has(this.tooltipEl.dataset, 'content')) {
+    } else if (_.has(this.tooltipEl.dataset, 'content')) {
       config.content = this.tooltipEl.dataset.content;
-    } else if (_has(overrideConfig, 'content')) {
+    } else if (_.has(overrideConfig, 'content')) {
       if (typeof overrideConfig.content === 'object' && overrideConfig.content.nodeValue) {
         config.content = overrideConfig.content.nodeValue;
       } else {
@@ -809,29 +810,29 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     } else {
       config.content = this.defaults.content;
     }
-    if (_isNumber(config.content)) {
-      config.content = _toString(config.content);
+    if (_.isNumber(config.content)) {
+      config.content = _.toString(config.content);
     }
 
     let newConfigDelay;
-    if (_has(overrideConfig, 'delay')) {
+    if (_.has(overrideConfig, 'delay')) {
       newConfigDelay = overrideConfig.delay;
-    } else if (_has(this.tooltipEl.dataset, 'delay')) {
+    } else if (_.has(this.tooltipEl.dataset, 'delay')) {
       newConfigDelay = this.tooltipEl.dataset.delay;
     }
-    if (_isInteger(newConfigDelay)) {
+    if (_.isInteger(newConfigDelay)) {
       config.delay = {
         show: newConfigDelay,
         hide: newConfigDelay,
       };
-    } else if (_isObject(newConfigDelay)) {
+    } else if (_.isObject(newConfigDelay)) {
       config.delay = {
-        show: _get(newConfigDelay, 'show', this.defaults.delay),
-        hide: _get(newConfigDelay, 'hide', this.defaults.delay),
+        show: _.get(newConfigDelay, 'show', this.defaults.delay),
+        hide: _.get(newConfigDelay, 'hide', this.defaults.delay),
       };
-    } else if (_isString(newConfigDelay) && _size(newConfigDelay) > 0) {
-      const configDelayInteger = _toInteger(newConfigDelay);
-      if (!_isNaN(configDelayInteger)) {
+    } else if (_.isString(newConfigDelay) && _.size(newConfigDelay) > 0) {
+      const configDelayInteger = _.toInteger(newConfigDelay);
+      if (!_.isNaN(configDelayInteger)) {
         config.delay = {
           show: configDelayInteger,
           hide: configDelayInteger,
@@ -839,8 +840,8 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       } else {
         const configDelayObj = parseJson(newConfigDelay);
         config.delay = {
-          show: _get(configDelayObj, 'show', this.defaults.delay),
-          hide: _get(configDelayObj, 'hide', this.defaults.delay),
+          show: _.get(configDelayObj, 'show', this.defaults.delay),
+          hide: _.get(configDelayObj, 'hide', this.defaults.delay),
         };
       }
     } else {
@@ -850,25 +851,25 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       };
     }
 
-    if (_has(overrideConfig, 'html')) {
+    if (_.has(overrideConfig, 'html')) {
       config.html = getConfigBoolean(overrideConfig.html);
-    } else if (_has(this.tooltipEl.dataset, 'html')) {
+    } else if (_.has(this.tooltipEl.dataset, 'html')) {
       config.html = getConfigBoolean(this.tooltipEl.dataset.html);
     } else {
       config.html = this.defaults.html;
     }
 
-    if (_has(overrideConfig, 'selector')) {
+    if (_.has(overrideConfig, 'selector')) {
       config.selector = overrideConfig.selector;
-    } else if (_has(this.tooltipEl.dataset, 'selector')) {
+    } else if (_.has(this.tooltipEl.dataset, 'selector')) {
       config.selector = this.tooltipEl.dataset.selector;
     } else {
       config.selector = this.defaults.selector;
     }
 
-    if (_has(overrideConfig, 'placement')) {
+    if (_.has(overrideConfig, 'placement')) {
       config.placement = overrideConfig.placement;
-    } else if (_has(this.tooltipEl.dataset, 'placement')) {
+    } else if (_.has(this.tooltipEl.dataset, 'placement')) {
       config.placement = this.tooltipEl.dataset.placement;
     } else if (config.toggle === 'popover') {
       config.placement = this.defaults.popoverPlacement;
@@ -876,55 +877,55 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       config.placement = this.defaults.placement;
     }
 
-    if (_has(overrideConfig, 'offset')) {
-      config.offset = _toInteger(overrideConfig.offset);
-    } else if (_has(this.tooltipEl.dataset, 'offset')) {
-      config.offset = _toInteger(this.tooltipEl.dataset.offset);
+    if (_.has(overrideConfig, 'offset')) {
+      config.offset = _.toInteger(overrideConfig.offset);
+    } else if (_.has(this.tooltipEl.dataset, 'offset')) {
+      config.offset = _.toInteger(this.tooltipEl.dataset.offset);
     } else {
       config.offset = this.defaults.offset;
     }
-    if (_isNaN(config.offset)) {
+    if (_.isNaN(config.offset)) {
       config.offset = this.defaults.offset;
     }
 
-    if (_has(overrideConfig, 'container')) {
+    if (_.has(overrideConfig, 'container')) {
       config.container = getConfigBoolean(overrideConfig.container);
-    } else if (_has(this.tooltipEl.dataset, 'container')) {
+    } else if (_.has(this.tooltipEl.dataset, 'container')) {
       config.container = getConfigBoolean(this.tooltipEl.dataset.container);
     } else {
       config.container = this.defaults.container;
     }
 
-    if (_has(overrideConfig, 'fallbackPlacement')) {
+    if (_.has(overrideConfig, 'fallbackPlacement')) {
       config.fallbackPlacement = overrideConfig.fallbackPlacement;
-    } else if (_has(this.tooltipEl.dataset, 'fallbackPlacement')) {
+    } else if (_.has(this.tooltipEl.dataset, 'fallbackPlacement')) {
       config.fallbackPlacement = this.tooltipEl.dataset.fallbackPlacement;
     } else {
       config.fallbackPlacement = this.defaults.fallbackPlacement;
     }
 
-    if (_has(overrideConfig, 'boundary')) {
+    if (_.has(overrideConfig, 'boundary')) {
       config.boundary = overrideConfig.boundary;
-    } else if (_has(this.tooltipEl.dataset, 'boundary')) {
+    } else if (_.has(this.tooltipEl.dataset, 'boundary')) {
       config.boundary = this.tooltipEl.dataset.boundary;
     } else {
       config.boundary = this.defaults.boundary;
     }
 
-    if (_has(overrideConfig, 'disposeTimeToWait')) {
-      config.disposeTimeToWait = _toInteger(overrideConfig.disposeTimeToWait);
-    } else if (_has(this.tooltipEl.dataset, 'disposeTimeToWait')) {
-      config.disposeTimeToWait = _toInteger(this.tooltipEl.dataset.disposeTimeToWait);
+    if (_.has(overrideConfig, 'disposeTimeToWait')) {
+      config.disposeTimeToWait = _.toInteger(overrideConfig.disposeTimeToWait);
+    } else if (_.has(this.tooltipEl.dataset, 'disposeTimeToWait')) {
+      config.disposeTimeToWait = _.toInteger(this.tooltipEl.dataset.disposeTimeToWait);
     } else {
       config.disposeTimeToWait = this.defaults.disposeTimeToWait;
     }
-    if (_isNaN(config.disposeTimeToWait)) {
+    if (_.isNaN(config.disposeTimeToWait)) {
       config.disposeTimeToWait = this.defaults.disposeTimeToWait;
     }
 
-    if (_has(overrideConfig, 'template')) {
+    if (_.has(overrideConfig, 'template')) {
       config.template = overrideConfig.template;
-    } else if (_has(this.tooltipEl.dataset, 'template')) {
+    } else if (_.has(this.tooltipEl.dataset, 'template')) {
       config.template = this.tooltipEl.dataset.template;
     } else if (config.toggle === 'popover') {
       config.template = this.defaults.popoverTemplate;
@@ -985,12 +986,12 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       return;
     }
     if (newValue) {
-      if (_includes(this.config.trigger, 'click')) {
+      if (_.includes(this.config.trigger, 'click')) {
         this.activeTrigger.click = true;
-      } else if (_includes(this.config.trigger, 'hover') && !_includes(this.config.trigger, 'manual')) {
+      } else if (_.includes(this.config.trigger, 'hover') && !_.includes(this.config.trigger, 'manual')) {
         this.activeTrigger.hover = true;
         this.hoverState = 'show';
-      } else if (_includes(this.config.trigger, 'focus') && !_includes(this.config.trigger, 'manual')) {
+      } else if (_.includes(this.config.trigger, 'focus') && !_.includes(this.config.trigger, 'manual')) {
         this.activeTrigger.focus = true;
       }
       this.show();
@@ -1015,7 +1016,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   setupMethod(tooltipOptions) {
-    if (_size(tooltipOptions) === 0) {
+    if (_.size(tooltipOptions) === 0) {
       if (!this.isEnabled) {
         this.enableTooltip();
         return true;

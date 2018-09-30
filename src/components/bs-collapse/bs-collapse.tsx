@@ -7,11 +7,11 @@ import {
   Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-import _get from 'lodash/get';
-import _has from 'lodash/has';
-import _size from 'lodash/size';
-import _upperFirst from 'lodash/upperFirst';
-import _isElement from 'lodash/isElement';
+import _ from 'lodash';
+// import _has from 'lodash/has';
+// import _size from 'lodash/size';
+// import _upperFirst from 'lodash/upperFirst';
+// import _isElement from 'lodash/isElement';
 
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
@@ -48,7 +48,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
       this.collapseEl.style[dimension] = '';
       const config = this.getConfig({ toggle: 'show' });
       let accordionParentEl;
-      if (_isElement(config.parent)) {
+      if (_.isElement(config.parent)) {
         accordionParentEl = config.parent;
       } else {
         // accordionParentEl = document.querySelector(config.parent);
@@ -100,15 +100,15 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
         config.toggle = 'hide';
       }
     } else {
-      config.toggle = _get(overrideConfig, 'toggle', 'toggle');
+      config.toggle = _.get(overrideConfig, 'toggle', 'toggle');
     }
 
-    if (_has(overrideConfig, 'ignoreAccordion')) {
+    if (_.has(overrideConfig, 'ignoreAccordion')) {
       config.ignoreAccordion = overrideConfig.ignoreAccordion;
     } else {
       config.ignoreAccordion = this.ignoreAccordion;
     }
-    if (_has(overrideConfig, 'ignoreDataToggles')) {
+    if (_.has(overrideConfig, 'ignoreDataToggles')) {
       config.ignoreDataToggles = overrideConfig.ignoreDataToggles;
     } else {
       config.ignoreDataToggles = this.ignoreDataToggles;
@@ -116,16 +116,16 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
 
     config.collapseElPlannedToBeOpened = [];
     config.collapseElPlannedToBeClosed = [];
-    if (_has(overrideConfig, 'target')) {
+    if (_.has(overrideConfig, 'target')) {
       config.targetSelector = overrideConfig.target;
-    } else if (relatedTarget && _has(relatedTarget.dataset, 'target')) {
+    } else if (relatedTarget && _.has(relatedTarget.dataset, 'target')) {
       config.targetSelector = relatedTarget.dataset.target;
     }
-    if (_has(overrideConfig, 'parent') && _isElement(overrideConfig.parent)) {
+    if (_.has(overrideConfig, 'parent') && _.isElement(overrideConfig.parent)) {
       config.parent = overrideConfig.parent;
-    } else if (_has(overrideConfig, 'parent') && typeof overrideConfig.parent === 'string' && _size(overrideConfig.parent) > 1) {
+    } else if (_.has(overrideConfig, 'parent') && typeof overrideConfig.parent === 'string' && _.size(overrideConfig.parent) > 1) {
       config.parent = overrideConfig.parent;
-    } else if (_has(this.collapseEl.dataset, 'parent')) {
+    } else if (_.has(this.collapseEl.dataset, 'parent')) {
       config.parent = this.collapseEl.dataset.parent;
     }
     return config;
@@ -148,7 +148,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
     for (let j = 0, len = allCollapsesOnPage.length; j < len; j += 1) {
       const targetSelector = getTargetSelector(allCollapsesOnPage[j]);
       let thisCollapseWasOpened = false;
-      if (_size(targetSelector) > 0) {
+      if (_.size(targetSelector) > 0) {
       // see if we need to open this collapse
         for (let x = 0, innerLen = config.collapseElPlannedToBeOpened.length; x < innerLen; x += 1) {
           const shouldOpen = elementMatches(config.collapseElPlannedToBeOpened[x], targetSelector);
@@ -164,7 +164,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
             const shouldClose = elementMatches(config.collapseElPlannedToBeClosed[x], targetSelector);
             if (shouldClose === true) {
               const preExistingOpenTargets = document.querySelectorAll(`${targetSelector}.show`);
-              if (_size(preExistingOpenTargets) === 0) {
+              if (_.size(preExistingOpenTargets) === 0) {
                 addClass(allCollapsesOnPage[j], 'collapsed');
                 allCollapsesOnPage[j].setAttribute('aria-expanded', 'false');
               }
@@ -181,10 +181,10 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
 
   handleToggle(config) {
     // console.log('config: ', config);
-    if (_has(config, 'parent') && config.ignoreAccordion !== true) {
+    if (_.has(config, 'parent') && config.ignoreAccordion !== true) {
       // if it has a parent then it is part of an accordion
       let accordionParentEl;
-      if (_isElement(config.parent)) {
+      if (_.isElement(config.parent)) {
         accordionParentEl = config.parent;
       } else {
         // accordionParentEl = document.querySelector(config.parent);
@@ -238,7 +238,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
       return;
     }
     const dimension = BsCollapse.getDimension(targetEl);
-    const scrollSize = `scroll${_upperFirst(dimension)}`;
+    const scrollSize = `scroll${_.upperFirst(dimension)}`;
     addClass(targetEl, 'collapsing');
     removeClass(targetEl, 'collapse');
     if (config.ignoreAccordion !== true) {
@@ -309,7 +309,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
 
   @Method()
   collapse(collapseOptions, relatedTarget = null) {
-    if (_size(collapseOptions) === 0) {
+    if (_.size(collapseOptions) === 0) {
       return this.collapseEl;
     }
     if (collapseOptions === 'toggle') {

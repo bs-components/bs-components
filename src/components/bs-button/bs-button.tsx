@@ -9,8 +9,8 @@ import {
 } from '@stencil/core';
 
 
-import _size from 'lodash/size';
-import _toLower from 'lodash/toLower';
+import _ from 'lodash';
+// import _toLower from 'lodash/toLower';
 
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
@@ -109,13 +109,13 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (event.which === 32) { // space
       if (!this.bsButtonEl.isEqualNode(event.target)) {
         // user pressed enter on some element element wrapped within bs-button
-        if (_toLower(event.target.tagName) === 'button'
+        if (_.toLower(event.target.tagName) === 'button'
           && event.target.dataset.toggle !== 'collapse'
           && event.target.dataset.toggle !== 'modal') {
           // we let space go through if the button is not a collapse or modal trigger
           return;
         }
-        if (_toLower(event.target.tagName) === 'a'
+        if (_.toLower(event.target.tagName) === 'a'
           // && event.target.dataset.toggle !== 'collapse'
           && event.target.dataset.toggle !== 'modal') {
           // we let space go through if the button is not a modal trigger
@@ -140,13 +140,13 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (event.which === 13) { // enter
       if (!this.bsButtonEl.isEqualNode(event.target)) {
         // user pressed enter on some element element wrapped within bs-button
-        if (_toLower(event.target.tagName) === 'button'
+        if (_.toLower(event.target.tagName) === 'button'
           && event.target.dataset.toggle !== 'collapse'
           && event.target.dataset.toggle !== 'modal') {
           // we let enter go through if the button is not a collapse or modal trigger
           return; // leaving without preventing default
         }
-        if (_toLower(event.target.tagName) === 'a'
+        if (_.toLower(event.target.tagName) === 'a'
           && event.target.dataset.toggle !== 'collapse'
           && event.target.dataset.toggle !== 'modal') {
           // we let enter go through if the anchor is not a collapse or modal trigger
@@ -187,7 +187,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
     if (isDisabled) {
       return;
     }
-    if (_toLower(event.target.tagName) === 'a' && event.stopPropagation) {
+    if (_.toLower(event.target.tagName) === 'a' && event.stopPropagation) {
       event.stopPropagation();
       event.preventDefault();
     }
@@ -479,7 +479,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
   @Method()
   button(buttonOptions:any = {}) {
-    if (_size(buttonOptions) === 0) {
+    if (_.size(buttonOptions) === 0) {
       return this.bsButtonEl;
     }
     if (buttonOptions === 'toggle') {

@@ -8,11 +8,12 @@ import {
 } from '@stencil/core';
 
 
-import _size from 'lodash/size';
-import _get from 'lodash/get';
-import _has from 'lodash/has';
-import _toLower from 'lodash/toLower';
+// import _.size from 'lodash/size';
+// import _.get from 'lodash/get';
+// import _.has from 'lodash/has';
+// import _.toLower from 'lodash/toLower';
 
+import _ from 'lodash';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
@@ -307,32 +308,32 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   getConfig(overrideConfig:any = {}) {
     this.config = {};
     const config: any = {};
-    if (_has(overrideConfig, 'backdrop')) {
-      const backdrop = _toLower(_get(overrideConfig, 'backdrop', 'true'));
+    if (_.has(overrideConfig, 'backdrop')) {
+      const backdrop = _.toLower(_.get(overrideConfig, 'backdrop', 'true'));
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
-    } else if (_has(this.modalEl.dataset, 'backdrop')) {
-      const backdrop = _toLower(this.modalEl.dataset.backdrop);
+    } else if (_.has(this.modalEl.dataset, 'backdrop')) {
+      const backdrop = _.toLower(this.modalEl.dataset.backdrop);
       config.backdrop = backdrop === 'static' ? 'static' : getConfigBoolean(backdrop);
     } else {
       config.backdrop = true;
     }
-    if (_has(overrideConfig, 'focus')) {
-      config.focus = getConfigBoolean(_get(overrideConfig, 'focus', true));
-    } else if (_has(this.modalEl.dataset, 'focus')) {
+    if (_.has(overrideConfig, 'focus')) {
+      config.focus = getConfigBoolean(_.get(overrideConfig, 'focus', true));
+    } else if (_.has(this.modalEl.dataset, 'focus')) {
       config.focus = getConfigBoolean(this.modalEl.dataset.focus);
     } else {
       config.focus = true;
     }
-    if (_has(overrideConfig, 'keyboard')) {
-      config.keyboard = getConfigBoolean(_get(overrideConfig, 'keyboard', true));
-    } else if (_has(this.modalEl.dataset, 'keyboard')) {
+    if (_.has(overrideConfig, 'keyboard')) {
+      config.keyboard = getConfigBoolean(_.get(overrideConfig, 'keyboard', true));
+    } else if (_.has(this.modalEl.dataset, 'keyboard')) {
       config.keyboard = getConfigBoolean(this.modalEl.dataset.keyboard);
     } else {
       config.keyboard = true;
     }
-    if (_has(overrideConfig, 'show')) {
-      config.show = getConfigBoolean(_get(overrideConfig, 'show', true));
-    } else if (_has(this.modalEl.dataset, 'show')) {
+    if (_.has(overrideConfig, 'show')) {
+      config.show = getConfigBoolean(_.get(overrideConfig, 'show', true));
+    } else if (_.has(this.modalEl.dataset, 'show')) {
       config.show = getConfigBoolean(this.modalEl.dataset.show);
     } else {
       config.show = true;
@@ -400,7 +401,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     if (event.target !== event.currentTarget) {
       return;
     }
-    if (_get(this.config, 'backdrop', '') === 'static') {
+    if (_.get(this.config, 'backdrop', '') === 'static') {
       this.modalEl.focus();
     } else {
       this.hide();
@@ -486,7 +487,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   @Method()
   modal(modalOptions = {}, relatedTarget = null) {
     // console.log('modalOptions: ', modalOptions);
-    if (_size(modalOptions) === 0) {
+    if (_.size(modalOptions) === 0) {
       return this.modalEl;
     }
     if (typeof modalOptions === 'object') {

@@ -7,7 +7,7 @@ import {
   Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-import _size from 'lodash/size';
+import _ from 'lodash';
 
 import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
@@ -140,7 +140,7 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
 
   @Method()
   alert(alertOptions) {
-    if (_size(alertOptions) === 0) {
+    if (_.size(alertOptions) === 0) {
       return this.alertEl;
     }
     if (alertOptions === 'close') {
