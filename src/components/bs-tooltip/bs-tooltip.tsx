@@ -677,7 +677,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   handleModalHide = (event) => {
-    console.log('handleModalHide');
     this.activeTrigger = {};
     this.leave(event);
   }
@@ -933,7 +932,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       config.template = this.defaults.template;
     }
     this.config = config;
-    // console.log('this.config: ', this.config);
     if (this.config.toggle === 'popover') {
       if (!this.tooltipEl.hasAttribute('show-event-name')) {
         this.showEventName = 'show.bs.popover';
@@ -1046,8 +1044,6 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       return true;
     }
     if (tooltipOptions === 'show') {
-      console.log('show');
-      console.log('this.isEnabled: ', this.isEnabled);
       if (!this.isEnabled) {
         return null;
       }

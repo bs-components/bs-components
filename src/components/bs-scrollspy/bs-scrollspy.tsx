@@ -251,8 +251,8 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
       this.clear(container);
       return;
     }
-    console.log('this.offsets: ', this.offsets);
-    console.log('this.targets: ', this.targets);
+    // console.log('this.offsets: ', this.offsets);
+    // console.log('this.targets: ', this.targets);
     for (let i = _size(this.offsets) - 1; i >= 0; i -= 1) {
       if (this.isActiveTarget(i, scrollTop)) {
         this.activate(this.targets[i]);
