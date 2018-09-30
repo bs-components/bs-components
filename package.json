@@ -1,6 +1,6 @@
 {
   "name": "bs-components",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bootstrap Stenciljs Components",
   "author": "Jason Cubic",
   "license": "MIT",
@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "build": "stencil build",
+    "pub": "stencil build && yarn publish",
     "build-es5": "stencil build --es5",
     "start": "stencil build --dev --watch --serve",
     "docs:dev": "stencil build && node ./docs/.vuepress/docs-update.js && vuepress dev docs",
