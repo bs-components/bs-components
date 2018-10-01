@@ -8,23 +8,6 @@ import {
 } from '@stencil/core';
 
 import Popper from 'popper.js';
-
-// import _.size from 'lodash/size';
-// import _.get from 'lodash/get';
-// import _.split from 'lodash/split';
-// import _.toLower from 'lodash/toLower';
-// import _.has from 'lodash/has';
-// import _.toInteger from 'lodash/toInteger';
-// import _.isNaN from 'lodash/isNaN';
-// import _.toString from 'lodash/toString';
-// import _.isNumber from 'lodash/isNumber';
-// import _.includes from 'lodash/includes';
-// import _.intersection from 'lodash/intersection';
-// import _.trim from 'lodash/trim';
-// import _.isInteger from 'lodash/isInteger';
-// import _.isObject from 'lodash/isObject';
-// import _.isString from 'lodash/isString';
-
 import _ from 'lodash';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import closest from '../../utilities/closest';

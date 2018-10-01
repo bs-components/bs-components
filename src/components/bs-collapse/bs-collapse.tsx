@@ -8,11 +8,6 @@ import {
 } from '@stencil/core';
 
 import _ from 'lodash';
-// import _has from 'lodash/has';
-// import _size from 'lodash/size';
-// import _upperFirst from 'lodash/upperFirst';
-// import _isElement from 'lodash/isElement';
-
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';

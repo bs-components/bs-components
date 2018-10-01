@@ -8,7 +8,6 @@ import {
 } from '@stencil/core';
 
 import _ from 'lodash';
-
 import closest from '../../utilities/closest';
 import customEvent from '../../utilities/custom-event';
 import removeClass from '../../utilities/remove-class';

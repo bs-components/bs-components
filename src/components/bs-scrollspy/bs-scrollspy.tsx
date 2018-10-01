@@ -6,12 +6,6 @@ import {
   Method, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-// import _.size from 'lodash/size';
-// import _.has from 'lodash/has';
-// import _.toNumber from 'lodash/toNumber';
-// import _.isNaN from 'lodash/isNaN';
-// import _.isElement from 'lodash/isElement';
-
 import _ from 'lodash';
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';

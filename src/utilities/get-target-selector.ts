@@ -1,6 +1,4 @@
 import _ from 'lodash';
-// import _size from 'lodash/size';
-// import _trim from 'lodash/trim';
 
 export default function getTargetSelector(element) {
   if (_.toLower(element.tagName) === 'a') {

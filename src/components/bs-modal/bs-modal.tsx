@@ -7,12 +7,6 @@ import {
   Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-
-// import _.size from 'lodash/size';
-// import _.get from 'lodash/get';
-// import _.has from 'lodash/has';
-// import _.toLower from 'lodash/toLower';
-
 import _ from 'lodash';
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import hasClass from '../../utilities/has-class';

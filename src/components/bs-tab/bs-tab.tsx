@@ -7,7 +7,6 @@ import {
 } from '@stencil/core';
 
 import _ from 'lodash';
-
 import getTransitionDurationFromElement from '../../utilities/get-transition-duration-from-element';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';

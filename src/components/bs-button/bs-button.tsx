@@ -8,10 +8,7 @@ import {
   Watch, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
-
 import _ from 'lodash';
-// import _toLower from 'lodash/toLower';
-
 import closest from '../../utilities/closest';
 import hasClass from '../../utilities/has-class';
 import addClass from '../../utilities/add-class';

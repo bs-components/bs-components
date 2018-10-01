@@ -1,9 +1,3 @@
-// import _toNumber from 'lodash/toNumber';
-// import _max from 'lodash/max';
-// import _isNaN from 'lodash/isNaN';
-// import _trimEnd from 'lodash/trimEnd';
-// import _toLower from 'lodash/toLower';
-
 import _ from 'lodash';
 
 function transformTransitionDuration(stringDuration) {

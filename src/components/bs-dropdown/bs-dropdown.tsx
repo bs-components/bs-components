@@ -10,10 +10,6 @@ import {
 
 import Popper from 'popper.js';
 import _ from 'lodash';
-// import _.size from 'lodash/size';
-// import _.has from 'lodash/has';
-// import _.toLower from 'lodash/toLower';
-
 import getUniqueId from '../../utilities/get-unique-id';
 import addClass from '../../utilities/add-class';
 import removeClass from '../../utilities/remove-class';
