@@ -12,9 +12,9 @@ The bs-component popovers use the bs-tooltip web component.  Make sure to set `d
 
 
 ```html
-<vs-tooltip role="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">
+<bs-tooltip role="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">
   Click to toggle popover
-</vs-tooltip>
+</bs-tooltip>
 ```
 
 ## Four Directions
