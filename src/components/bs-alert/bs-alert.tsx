@@ -4,7 +4,7 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -88,7 +88,7 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  close() {
+  async close() {
     if (!hasClass(this.alertEl, 'show')) {
       return;
     }
@@ -113,7 +113,7 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  open() {
+  async open() {
     if (hasClass(this.alertEl, 'show') && !hasClass(this.alertEl, 'd-none')) {
       return;
     }
@@ -138,16 +138,16 @@ export class BsAlert { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  alert(alertOptions) {
+  async alert(alertOptions): Promise<any> {
     if (_.size(alertOptions) === 0) {
       return this.alertEl;
     }
     if (alertOptions === 'close') {
-      this.close();
+      await this.close();
       return true;
     }
     if (alertOptions === 'open') {
-      this.open();
+      await this.open();
       return true;
     }
     if (typeof alertOptions === 'string') {

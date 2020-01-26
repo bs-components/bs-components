@@ -5,7 +5,7 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -408,7 +408,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  dropdown(dropdownOptions:any = {}) {
+  async dropdown(dropdownOptions:any = {}): Promise<any> {
     // this is a proxy
     if (this.bsButtonEl.dataset.toggle !== 'dropdown') {
       throw new Error('dropdown method can only be run on a bs-button with [data-toggle="dropdown"]');
@@ -449,7 +449,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  tab(tabOptions:any = {}) {
+  async tab(tabOptions:any = {}): Promise<any> {
     // this is a proxy
     const tabToggler = this.getTabToggler(this.bsButtonEl);
     if (!tabToggler) {
@@ -475,7 +475,7 @@ export class BsButton { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  button(buttonOptions:any = {}) {
+  async button(buttonOptions:any = {}): Promise<HTMLElement | boolean> {
     if (_.size(buttonOptions) === 0) {
       return this.bsButtonEl;
     }

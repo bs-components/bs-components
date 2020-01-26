@@ -4,7 +4,7 @@ import {
   State,
   Element,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -78,7 +78,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  getScrollbarWidth() { // eslint-disable-line class-methods-use-this
+  async getScrollbarWidth(): Promise<number> { // eslint-disable-line class-methods-use-this
     const scrollDiv = document.createElement('div');
     scrollDiv.className = 'modal-scrollbar-measure';
     document.body.appendChild(scrollDiv);
@@ -87,10 +87,10 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
     return scrollbarWidth;
   }
 
-  checkScrollbar() {
+  async checkScrollbar() {
     const rect = document.body.getBoundingClientRect();
     this.isBodyOverflowing = rect.left + rect.right < window.innerWidth;
-    this.scrollbarWidth = this.getScrollbarWidth();
+    this.scrollbarWidth = await this.getScrollbarWidth();
   }
 
   setScrollbar() {
@@ -479,7 +479,7 @@ export class BsModal { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  modal(modalOptions = {}, relatedTarget = null) {
+  async modal(modalOptions = {}, relatedTarget = null): Promise<HTMLElement | boolean> {
     // console.log('modalOptions: ', modalOptions);
     if (_.size(modalOptions) === 0) {
       return this.modalEl;

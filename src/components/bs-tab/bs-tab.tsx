@@ -3,7 +3,7 @@ import {
   Prop,
   Element,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -228,7 +228,7 @@ export class BsTab { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  tab(tabOptions = {}, triggeringButton = null) {
+  async tab(tabOptions = {}, triggeringButton = null): Promise<HTMLElement | boolean> {
     if (_.size(tabOptions) === 0) {
       return this.tabEl;
     }

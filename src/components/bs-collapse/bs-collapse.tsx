@@ -4,7 +4,7 @@ import {
   Element,
   State,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -303,7 +303,7 @@ export class BsCollapse { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  collapse(collapseOptions, relatedTarget = null) {
+  async collapse(collapseOptions, relatedTarget = null): Promise<HTMLElement | boolean> {
     if (_.size(collapseOptions) === 0) {
       return this.collapseEl;
     }
