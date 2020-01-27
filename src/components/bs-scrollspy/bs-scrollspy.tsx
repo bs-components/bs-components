@@ -3,7 +3,7 @@ import {
   Prop,
   State,
   Element,
-  Method, // eslint-disable-line no-unused-vars
+  Method, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import _ from 'lodash';
@@ -344,7 +344,7 @@ export class BsScrollspy { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  scrollspy(scrollspyOptions = {}) {
+  async scrollspy(scrollspyOptions = {}): Promise<HTMLElement | boolean> {
     if (_.size(scrollspyOptions) === 0) {
       return this.scrollspyEl;
     }

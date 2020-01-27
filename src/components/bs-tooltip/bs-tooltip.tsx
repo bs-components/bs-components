@@ -4,7 +4,7 @@ import {
   Element,
   Method, // eslint-disable-line no-unused-vars
   State,
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import Popper from 'popper.js';
@@ -540,7 +540,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     removeClass(tip, 'show');
   }
 
-  setElementContent(el, content) {
+  setElementContent(el, content: HTMLElement | string) {
     if (this.config.html) {
       if (content instanceof Element) {
         el.appendChild(content);
@@ -549,7 +549,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
       // eslint-disable-next-line no-param-reassign
       el.innerHTML = content;
     } else {
-      if (content instanceof Element) {
+      if (content instanceof HTMLElement) {
         // eslint-disable-next-line no-param-reassign
         el.textContent = content.innerText;
         return;
@@ -998,7 +998,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
     this.leave();
   }
 
-  setupMethod(tooltipOptions) {
+  setupMethod(tooltipOptions): HTMLElement | boolean {
     if (_.size(tooltipOptions) === 0) {
       if (!this.isEnabled) {
         this.enableTooltip();
@@ -1071,7 +1071,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  popover(popoverOptions:any = {}) {
+  async popover(popoverOptions:any = {}): Promise<HTMLElement | boolean> {
     if (this.tooltipEl.dataset.toggle !== 'popover') {
       throw new Error('a popover requires [data-toggle="popover"]');
     }
@@ -1079,7 +1079,7 @@ export class BsTooltip { // eslint-disable-line import/prefer-default-export
   }
 
   @Method()
-  tooltip(tooltipOptions:any = {}) {
+  async tooltip(tooltipOptions:any = {}): Promise<HTMLElement | boolean> {
     if (this.tooltipEl.dataset.toggle === 'popover') {
       throw new Error('For a popover you must call the popover method not the tooltip method');
     }

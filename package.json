@@ -1,6 +1,6 @@
 {
   "name": "bs-components",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Bootstrap Stenciljs Components",
   "author": "Jason Cubic",
   "license": "MIT",
@@ -12,7 +12,9 @@
     "type": "git",
     "url": "git+https://github.com/bs-components/bs-components.git"
   },
-  "module": "dist/esm/index.js",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "module": "dist/index.mjs",
   "main": "dist/index.js",
   "types": "dist/types/components.d.ts",
   "collection": "dist/collection/collection-manifest.json",
@@ -37,19 +39,20 @@
     "test-bs-scrollspy": "stencil build && testcafe ie,chrome ./tests/bs-scrollspy.test.ts"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
-    "popper.js": "^1.14.4"
+    "lodash": "^4.17.15",
+    "popper.js": "^1.16.1"
   },
   "devDependencies": {
-    "@stencil/core": "^0.11.4",
-    "del": "^3.0.0",
-    "eslint": "^5.4.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-typescript": "^0.12.0",
+    "@stencil/core": "^1.8.6",
+    "del": "^5.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "eslint-plugin-typescript": "^0.14.0",
     "ncp": "^2.0.0",
-    "testcafe": "^0.21.1",
-    "typescript-eslint-parser": "^18.0.0",
-    "vuepress": "^0.14.2"
+    "testcafe": "^15.1.317922",
+    "@typescript-eslint/parser": "^2.17.0",
+    "vuepress": "^1.2.0"
   }
 }

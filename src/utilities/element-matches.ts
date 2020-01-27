@@ -4,7 +4,7 @@
 // supports IE9+
 
 export default function elementMatches(el, selector) {
-  if (Element.prototype.msMatchesSelector) {
+  if (!!(Element.prototype as any).msMatchesSelector) {
     return el.msMatchesSelector(selector);
   }
   return el.matches(selector);

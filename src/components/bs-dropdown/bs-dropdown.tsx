@@ -5,7 +5,7 @@ import {
   Listen, // eslint-disable-line no-unused-vars
   Element,
   Method, // eslint-disable-line no-unused-vars
-  Watch, // eslint-disable-line no-unused-vars
+  Watch, h, // eslint-disable-line no-unused-vars
 } from '@stencil/core';
 
 import Popper from 'popper.js';
@@ -277,7 +277,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
     } else {
       this.handleShowDropdown(event.target);
     }
-  }
+  };
 
   static getPlacement(dropdownEl, dropdownMenuEl) {
     const AttachmentMap = {
@@ -497,7 +497,7 @@ export class BsDropdown { // eslint-disable-line import/prefer-default-export
 
 
   @Method()
-  dropdown(dropdownOptions = {}, relatedTarget = null) {
+  async dropdown(dropdownOptions = {}, relatedTarget = null): Promise<HTMLElement | boolean> {
     if (_.size(dropdownOptions) === 0) {
       return this.dropdownEl;
     }
