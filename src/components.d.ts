@@ -78,6 +78,18 @@ export namespace Components {
     'shownEventName': string;
     'tab': (tabOptions?: {}, triggeringButton?: any) => Promise<boolean | HTMLElement>;
   }
+  interface BsToast {
+    'autohide': boolean;
+    'delay': number;
+    'hiddenEventName': string;
+    'hide': () => Promise<void>;
+    'hideEventName': string;
+    'noSelfRemoveFromDom': boolean;
+    'show': () => Promise<void>;
+    'showEventName': string;
+    'shownEventName': string;
+    'toast': (toastOptions: any) => Promise<any>;
+  }
   interface BsTooltip {
     'bsContent': string;
     'bsTitle': string;
@@ -146,6 +158,12 @@ declare global {
     new (): HTMLBsTabElement;
   };
 
+  interface HTMLBsToastElement extends Components.BsToast, HTMLStencilElement {}
+  var HTMLBsToastElement: {
+    prototype: HTMLBsToastElement;
+    new (): HTMLBsToastElement;
+  };
+
   interface HTMLBsTooltipElement extends Components.BsTooltip, HTMLStencilElement {}
   var HTMLBsTooltipElement: {
     prototype: HTMLBsTooltipElement;
@@ -159,6 +177,7 @@ declare global {
     'bs-modal': HTMLBsModalElement;
     'bs-scrollspy': HTMLBsScrollspyElement;
     'bs-tab': HTMLBsTabElement;
+    'bs-toast': HTMLBsToastElement;
     'bs-tooltip': HTMLBsTooltipElement;
   }
 }
@@ -220,6 +239,15 @@ declare namespace LocalJSX {
     'showTab'?: boolean;
     'shownEventName'?: string;
   }
+  interface BsToast {
+    'autohide'?: boolean;
+    'delay'?: number;
+    'hiddenEventName'?: string;
+    'hideEventName'?: string;
+    'noSelfRemoveFromDom'?: boolean;
+    'showEventName'?: string;
+    'shownEventName'?: string;
+  }
   interface BsTooltip {
     'bsContent'?: string;
     'bsTitle'?: string;
@@ -248,6 +276,7 @@ declare namespace LocalJSX {
     'bs-modal': BsModal;
     'bs-scrollspy': BsScrollspy;
     'bs-tab': BsTab;
+    'bs-toast': BsToast;
     'bs-tooltip': BsTooltip;
   }
 }
@@ -265,6 +294,7 @@ declare module "@stencil/core" {
       'bs-modal': LocalJSX.BsModal & JSXBase.HTMLAttributes<HTMLBsModalElement>;
       'bs-scrollspy': LocalJSX.BsScrollspy & JSXBase.HTMLAttributes<HTMLBsScrollspyElement>;
       'bs-tab': LocalJSX.BsTab & JSXBase.HTMLAttributes<HTMLBsTabElement>;
+      'bs-toast': LocalJSX.BsToast & JSXBase.HTMLAttributes<HTMLBsToastElement>;
       'bs-tooltip': LocalJSX.BsTooltip & JSXBase.HTMLAttributes<HTMLBsTooltipElement>;
     }
   }

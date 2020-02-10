@@ -16,7 +16,7 @@ See [documentation](https://bs-components.github.io/) for installation and getti
 
 Built Using:
 
-- [bootstrap css from v4.1.3](https://github.com/twbs/bootstrap/releases/tag/v4.1.3)
+- [bootstrap css from v4.4.1](https://github.com/twbs/bootstrap/releases/tag/v4.4.1)
 - [stencil](https://stenciljs.com/)
 
 Tests Using:
@@ -38,6 +38,7 @@ Status:
 - [x] alert - run tests using: `yarn test-bs-alert`
 - [x] tab - run tests using: `yarn test-bs-tab`
 - [x] scrollspy - run tests using: `yarn test-bs-scrollspy`
+- [ ] toast - run tests using: `yarn test-bs-toast`
 - [ ] carousel not planned currently but maybe later
 
 For all of the other bootstrap components a web component solution is not needed because they can be done with normal html and css. Use the bootstrap webpage component documents.
