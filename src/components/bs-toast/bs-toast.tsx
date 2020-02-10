@@ -64,17 +64,6 @@ export class BsToast { // eslint-disable-line import/prefer-default-export
     });
   }
 
-  @Watch('dismiss')
-  handleActiveWatch(newValue /* , oldValue */) {
-    // console.log('newValue: ', newValue);
-    if (newValue === true) {
-      this.hide();
-      return;
-    }
-    this.show();
-  }
-
-
   @Method()
   async hide() {
     if (!hasClass(this.toastEl, 'show')) {
